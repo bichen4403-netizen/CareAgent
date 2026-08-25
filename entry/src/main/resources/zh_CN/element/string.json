@@ -1,0 +1,48 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "智护同行 - 基于多智能体协同的全流程智能陪诊系统"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "智护同行主入口"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "智护同行"
+    },
+    {
+      "name": "CareCard_label",
+      "value": "陪诊安排"
+    },
+    {
+      "name": "CareCard_desc",
+      "value": "在桌面查看下一步陪诊安排，无需打开应用"
+    },
+    {
+      "name": "reason_internet",
+      "value": "用于查询医院号源、实时路况与天气信息"
+    },
+    {
+      "name": "reason_location",
+      "value": "用于根据您的位置规划出行方案和出发时间"
+    },
+    {
+      "name": "reason_distributed",
+      "value": "用于将提醒同步到您的手表和耳机"
+    },
+    {
+      "name": "reason_background",
+      "value": "用于在您退出应用后仍能按时提醒您出发和用药"
+    },
+    {
+      "name": "reason_reminder",
+      "value": "用于设置出发、排队、用药等关键节点提醒"
+    },
+    {
+      "name": "reason_microphone",
+      "value": "用于识别您说出的就医需求"
+    }
+  ]
+}

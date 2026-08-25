@@ -1,0 +1,15 @@
+{
+  "string": [
+    { "name": "module_desc", "value": "Zhihu Tongxing - Multi-agent medical companion system" },
+    { "name": "EntryAbility_desc", "value": "Main entry" },
+    { "name": "EntryAbility_label", "value": "CareCompanion" },
+    { "name": "CareCard_label", "value": "Care Plan" },
+    { "name": "CareCard_desc", "value": "View your next care step from the home screen" },
+    { "name": "reason_internet", "value": "To query hospital slots, traffic and weather" },
+    { "name": "reason_location", "value": "To plan your trip and departure time" },
+    { "name": "reason_distributed", "value": "To sync reminders to your watch and earbuds" },
+    { "name": "reason_background", "value": "To remind you on time after leaving the app" },
+    { "name": "reason_reminder", "value": "To set departure, queue and medication reminders" },
+    { "name": "reason_microphone", "value": "To recognize your spoken request" }
+  ]
+}

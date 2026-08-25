@@ -1,0 +1,1530 @@
+Ôr@Ÿªassertions¤code´customTransformCache¬dependencies¢id¤meta±moduleSideEffects¬originalCode±originalSourcemap«resolvedIds®sourcemapChainµsyntheticNamedExportsµtransformDependencies®transformFiles¨cacheAstÔrAÚ†if (!("finalizeConstruction" in ViewPU.prototype)) {
+    Reflect.set(ViewPU.prototype, "finalizeConstruction", () => { });
+}
+/**
+ * æ™ºæŠ¤åŒè¡Œ - ä¸»ç•Œé¢
+ *
+ * è®¾è®¡åŸåˆ™ï¼ˆè€å¹´ç”¨æˆ·ï¼‰ï¼š
+ *  1. ä¸€ä¸ªå·¨å¤§çš„è¯­éŸ³æŒ‰é’®ï¼Œä¸éœ€è¦æ‰¾å…¥å£
+ *  2. å­—å· â‰¥ 20fpï¼Œå¯¹æ¯”åº¦é«˜
+ *  3. æ¯ä¸€æ­¥åªå‘ˆç°ä¸€ä¸ªå†³ç­–ç‚¹ï¼Œä¸å †ä¿¡æ¯
+ *  4. å…¨æµç¨‹è¿›åº¦å¯è§†ï¼Œè®©ç”¨æˆ·çŸ¥é“"ç³»ç»Ÿæ­£åœ¨æ›¿æˆ‘åšä»€ä¹ˆ"
+ */
+import router from "@ohos.router";
+import photoAccessHelper from "@ohos.file.photoAccessHelper";
+import image from "@ohos.multimedia.image";
+import fileIo from "@ohos.file.fs";
+import { BusEvent, RecordSource } from '../core/AgentTypes';
+import { eventBus } from '../core/EventBus';
+import { CentralAgent } from '../agents/CentralAgent';
+import { ContextStore } from '../core/ContextStore';
+import { DeviceSyncService } from '../services/DeviceSyncService';
+import { WeatherService } from '../services/WeatherService';
+import { OcrCaptureService } from '../services/OcrCaptureService';
+/** å¯¹è¯æ°”æ³¡ */
+class ChatItem {
+    constructor(role, text) {
+        this.role = 'assistant'; // user / assistant
+        this.text = '';
+        this.role = role;
+        this.text = text;
+    }
+}
+/** è¿›åº¦æ¡ç›® */
+class ProgressItem {
+    constructor(taskId, title, status) {
+        this.taskId = '';
+        this.title = '';
+        this.status = 'PENDING';
+        this.taskId = taskId;
+        this.title = title;
+        this.status = status;
+    }
+}
+class Index extends ViewPU {
+    constructor(parent, params, __localStorage, elmtId = -1, paramsLambda = undefined, extraInfo) {
+        super(parent, __localStorage, elmtId, extraInfo);
+        if (typeof paramsLambda === "function") {
+            this.paramsGenerator_ = paramsLambda;
+        }
+        this.__chats = new ObservedPropertyObjectPU([], this, "chats");
+        this.__progress = new ObservedPropertyObjectPU([], this, "progress");
+        this.__listening = new ObservedPropertySimplePU(false, this, "listening");
+        this.__busy = new ObservedPropertySimplePU(false, this, "busy");
+        this.__inputText = new ObservedPropertySimplePU('', this, "inputText");
+        this.__pendingRecord = new ObservedPropertyObjectPU(null, this, "pendingRecord");
+        this.__capturingOcr = new ObservedPropertySimplePU(false, this, "capturingOcr");
+        this.central = new CentralAgent();
+        this.scroller = new Scroller();
+        this.setInitiallyProvidedValue(params);
+        this.finalizeConstruction();
+    }
+    setInitiallyProvidedValue(params) {
+        if (params.chats !== undefined) {
+            this.chats = params.chats;
+        }
+        if (params.progress !== undefined) {
+            this.progress = params.progress;
+        }
+        if (params.listening !== undefined) {
+            this.listening = params.listening;
+        }
+        if (params.busy !== undefined) {
+            this.busy = params.busy;
+        }
+        if (params.inputText !== undefined) {
+            this.inputText = params.inputText;
+        }
+        if (params.pendingRecord !== undefined) {
+            this.pendingRecord = params.pendingRecord;
+        }
+        if (params.capturingOcr !== undefined) {
+            this.capturingOcr = params.capturingOcr;
+        }
+        if (params.central !== undefined) {
+            this.central = params.central;
+        }
+        if (params.scroller !== undefined) {
+            this.scroller = params.scroller;
+        }
+    }
+    updateStateVars(params) {
+    }
+    purgeVariableDependenciesOnElmtId(rmElmtId) {
+        this.__chats.purgeDependencyOnElmtId(rmElmtId);
+        this.__progress.purgeDependencyOnElmtId(rmElmtId);
+        this.__listening.purgeDependencyOnElmtId(rmElmtId);
+        this.__busy.purgeDependencyOnElmtId(rmElmtId);
+        this.__inputText.purgeDependencyOnElmtId(rmElmtId);
+        this.__pendingRecord.purgeDependencyOnElmtId(rmElmtId);
+        this.__capturingOcr.purgeDependencyOnElmtId(rmElmtId);
+    }
+    aboutToBeDeleted() {
+        this.__chats.aboutToBeDeleted();
+        this.__progress.aboutToBeDeleted();
+        this.__listening.aboutToBeDeleted();
+        this.__busy.aboutToBeDeleted();
+        this.__inputText.aboutToBeDeleted();
+        this.__pendingRecord.aboutToBeDeleted();
+        this.__capturingOcr.aboutToBeDeleted();
+        SubscriberManager.Get().delete(this.id__());
+        this.aboutToBeDeletedInternal();
+    }
+    get chats() {
+        return this.__chats.get();
+    }
+    set chats(newValue) {
+        this.__chats.set(newValue);
+    }
+    get progress() {
+        return this.__progress.get();
+    }
+    set progress(newValue) {
+        this.__progress.set(newValue);
+    }
+    get listening() {
+        return this.__listening.get();
+    }
+    set listening(newValue) {
+        this.__listening.set(newValue);
+    }
+    get busy() {
+        return this.__busy.get();
+    }
+    set busy(newValue) {
+        this.__busy.set(newValue);
+    }
+    get inputText() {
+        return this.__inputText.get();
+    }
+    set inputText(newValue) {
+        this.__inputText.set(newValue);
+    }
+    get pendingRecord() {
+        return this.__pendingRecord.get();
+    }
+    set pendingRecord(newValue) {
+        this.__pendingRecord.set(newValue);
+    }
+    get capturingOcr() {
+        return this.__capturingOcr.get();
+    }
+    set capturingOcr(newValue) {
+        this.__capturingOcr.set(newValue);
+    }
+    aboutToAppear() {
+        this.initServices();
+        this.bindEvents();
+        this.chats.push(new ChatItem('assistant', 'æ‚¨å¥½ï¼Œæˆ‘æ˜¯æ™ºæŠ¤åŒè¡Œã€‚æ‚¨è¦å»åŒ»é™¢çœ‹ç—…ã€å–è¯ï¼Œç›´æ¥è·Ÿæˆ‘è¯´ä¸€å¥å°±è¡Œ'));
+    }
+    aboutToDisappear() {
+        eventBus.clear();
+        DeviceSyncService.clearReminders();
+    }
+    async initServices() {
+        const ctx = getContext(this);
+        await ContextStore.getInstance().init(ctx);
+        DeviceSyncService.start();
+        await this.seedDemoProfile();
+    }
+    /** æ¼”ç¤ºç”¨ï¼šé¢„ç½®ä¸€ä»½ç”¨æˆ·æ¡£æ¡ˆä¸ä¸€æ¡å†å²å°±è¯Šè®°å½• */
+    async seedDemoProfile() {
+        const store = ContextStore.getInstance();
+        const p = store.getProfile();
+        if (p.name.length > 0) {
+            return;
+        }
+        await store.saveProfile({
+            name: 'å¼ ç§€å…°',
+            age: 72,
+            homeAddress: 'å¹¸ç¦å°åŒº3æ ‹2å•å…ƒ',
+            preferredHospitals: ['å¸‚ç¬¬ä¸€äººæ°‘åŒ»é™¢'],
+            chronicTags: ['é«˜è¡€å‹'],
+            accessibilityMode: true,
+            emergencyContact: '13800000000'
+        });
+        await store.addRecord({
+            recordId: 'r001',
+            hospital: 'å¸‚ç¬¬ä¸€äººæ°‘åŒ»é™¢',
+            department: 'å¿ƒè¡€ç®¡å†…ç§‘',
+            doctorName: 'ç‹å»ºå›½ ä¸»ä»»åŒ»å¸ˆ',
+            visitDate: '2026-07-20',
+            followUpDays: 30,
+            prescription: 'è‹¯ç£ºé…¸æ°¨æ°¯åœ°å¹³ç‰‡ æ¯æ—¥1æ¬¡ æ¯æ¬¡5mg',
+            source: RecordSource.MANUAL_INPUT,
+            confirmed: true // æ¼”ç¤ºæ•°æ®è§†ä¸ºå·²æ ¸å®ï¼ŒçœŸå®åœºæ™¯ä¸‹å¿…é¡»èµ°ç”¨æˆ·ç¡®è®¤
+        });
+    }
+    /** è®¢é˜… Agent å±‚äº‹ä»¶ï¼Œé©±åŠ¨ UI æ›´æ–° */
+    bindEvents() {
+        eventBus.on(BusEvent.PLAN_UPDATED, (msg) => {
+            const plan = JSON.parse(msg.payload);
+            const list = [];
+            for (let i = 0; i < plan.nodes.length; i++) {
+                const n = plan.nodes[i];
+                list.push(new ProgressItem(n.id, n.title, n.status));
+            }
+            this.progress = list;
+        });
+        eventBus.on(BusEvent.TASK_STARTED, (msg) => {
+            const obj = JSON.parse(msg.payload);
+            this.updateProgress(obj['taskId'], 'RUNNING');
+        });
+        eventBus.on(BusEvent.TASK_FINISHED, (msg) => {
+            const r = JSON.parse(msg.payload);
+            this.updateProgress(r.taskId, r.success ? 'SUCCESS' : 'FAILED');
+        });
+        eventBus.on(BusEvent.SPEAK, (msg) => {
+            const obj = JSON.parse(msg.payload);
+            this.pushChat('assistant', obj['text']);
+        });
+        eventBus.on(BusEvent.ANOMALY_DETECTED, () => {
+            this.progress = [];
+        });
+    }
+    updateProgress(taskId, status) {
+        const list = [];
+        for (let i = 0; i < this.progress.length; i++) {
+            const p = this.progress[i];
+            if (p.taskId === taskId) {
+                list.push(new ProgressItem(p.taskId, p.title, status));
+            }
+            else {
+                list.push(p);
+            }
+        }
+        this.progress = list;
+    }
+    pushChat(role, text) {
+        this.chats.push(new ChatItem(role, text));
+        setTimeout(() => {
+            this.scroller.scrollEdge(Edge.Bottom);
+        }, 80);
+    }
+    /** å‘èµ·ä¸€æ¬¡è¯·æ±‚ */
+    async submit(text) {
+        if (text.length === 0 || this.busy) {
+            return;
+        }
+        this.busy = true;
+        this.pushChat('user', text);
+        this.inputText = '';
+        try {
+            const rt = await this.buildRuntimeContext();
+            const clarify = await this.central.handleUserRequest(text, rt);
+            if (clarify.length > 0) {
+                this.pushChat('assistant', clarify);
+            }
+        }
+        catch (e) {
+            this.pushChat('assistant', 'åˆšæ‰æ²¡å¤„ç†å¥½ï¼Œæ‚¨å†è¯´ä¸€æ¬¡å¥½å—');
+            console.error(`[Index] submit error: ${e}`);
+        }
+        finally {
+            this.busy = false;
+        }
+    }
+    // ==================== æ‹ç…§å½•å…¥ç—…å† ====================
+    /**
+     * ç”¨æˆ·ç‚¹"æ‹ç…§å½•å…¥"ï¼šé€‰ç…§ç‰‡ â†’ OCR â†’ å¤§æ¨¡å‹ç»“æ„åŒ– â†’ å¼¹å‡ºå¾…ç¡®è®¤å¡ç‰‡
+     * å…¨ç¨‹ä¸ç›´æ¥å†™å…¥æ­£å¼ç—…å†ï¼Œå¿…é¡»ç­‰ç”¨æˆ·ç‚¹"ç¡®è®¤æ— è¯¯"æ‰ç”Ÿæ•ˆï¼ˆè§ onConfirmPendingRecordï¼‰
+     */
+    async onCapturePhoto() {
+        if (this.capturingOcr) {
+            return;
+        }
+        this.capturingOcr = true;
+        try {
+            const picker = new photoAccessHelper.PhotoViewPicker();
+            const result = await picker.select({
+                MIMEType: photoAccessHelper.PhotoViewMIMETypes.IMAGE_TYPE,
+                maxSelectNumber: 1
+            });
+            if (result.photoUris === undefined || result.photoUris.length === 0) {
+                this.capturingOcr = false;
+                return;
+            }
+            const pixelMap = await this.loadPixelMap(result.photoUris[0]);
+            const record = await OcrCaptureService.captureFromPhoto(pixelMap);
+            if (record === null) {
+                this.pushChat('assistant', 'è¿™å¼ ç…§ç‰‡æ²¡èƒ½è¯†åˆ«å‡ºç—…å†ä¿¡æ¯ï¼Œè¦ä¸æ¢ä¸€å¼ æ¸…æ¥šç‚¹çš„è¯•è¯•');
+            }
+            else {
+                this.pendingRecord = record;
+            }
+        }
+        catch (e) {
+            console.error(`[Index] capture photo failed: ${e}`);
+            this.pushChat('assistant', 'æ‹ç…§è¯†åˆ«æ²¡æˆåŠŸï¼Œæ‚¨å¯ä»¥å†è¯•ä¸€æ¬¡');
+        }
+        finally {
+            this.capturingOcr = false;
+        }
+    }
+    /** æŠŠç…§ç‰‡ URI è¯»æˆ PixelMapï¼Œä¾› OCR ä½¿ç”¨ */
+    async loadPixelMap(uri) {
+        const file = await fileIo.open(uri, fileIo.OpenMode.READ_ONLY);
+        try {
+            const source = image.createImageSource(file.fd);
+            const pixelMap = await source.createPixelMap();
+            await source.release();
+            return pixelMap;
+        }
+        finally {
+            await fileIo.close(file.fd);
+        }
+    }
+    /** ç”¨æˆ·ç‚¹"ç¡®è®¤æ— è¯¯"ï¼šè¿™æ—¶å€™æ‰çœŸæ­£å†™å…¥ç—…å†åº“ */
+    async onConfirmPendingRecord() {
+        if (this.pendingRecord === null) {
+            return;
+        }
+        const confirmed = {
+            recordId: this.pendingRecord.recordId,
+            hospital: this.pendingRecord.hospital,
+            department: this.pendingRecord.department,
+            doctorName: this.pendingRecord.doctorName,
+            visitDate: this.pendingRecord.visitDate,
+            followUpDays: this.pendingRecord.followUpDays,
+            prescription: this.pendingRecord.prescription,
+            source: this.pendingRecord.source,
+            confirmed: true
+        };
+        await ContextStore.getInstance().addRecord(confirmed);
+        this.pushChat('assistant', `å·²ç»æŠŠ${confirmed.hospital}${confirmed.department}è¿™æ¬¡çš„è®°å½•å­˜å¥½äº†`);
+        this.pendingRecord = null;
+    }
+    onDiscardPendingRecord() {
+        this.pendingRecord = null;
+    }
+    /**
+     * é‡‡é›†å½“å‰ä¸Šä¸‹æ–‡ï¼šä½ç½®ã€å¤©æ°”ã€æ—¶é—´
+     *
+     * âš ï¸ å®šä½ç›®å‰ä»æ˜¯å†™æ­»çš„ç»çº¬åº¦ï¼ˆæ­å·é™„è¿‘ï¼‰ã€‚
+     * è¦æ¥çœŸå®å®šä½ï¼Œéœ€è¦åœ¨ module.json5 é‡Œå·²ç»å£°æ˜çš„ LOCATION æƒé™åŸºç¡€ä¸Šï¼Œ
+     * è°ƒç”¨ @kit.LocationKit çš„ geoLocationManager.getCurrentLocation() è·å–çœŸå®ç»çº¬åº¦ï¼Œ
+     * è¿™é‡Œå…ˆç”¨å›ºå®šåæ ‡ï¼Œä¿è¯æ²¡æœ‰å®šä½æƒé™æ—¶ä¹Ÿèƒ½è·‘é€šå…¨æµç¨‹æ¼”ç¤ºã€‚
+     */
+    async buildRuntimeContext() {
+        const profile = ContextStore.getInstance().getProfile();
+        const lat = 30.2741;
+        const lng = 120.1551;
+        // å¤©æ°”æ”¹ä¸ºçœŸå®æ¥å£ï¼ˆæœªé…ç½® Key æ—¶è‡ªåŠ¨é™çº§ä¸º Mockï¼Œè§ WeatherService.etsï¼‰
+        const weather = await WeatherService.getWeather();
+        return {
+            currentLat: lat,
+            currentLng: lng,
+            currentAddress: profile.homeAddress,
+            nowTs: Date.now(),
+            weather: weather,
+            trafficLevel: 'ç¼“è¡Œ'
+        };
+    }
+    /** æ¨¡æ‹Ÿè¯­éŸ³è¾“å…¥ */
+    onVoiceTap() {
+        if (this.busy) {
+            return;
+        }
+        this.listening = true;
+        // TODO: æ¥å…¥ç³»ç»Ÿè¯­éŸ³è¯†åˆ«ï¼Œæ­¤å¤„ç”¨å›ºå®šè¯­æ–™æ¨¡æ‹Ÿ
+        setTimeout(() => {
+            this.listening = false;
+            this.submit('æˆ‘è¦å»ç¬¬ä¸€äººæ°‘åŒ»é™¢æ‹¿é«˜è¡€å‹è¯');
+        }, 1200);
+    }
+    // ==================== UI ====================
+    ChatBubble(item, parent = null) {
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Row.create();
+            Row.debugLine("entry/src/main/ets/pages/Index.ets(305:5)", "entry");
+            Row.width('100%');
+            Row.margin({ bottom: 14 });
+        }, Row);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            If.create();
+            if (item.role === 'user') {
+                this.ifElseBranchUpdateFunction(0, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Blank.create();
+                        Blank.debugLine("entry/src/main/ets/pages/Index.ets(307:9)", "entry");
+                    }, Blank);
+                    Blank.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create(item.text);
+                        Text.debugLine("entry/src/main/ets/pages/Index.ets(308:9)", "entry");
+                        Text.fontSize(21);
+                        Text.fontColor('#FFFFFF');
+                        Text.padding({ left: 18, right: 18, top: 14, bottom: 14 });
+                        Text.backgroundColor('#2E6F8E');
+                        Text.borderRadius(18);
+                        Text.constraintSize({ maxWidth: '78%' });
+                    }, Text);
+                    Text.pop();
+                });
+            }
+            else {
+                this.ifElseBranchUpdateFunction(1, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create(item.text);
+                        Text.debugLine("entry/src/main/ets/pages/Index.ets(316:9)", "entry");
+                        Text.fontSize(21);
+                        Text.fontColor('#22303C');
+                        Text.lineHeight(32);
+                        Text.padding({ left: 18, right: 18, top: 14, bottom: 14 });
+                        Text.backgroundColor('#FFFFFF');
+                        Text.borderRadius(18);
+                        Text.constraintSize({ maxWidth: '82%' });
+                    }, Text);
+                    Text.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Blank.create();
+                        Blank.debugLine("entry/src/main/ets/pages/Index.ets(324:9)", "entry");
+                    }, Blank);
+                    Blank.pop();
+                });
+            }
+        }, If);
+        If.pop();
+        Row.pop();
+    }
+    PendingInfoRow(label, value, parent = null) {
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Row.create();
+            Row.debugLine("entry/src/main/ets/pages/Index.ets(333:5)", "entry");
+            Row.width('100%');
+            Row.padding({ top: 6, bottom: 6 });
+        }, Row);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create(label);
+            Text.debugLine("entry/src/main/ets/pages/Index.ets(334:7)", "entry");
+            Text.fontSize(16);
+            Text.fontColor('#7A8A96');
+            Text.width(70);
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create(value.length > 0 ? value : 'æœªè¯†åˆ«åˆ°ï¼Œå¯ç¨åæ‰‹åŠ¨è¡¥å……');
+            Text.debugLine("entry/src/main/ets/pages/Index.ets(338:7)", "entry");
+            Text.fontSize(16);
+            Text.fontColor(value.length > 0 ? '#22303C' : '#B0BAC2');
+            Text.layoutWeight(1);
+        }, Text);
+        Text.pop();
+        Row.pop();
+    }
+    ProgressRow(item, parent = null) {
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Row.create();
+            Row.debugLine("entry/src/main/ets/pages/Index.ets(349:5)", "entry");
+            Row.width('100%');
+            Row.padding({ top: 10, bottom: 10 });
+        }, Row);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create(this.statusIcon(item.status));
+            Text.debugLine("entry/src/main/ets/pages/Index.ets(350:7)", "entry");
+            Text.fontSize(20);
+            Text.width(34);
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create(item.title);
+            Text.debugLine("entry/src/main/ets/pages/Index.ets(353:7)", "entry");
+            Text.fontSize(19);
+            Text.fontColor(item.status === 'SUCCESS' ? '#3B7A57' : '#4A5A66');
+            Text.layoutWeight(1);
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create(this.statusLabel(item.status));
+            Text.debugLine("entry/src/main/ets/pages/Index.ets(357:7)", "entry");
+            Text.fontSize(16);
+            Text.fontColor('#8A9AA6');
+        }, Text);
+        Text.pop();
+        Row.pop();
+    }
+    statusIcon(s) {
+        if (s === 'SUCCESS') {
+            return 'âœ“';
+        }
+        if (s === 'RUNNING') {
+            return 'â—';
+        }
+        if (s === 'FAILED') {
+            return '!';
+        }
+        return 'â—‹';
+    }
+    statusLabel(s) {
+        if (s === 'SUCCESS') {
+            return 'å·²å®Œæˆ';
+        }
+        if (s === 'RUNNING') {
+            return 'å¤„ç†ä¸­';
+        }
+        if (s === 'FAILED') {
+            return 'æœªæˆåŠŸ';
+        }
+        return 'ç­‰å¾…ä¸­';
+    }
+    initialRender() {
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.debugLine("entry/src/main/ets/pages/Index.ets(392:5)", "entry");
+            Column.width('100%');
+            Column.height('100%');
+            Column.backgroundColor('#EEF3F6');
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            // é¡¶éƒ¨æ ‡é¢˜
+            Row.create();
+            Row.debugLine("entry/src/main/ets/pages/Index.ets(394:7)", "entry");
+            // é¡¶éƒ¨æ ‡é¢˜
+            Row.width('100%');
+            // é¡¶éƒ¨æ ‡é¢˜
+            Row.padding({ left: 20, right: 20, top: 16, bottom: 12 });
+        }, Row);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.debugLine("entry/src/main/ets/pages/Index.ets(395:9)", "entry");
+            Column.alignItems(HorizontalAlign.Start);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create('æ™ºæŠ¤åŒè¡Œ');
+            Text.debugLine("entry/src/main/ets/pages/Index.ets(396:11)", "entry");
+            Text.fontSize(26);
+            Text.fontWeight(FontWeight.Bold);
+            Text.fontColor('#1B2A34');
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create('è¯´ä¸€å¥è¯ï¼Œæˆ‘æ¥å®‰æ’');
+            Text.debugLine("entry/src/main/ets/pages/Index.ets(400:11)", "entry");
+            Text.fontSize(15);
+            Text.fontColor('#7A8A96');
+            Text.margin({ top: 2 });
+        }, Text);
+        Text.pop();
+        Column.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Blank.create();
+            Blank.debugLine("entry/src/main/ets/pages/Index.ets(406:9)", "entry");
+        }, Blank);
+        Blank.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create('é™ªè¯Šè®°å½•');
+            Text.debugLine("entry/src/main/ets/pages/Index.ets(407:9)", "entry");
+            Text.fontSize(16);
+            Text.fontColor('#2E6F8E');
+            Text.onClick(() => {
+                router.pushUrl({ url: 'pages/JourneyPage' });
+            });
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create('æ‹ç…§å½•å…¥');
+            Text.debugLine("entry/src/main/ets/pages/Index.ets(413:9)", "entry");
+            Text.fontSize(16);
+            Text.fontColor('#2E6F8E');
+            Text.margin({ left: 16 });
+            Text.onClick(() => {
+                this.onCapturePhoto();
+            });
+        }, Text);
+        Text.pop();
+        // é¡¶éƒ¨æ ‡é¢˜
+        Row.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            If.create();
+            // æ‹ç…§è¯†åˆ«å¾…ç¡®è®¤å¡ç‰‡ â€”â€” è¯†åˆ«ç»“æœä¸ç›´æ¥ç”Ÿæ•ˆï¼Œå¿…é¡»ç”¨æˆ·ç‚¹ç¡®è®¤
+            if (this.pendingRecord !== null) {
+                this.ifElseBranchUpdateFunction(0, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Column.create();
+                        Column.debugLine("entry/src/main/ets/pages/Index.ets(426:9)", "entry");
+                        Column.width('90%');
+                        Column.padding(18);
+                        Column.backgroundColor('#FFFFFF');
+                        Column.borderRadius(16);
+                        Column.margin({ bottom: 12 });
+                    }, Column);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Row.create();
+                        Row.debugLine("entry/src/main/ets/pages/Index.ets(427:11)", "entry");
+                        Row.width('100%');
+                        Row.margin({ bottom: 10 });
+                    }, Row);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create('è¯†åˆ«åˆ°ä¸€æ¡ç—…å†ï¼Œéº»çƒ¦æ‚¨çœ‹çœ‹å¯¹ä¸å¯¹');
+                        Text.debugLine("entry/src/main/ets/pages/Index.ets(428:13)", "entry");
+                        Text.fontSize(17);
+                        Text.fontWeight(FontWeight.Medium);
+                        Text.fontColor('#1B2A34');
+                    }, Text);
+                    Text.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Blank.create();
+                        Blank.debugLine("entry/src/main/ets/pages/Index.ets(432:13)", "entry");
+                    }, Blank);
+                    Blank.pop();
+                    Row.pop();
+                    this.PendingInfoRow.bind(this)('åŒ»é™¢', this.pendingRecord.hospital);
+                    this.PendingInfoRow.bind(this)('ç§‘å®¤', this.pendingRecord.department);
+                    this.PendingInfoRow.bind(this)('åŒ»ç”Ÿ', this.pendingRecord.doctorName);
+                    this.PendingInfoRow.bind(this)('æ—¥æœŸ', this.pendingRecord.visitDate);
+                    this.PendingInfoRow.bind(this)('ç”¨è¯', this.pendingRecord.prescription);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Row.create();
+                        Row.debugLine("entry/src/main/ets/pages/Index.ets(443:11)", "entry");
+                        Row.width('100%');
+                        Row.margin({ top: 12 });
+                    }, Row);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Button.createWithLabel('ä¸å¯¹ï¼Œå–æ¶ˆ');
+                        Button.debugLine("entry/src/main/ets/pages/Index.ets(444:13)", "entry");
+                        Button.fontSize(16);
+                        Button.fontColor('#7A8A96');
+                        Button.backgroundColor('#EEF3F6');
+                        Button.layoutWeight(1);
+                        Button.margin({ right: 10 });
+                        Button.onClick(() => {
+                            this.onDiscardPendingRecord();
+                        });
+                    }, Button);
+                    Button.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Button.createWithLabel('ç¡®è®¤æ— è¯¯');
+                        Button.debugLine("entry/src/main/ets/pages/Index.ets(453:13)", "entry");
+                        Button.fontSize(16);
+                        Button.fontColor('#FFFFFF');
+                        Button.backgroundColor('#2E6F8E');
+                        Button.layoutWeight(1);
+                        Button.onClick(() => {
+                            this.onConfirmPendingRecord();
+                        });
+                    }, Button);
+                    Button.pop();
+                    Row.pop();
+                    Column.pop();
+                });
+            }
+            // è¿›åº¦é¢æ¿ï¼šè®©ç”¨æˆ·çœ‹è§ Agent æ­£åœ¨æ›¿ä»–åšä»€ä¹ˆ
+            else {
+                this.ifElseBranchUpdateFunction(1, () => {
+                });
+            }
+        }, If);
+        If.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            If.create();
+            // è¿›åº¦é¢æ¿ï¼šè®©ç”¨æˆ·çœ‹è§ Agent æ­£åœ¨æ›¿ä»–åšä»€ä¹ˆ
+            if (this.progress.length > 0) {
+                this.ifElseBranchUpdateFunction(0, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Column.create();
+                        Column.debugLine("entry/src/main/ets/pages/Index.ets(474:9)", "entry");
+                        Column.width('90%');
+                        Column.padding(18);
+                        Column.backgroundColor('#FFFFFF');
+                        Column.borderRadius(16);
+                        Column.margin({ bottom: 12 });
+                    }, Column);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create('æ­£åœ¨ä¸ºæ‚¨å®‰æ’');
+                        Text.debugLine("entry/src/main/ets/pages/Index.ets(475:11)", "entry");
+                        Text.fontSize(17);
+                        Text.fontColor('#5A6A76');
+                        Text.width('100%');
+                        Text.margin({ bottom: 4 });
+                    }, Text);
+                    Text.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        ForEach.create();
+                        const forEachItemGenFunction = _item => {
+                            const item = _item;
+                            this.ProgressRow.bind(this)(item);
+                        };
+                        this.forEachUpdateFunction(elmtId, this.progress, forEachItemGenFunction, (item) => item.taskId, false, false);
+                    }, ForEach);
+                    ForEach.pop();
+                    Column.pop();
+                });
+            }
+            // å¯¹è¯åŒº
+            else {
+                this.ifElseBranchUpdateFunction(1, () => {
+                });
+            }
+        }, If);
+        If.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            // å¯¹è¯åŒº
+            Scroll.create(this.scroller);
+            Scroll.debugLine("entry/src/main/ets/pages/Index.ets(492:7)", "entry");
+            // å¯¹è¯åŒº
+            Scroll.layoutWeight(1);
+            // å¯¹è¯åŒº
+            Scroll.scrollBar(BarState.Off);
+        }, Scroll);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.debugLine("entry/src/main/ets/pages/Index.ets(493:9)", "entry");
+            Column.width('100%');
+            Column.padding({ left: 18, right: 18 });
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            ForEach.create();
+            const forEachItemGenFunction = (_item, idx) => {
+                const item = _item;
+                this.ChatBubble.bind(this)(item);
+            };
+            this.forEachUpdateFunction(elmtId, this.chats, forEachItemGenFunction, (item, idx) => `${idx}_${item.text.length}`, true, true);
+        }, ForEach);
+        ForEach.pop();
+        Column.pop();
+        // å¯¹è¯åŒº
+        Scroll.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            // åº•éƒ¨è¾“å…¥åŒº
+            Column.create();
+            Column.debugLine("entry/src/main/ets/pages/Index.ets(505:7)", "entry");
+            // åº•éƒ¨è¾“å…¥åŒº
+            Column.width('100%');
+            // åº•éƒ¨è¾“å…¥åŒº
+            Column.padding({ top: 12, bottom: 22 });
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Row.create();
+            Row.debugLine("entry/src/main/ets/pages/Index.ets(506:9)", "entry");
+            Row.width('92%');
+            Row.margin({ bottom: 14 });
+        }, Row);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            TextInput.create({ text: this.inputText, placeholder: 'ä¹Ÿå¯ä»¥æ‰“å­—å‘Šè¯‰æˆ‘' });
+            TextInput.debugLine("entry/src/main/ets/pages/Index.ets(507:11)", "entry");
+            TextInput.fontSize(19);
+            TextInput.height(52);
+            TextInput.layoutWeight(1);
+            TextInput.backgroundColor('#FFFFFF');
+            TextInput.borderRadius(26);
+            TextInput.onChange((v) => {
+                this.inputText = v;
+            });
+        }, TextInput);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Button.createWithLabel('å‘é€');
+            Button.debugLine("entry/src/main/ets/pages/Index.ets(516:11)", "entry");
+            Button.fontSize(18);
+            Button.height(52);
+            Button.margin({ left: 10 });
+            Button.backgroundColor('#2E6F8E');
+            Button.onClick(() => {
+                this.submit(this.inputText);
+            });
+        }, Button);
+        Button.pop();
+        Row.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            // å¤§å·è¯­éŸ³æŒ‰é’® â€”â€” è€äººä¸»è¦å…¥å£
+            Button.createWithChild();
+            Button.debugLine("entry/src/main/ets/pages/Index.ets(529:9)", "entry");
+            // å¤§å·è¯­éŸ³æŒ‰é’® â€”â€” è€äººä¸»è¦å…¥å£
+            Button.width('84%');
+            // å¤§å·è¯­éŸ³æŒ‰é’® â€”â€” è€äººä¸»è¦å…¥å£
+            Button.height(72);
+            // å¤§å·è¯­éŸ³æŒ‰é’® â€”â€” è€äººä¸»è¦å…¥å£
+            Button.borderRadius(36);
+            // å¤§å·è¯­éŸ³æŒ‰é’® â€”â€” è€äººä¸»è¦å…¥å£
+            Button.backgroundColor(this.listening ? '#1F566E' : '#2E6F8E');
+            // å¤§å·è¯­éŸ³æŒ‰é’® â€”â€” è€äººä¸»è¦å…¥å£
+            Button.enabled(!this.busy);
+            // å¤§å·è¯­éŸ³æŒ‰é’® â€”â€” è€äººä¸»è¦å…¥å£
+            Button.onClick(() => {
+                this.onVoiceTap();
+            });
+        }, Button);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.debugLine("entry/src/main/ets/pages/Index.ets(530:11)", "entry");
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create(this.listening ? 'æ­£åœ¨å¬â€¦' : 'æŒ‰ä½è¯´è¯');
+            Text.debugLine("entry/src/main/ets/pages/Index.ets(531:13)", "entry");
+            Text.fontSize(23);
+            Text.fontColor('#FFFFFF');
+            Text.fontWeight(FontWeight.Medium);
+        }, Text);
+        Text.pop();
+        Column.pop();
+        // å¤§å·è¯­éŸ³æŒ‰é’® â€”â€” è€äººä¸»è¦å…¥å£
+        Button.pop();
+        // åº•éƒ¨è¾“å…¥åŒº
+        Column.pop();
+        Column.pop();
+    }
+    rerender() {
+        this.updateDirtyElements();
+    }
+    static getEntryName() {
+        return "Index";
+    }
+}
+registerNamedRoute(() => new Index(undefined, {}), "", { bundleName: "com.example.zhihutongxing", moduleName: "entry", pagePath: "pages/Index", pageFullPath: "entry/src/main/ets/pages/Index", integratedHsp: "false", moduleType: "followWithHap" });
+//# sourceMappingURL=Index.js.mapÂ›ÙQ hvigor_ignore_D:_DevEco Studio_sdk_default_openharmony_ets_api_@ohos.router.d.tsÙa hvigor_ignore_D:_DevEco Studio_sdk_default_openharmony_ets_api_@ohos.file.photoAccessHelper.d.tsÙ[ hvigor_ignore_D:_DevEco Studio_sdk_default_openharmony_ets_api_@ohos.multimedia.image.d.tsÙR hvigor_ignore_D:_DevEco Studio_sdk_default_openharmony_ets_api_@ohos.file.fs.d.tsÙ9D:\CareAgent\agent\entry\src\main\ets\core\AgentTypes.etsÙ7D:\CareAgent\agent\entry\src\main\ets\core\EventBus.etsÙ=D:\CareAgent\agent\entry\src\main\ets\agents\CentralAgent.etsÙ;D:\CareAgent\agent\entry\src\main\ets\core\ContextStore.etsÙDD:\CareAgent\agent\entry\src\main\ets\services\DeviceSyncService.etsÙAD:\CareAgent\agent\entry\src\main\ets\services\WeatherService.etsÙDD:\CareAgent\agent\entry\src\main\ets\services\OcrCaptureService.etsÙ5D:\CareAgent\agent\entry\src\main\ets\pages\Index.etsÔrBšªmoduleName±isLocalDependency¯isNodeEntryFile§pkgPath±belongProjectPath§pkgNameªpkgVersion±dependencyPkgInfo°belongModulePath¬shouldEmitJs¥entryÃÂ¸D:\CareAgent\agent\entry²D:\CareAgent\agent¥entry¥1.0.0Ô  ¸D:\CareAgent\agent\entryÃÃÚB7/**
+ * æ™ºæŠ¤åŒè¡Œ - ä¸»ç•Œé¢
+ *
+ * è®¾è®¡åŸåˆ™ï¼ˆè€å¹´ç”¨æˆ·ï¼‰ï¼š
+ *  1. ä¸€ä¸ªå·¨å¤§çš„è¯­éŸ³æŒ‰é’®ï¼Œä¸éœ€è¦æ‰¾å…¥å£
+ *  2. å­—å· â‰¥ 20fpï¼Œå¯¹æ¯”åº¦é«˜
+ *  3. æ¯ä¸€æ­¥åªå‘ˆç°ä¸€ä¸ªå†³ç­–ç‚¹ï¼Œä¸å †ä¿¡æ¯
+ *  4. å…¨æµç¨‹è¿›åº¦å¯è§†ï¼Œè®©ç”¨æˆ·çŸ¥é“"ç³»ç»Ÿæ­£åœ¨æ›¿æˆ‘åšä»€ä¹ˆ"
+ */
+
+import { router } from '@kit.ArkUI';
+import { common } from '@kit.AbilityKit';
+import { photoAccessHelper } from '@kit.MediaLibraryKit';
+import { image } from '@kit.ImageKit';
+import { fileIo } from '@kit.CoreFileKit';
+import {
+  RuntimeContext, BusEvent, BusMessage, TaskPlan, TaskNode, TaskStatus, AgentResult,
+  ServiceRecord, RecordSource
+} from '../core/AgentTypes';
+import { eventBus } from '../core/EventBus';
+import { CentralAgent } from '../agents/CentralAgent';
+import { ContextStore } from '../core/ContextStore';
+import { DeviceSyncService } from '../services/DeviceSyncService';
+import { WeatherService } from '../services/WeatherService';
+import { OcrCaptureService } from '../services/OcrCaptureService';
+
+/** å¯¹è¯æ°”æ³¡ */
+class ChatItem {
+  role: string = 'assistant';   // user / assistant
+  text: string = '';
+
+  constructor(role: string, text: string) {
+    this.role = role;
+    this.text = text;
+  }
+}
+
+/** è¿›åº¦æ¡ç›® */
+class ProgressItem {
+  taskId: string = '';
+  title: string = '';
+  status: string = 'PENDING';
+
+  constructor(taskId: string, title: string, status: string) {
+    this.taskId = taskId;
+    this.title = title;
+    this.status = status;
+  }
+}
+
+@Entry
+@Component
+struct Index {
+  @State chats: ChatItem[] = [];
+  @State progress: ProgressItem[] = [];
+  @State listening: boolean = false;
+  @State busy: boolean = false;
+  @State inputText: string = '';
+  @State pendingRecord: ServiceRecord | null = null;   // æ‹ç…§è¯†åˆ«å‡ºçš„å¾…ç¡®è®¤ç—…å†
+  @State capturingOcr: boolean = false;
+
+  private central: CentralAgent = new CentralAgent();
+  private scroller: Scroller = new Scroller();
+
+  aboutToAppear(): void {
+    this.initServices();
+    this.bindEvents();
+    this.chats.push(new ChatItem('assistant',
+      'æ‚¨å¥½ï¼Œæˆ‘æ˜¯æ™ºæŠ¤åŒè¡Œã€‚æ‚¨è¦å»åŒ»é™¢çœ‹ç—…ã€å–è¯ï¼Œç›´æ¥è·Ÿæˆ‘è¯´ä¸€å¥å°±è¡Œ'));
+  }
+
+  aboutToDisappear(): void {
+    eventBus.clear();
+    DeviceSyncService.clearReminders();
+  }
+
+  private async initServices(): Promise<void> {
+    const ctx = getContext(this) as common.UIAbilityContext;
+    await ContextStore.getInstance().init(ctx);
+    DeviceSyncService.start();
+    await this.seedDemoProfile();
+  }
+
+  /** æ¼”ç¤ºç”¨ï¼šé¢„ç½®ä¸€ä»½ç”¨æˆ·æ¡£æ¡ˆä¸ä¸€æ¡å†å²å°±è¯Šè®°å½• */
+  private async seedDemoProfile(): Promise<void> {
+    const store: ContextStore = ContextStore.getInstance();
+    const p = store.getProfile();
+    if (p.name.length > 0) {
+      return;
+    }
+    await store.saveProfile({
+      name: 'å¼ ç§€å…°',
+      age: 72,
+      homeAddress: 'å¹¸ç¦å°åŒº3æ ‹2å•å…ƒ',
+      preferredHospitals: ['å¸‚ç¬¬ä¸€äººæ°‘åŒ»é™¢'],
+      chronicTags: ['é«˜è¡€å‹'],
+      accessibilityMode: true,
+      emergencyContact: '13800000000'
+    });
+    await store.addRecord({
+      recordId: 'r001',
+      hospital: 'å¸‚ç¬¬ä¸€äººæ°‘åŒ»é™¢',
+      department: 'å¿ƒè¡€ç®¡å†…ç§‘',
+      doctorName: 'ç‹å»ºå›½ ä¸»ä»»åŒ»å¸ˆ',
+      visitDate: '2026-07-20',
+      followUpDays: 30,
+      prescription: 'è‹¯ç£ºé…¸æ°¨æ°¯åœ°å¹³ç‰‡ æ¯æ—¥1æ¬¡ æ¯æ¬¡5mg',
+      source: RecordSource.MANUAL_INPUT,
+      confirmed: true   // æ¼”ç¤ºæ•°æ®è§†ä¸ºå·²æ ¸å®ï¼ŒçœŸå®åœºæ™¯ä¸‹å¿…é¡»èµ°ç”¨æˆ·ç¡®è®¤
+    });
+  }
+
+  /** è®¢é˜… Agent å±‚äº‹ä»¶ï¼Œé©±åŠ¨ UI æ›´æ–° */
+  private bindEvents(): void {
+    eventBus.on(BusEvent.PLAN_UPDATED, (msg: BusMessage) => {
+      const plan: TaskPlan = JSON.parse(msg.payload) as TaskPlan;
+      const list: ProgressItem[] = [];
+      for (let i = 0; i < plan.nodes.length; i++) {
+        const n: TaskNode = plan.nodes[i];
+        list.push(new ProgressItem(n.id, n.title, n.status as string));
+      }
+      this.progress = list;
+    });
+
+    eventBus.on(BusEvent.TASK_STARTED, (msg: BusMessage) => {
+      const obj: Record<string, string> = JSON.parse(msg.payload) as Record<string, string>;
+      this.updateProgress(obj['taskId'], 'RUNNING');
+    });
+
+    eventBus.on(BusEvent.TASK_FINISHED, (msg: BusMessage) => {
+      const r: AgentResult = JSON.parse(msg.payload) as AgentResult;
+      this.updateProgress(r.taskId, r.success ? 'SUCCESS' : 'FAILED');
+    });
+
+    eventBus.on(BusEvent.SPEAK, (msg: BusMessage) => {
+      const obj: Record<string, string> = JSON.parse(msg.payload) as Record<string, string>;
+      this.pushChat('assistant', obj['text']);
+    });
+
+    eventBus.on(BusEvent.ANOMALY_DETECTED, () => {
+      this.progress = [];
+    });
+  }
+
+  private updateProgress(taskId: string, status: string): void {
+    const list: ProgressItem[] = [];
+    for (let i = 0; i < this.progress.length; i++) {
+      const p: ProgressItem = this.progress[i];
+      if (p.taskId === taskId) {
+        list.push(new ProgressItem(p.taskId, p.title, status));
+      } else {
+        list.push(p);
+      }
+    }
+    this.progress = list;
+  }
+
+  private pushChat(role: string, text: string): void {
+    this.chats.push(new ChatItem(role, text));
+    setTimeout(() => {
+      this.scroller.scrollEdge(Edge.Bottom);
+    }, 80);
+  }
+
+  /** å‘èµ·ä¸€æ¬¡è¯·æ±‚ */
+  private async submit(text: string): Promise<void> {
+    if (text.length === 0 || this.busy) {
+      return;
+    }
+    this.busy = true;
+    this.pushChat('user', text);
+    this.inputText = '';
+
+    try {
+      const rt: RuntimeContext = await this.buildRuntimeContext();
+      const clarify: string = await this.central.handleUserRequest(text, rt);
+      if (clarify.length > 0) {
+        this.pushChat('assistant', clarify);
+      }
+    } catch (e) {
+      this.pushChat('assistant', 'åˆšæ‰æ²¡å¤„ç†å¥½ï¼Œæ‚¨å†è¯´ä¸€æ¬¡å¥½å—');
+      console.error(`[Index] submit error: ${e}`);
+    } finally {
+      this.busy = false;
+    }
+  }
+
+  // ==================== æ‹ç…§å½•å…¥ç—…å† ====================
+
+  /**
+   * ç”¨æˆ·ç‚¹"æ‹ç…§å½•å…¥"ï¼šé€‰ç…§ç‰‡ â†’ OCR â†’ å¤§æ¨¡å‹ç»“æ„åŒ– â†’ å¼¹å‡ºå¾…ç¡®è®¤å¡ç‰‡
+   * å…¨ç¨‹ä¸ç›´æ¥å†™å…¥æ­£å¼ç—…å†ï¼Œå¿…é¡»ç­‰ç”¨æˆ·ç‚¹"ç¡®è®¤æ— è¯¯"æ‰ç”Ÿæ•ˆï¼ˆè§ onConfirmPendingRecordï¼‰
+   */
+  private async onCapturePhoto(): Promise<void> {
+    if (this.capturingOcr) {
+      return;
+    }
+    this.capturingOcr = true;
+    try {
+      const picker: photoAccessHelper.PhotoViewPicker = new photoAccessHelper.PhotoViewPicker();
+      const result = await picker.select({
+        MIMEType: photoAccessHelper.PhotoViewMIMETypes.IMAGE_TYPE,
+        maxSelectNumber: 1
+      });
+      if (result.photoUris === undefined || result.photoUris.length === 0) {
+        this.capturingOcr = false;
+        return;
+      }
+
+      const pixelMap: image.PixelMap = await this.loadPixelMap(result.photoUris[0]);
+      const record: ServiceRecord | null = await OcrCaptureService.captureFromPhoto(pixelMap);
+
+      if (record === null) {
+        this.pushChat('assistant', 'è¿™å¼ ç…§ç‰‡æ²¡èƒ½è¯†åˆ«å‡ºç—…å†ä¿¡æ¯ï¼Œè¦ä¸æ¢ä¸€å¼ æ¸…æ¥šç‚¹çš„è¯•è¯•');
+      } else {
+        this.pendingRecord = record;
+      }
+    } catch (e) {
+      console.error(`[Index] capture photo failed: ${e}`);
+      this.pushChat('assistant', 'æ‹ç…§è¯†åˆ«æ²¡æˆåŠŸï¼Œæ‚¨å¯ä»¥å†è¯•ä¸€æ¬¡');
+    } finally {
+      this.capturingOcr = false;
+    }
+  }
+
+  /** æŠŠç…§ç‰‡ URI è¯»æˆ PixelMapï¼Œä¾› OCR ä½¿ç”¨ */
+  private async loadPixelMap(uri: string): Promise<image.PixelMap> {
+    const file = await fileIo.open(uri, fileIo.OpenMode.READ_ONLY);
+    try {
+      const source: image.ImageSource = image.createImageSource(file.fd);
+      const pixelMap: image.PixelMap = await source.createPixelMap();
+      await source.release();
+      return pixelMap;
+    } finally {
+      await fileIo.close(file.fd);
+    }
+  }
+
+  /** ç”¨æˆ·ç‚¹"ç¡®è®¤æ— è¯¯"ï¼šè¿™æ—¶å€™æ‰çœŸæ­£å†™å…¥ç—…å†åº“ */
+  private async onConfirmPendingRecord(): Promise<void> {
+    if (this.pendingRecord === null) {
+      return;
+    }
+    const confirmed: ServiceRecord = {
+      recordId: this.pendingRecord.recordId,
+      hospital: this.pendingRecord.hospital,
+      department: this.pendingRecord.department,
+      doctorName: this.pendingRecord.doctorName,
+      visitDate: this.pendingRecord.visitDate,
+      followUpDays: this.pendingRecord.followUpDays,
+      prescription: this.pendingRecord.prescription,
+      source: this.pendingRecord.source,
+      confirmed: true
+    };
+    await ContextStore.getInstance().addRecord(confirmed);
+    this.pushChat('assistant', `å·²ç»æŠŠ${confirmed.hospital}${confirmed.department}è¿™æ¬¡çš„è®°å½•å­˜å¥½äº†`);
+    this.pendingRecord = null;
+  }
+
+  private onDiscardPendingRecord(): void {
+    this.pendingRecord = null;
+  }
+
+  /**
+   * é‡‡é›†å½“å‰ä¸Šä¸‹æ–‡ï¼šä½ç½®ã€å¤©æ°”ã€æ—¶é—´
+   *
+   * âš ï¸ å®šä½ç›®å‰ä»æ˜¯å†™æ­»çš„ç»çº¬åº¦ï¼ˆæ­å·é™„è¿‘ï¼‰ã€‚
+   * è¦æ¥çœŸå®å®šä½ï¼Œéœ€è¦åœ¨ module.json5 é‡Œå·²ç»å£°æ˜çš„ LOCATION æƒé™åŸºç¡€ä¸Šï¼Œ
+   * è°ƒç”¨ @kit.LocationKit çš„ geoLocationManager.getCurrentLocation() è·å–çœŸå®ç»çº¬åº¦ï¼Œ
+   * è¿™é‡Œå…ˆç”¨å›ºå®šåæ ‡ï¼Œä¿è¯æ²¡æœ‰å®šä½æƒé™æ—¶ä¹Ÿèƒ½è·‘é€šå…¨æµç¨‹æ¼”ç¤ºã€‚
+   */
+  private async buildRuntimeContext(): Promise<RuntimeContext> {
+    const profile = ContextStore.getInstance().getProfile();
+    const lat: number = 30.2741;
+    const lng: number = 120.1551;
+    // å¤©æ°”æ”¹ä¸ºçœŸå®æ¥å£ï¼ˆæœªé…ç½® Key æ—¶è‡ªåŠ¨é™çº§ä¸º Mockï¼Œè§ WeatherService.etsï¼‰
+    const weather: string = await WeatherService.getWeather();
+    return {
+      currentLat: lat,
+      currentLng: lng,
+      currentAddress: profile.homeAddress,
+      nowTs: Date.now(),
+      weather: weather,
+      trafficLevel: 'ç¼“è¡Œ'
+    };
+  }
+
+  /** æ¨¡æ‹Ÿè¯­éŸ³è¾“å…¥ */
+  private onVoiceTap(): void {
+    if (this.busy) {
+      return;
+    }
+    this.listening = true;
+    // TODO: æ¥å…¥ç³»ç»Ÿè¯­éŸ³è¯†åˆ«ï¼Œæ­¤å¤„ç”¨å›ºå®šè¯­æ–™æ¨¡æ‹Ÿ
+    setTimeout(() => {
+      this.listening = false;
+      this.submit('æˆ‘è¦å»ç¬¬ä¸€äººæ°‘åŒ»é™¢æ‹¿é«˜è¡€å‹è¯');
+    }, 1200);
+  }
+
+  // ==================== UI ====================
+
+  @Builder
+  ChatBubble(item: ChatItem) {
+    Row() {
+      if (item.role === 'user') {
+        Blank()
+        Text(item.text)
+          .fontSize(21)
+          .fontColor('#FFFFFF')
+          .padding({ left: 18, right: 18, top: 14, bottom: 14 })
+          .backgroundColor('#2E6F8E')
+          .borderRadius(18)
+          .constraintSize({ maxWidth: '78%' })
+      } else {
+        Text(item.text)
+          .fontSize(21)
+          .fontColor('#22303C')
+          .lineHeight(32)
+          .padding({ left: 18, right: 18, top: 14, bottom: 14 })
+          .backgroundColor('#FFFFFF')
+          .borderRadius(18)
+          .constraintSize({ maxWidth: '82%' })
+        Blank()
+      }
+    }
+    .width('100%')
+    .margin({ bottom: 14 })
+  }
+
+  @Builder
+  PendingInfoRow(label: string, value: string) {
+    Row() {
+      Text(label)
+        .fontSize(16)
+        .fontColor('#7A8A96')
+        .width(70)
+      Text(value.length > 0 ? value : 'æœªè¯†åˆ«åˆ°ï¼Œå¯ç¨åæ‰‹åŠ¨è¡¥å……')
+        .fontSize(16)
+        .fontColor(value.length > 0 ? '#22303C' : '#B0BAC2')
+        .layoutWeight(1)
+    }
+    .width('100%')
+    .padding({ top: 6, bottom: 6 })
+  }
+
+  @Builder
+  ProgressRow(item: ProgressItem) {
+    Row() {
+      Text(this.statusIcon(item.status))
+        .fontSize(20)
+        .width(34)
+      Text(item.title)
+        .fontSize(19)
+        .fontColor(item.status === 'SUCCESS' ? '#3B7A57' : '#4A5A66')
+        .layoutWeight(1)
+      Text(this.statusLabel(item.status))
+        .fontSize(16)
+        .fontColor('#8A9AA6')
+    }
+    .width('100%')
+    .padding({ top: 10, bottom: 10 })
+  }
+
+  private statusIcon(s: string): string {
+    if (s === 'SUCCESS') {
+      return 'âœ“';
+    }
+    if (s === 'RUNNING') {
+      return 'â—';
+    }
+    if (s === 'FAILED') {
+      return '!';
+    }
+    return 'â—‹';
+  }
+
+  private statusLabel(s: string): string {
+    if (s === 'SUCCESS') {
+      return 'å·²å®Œæˆ';
+    }
+    if (s === 'RUNNING') {
+      return 'å¤„ç†ä¸­';
+    }
+    if (s === 'FAILED') {
+      return 'æœªæˆåŠŸ';
+    }
+    return 'ç­‰å¾…ä¸­';
+  }
+
+  build() {
+    Column() {
+      // é¡¶éƒ¨æ ‡é¢˜
+      Row() {
+        Column() {
+          Text('æ™ºæŠ¤åŒè¡Œ')
+            .fontSize(26)
+            .fontWeight(FontWeight.Bold)
+            .fontColor('#1B2A34')
+          Text('è¯´ä¸€å¥è¯ï¼Œæˆ‘æ¥å®‰æ’')
+            .fontSize(15)
+            .fontColor('#7A8A96')
+            .margin({ top: 2 })
+        }
+        .alignItems(HorizontalAlign.Start)
+        Blank()
+        Text('é™ªè¯Šè®°å½•')
+          .fontSize(16)
+          .fontColor('#2E6F8E')
+          .onClick(() => {
+            router.pushUrl({ url: 'pages/JourneyPage' });
+          })
+        Text('æ‹ç…§å½•å…¥')
+          .fontSize(16)
+          .fontColor('#2E6F8E')
+          .margin({ left: 16 })
+          .onClick(() => {
+            this.onCapturePhoto();
+          })
+      }
+      .width('100%')
+      .padding({ left: 20, right: 20, top: 16, bottom: 12 })
+
+      // æ‹ç…§è¯†åˆ«å¾…ç¡®è®¤å¡ç‰‡ â€”â€” è¯†åˆ«ç»“æœä¸ç›´æ¥ç”Ÿæ•ˆï¼Œå¿…é¡»ç”¨æˆ·ç‚¹ç¡®è®¤
+      if (this.pendingRecord !== null) {
+        Column() {
+          Row() {
+            Text('è¯†åˆ«åˆ°ä¸€æ¡ç—…å†ï¼Œéº»çƒ¦æ‚¨çœ‹çœ‹å¯¹ä¸å¯¹')
+              .fontSize(17)
+              .fontWeight(FontWeight.Medium)
+              .fontColor('#1B2A34')
+            Blank()
+          }
+          .width('100%')
+          .margin({ bottom: 10 })
+
+          this.PendingInfoRow('åŒ»é™¢', this.pendingRecord.hospital)
+          this.PendingInfoRow('ç§‘å®¤', this.pendingRecord.department)
+          this.PendingInfoRow('åŒ»ç”Ÿ', this.pendingRecord.doctorName)
+          this.PendingInfoRow('æ—¥æœŸ', this.pendingRecord.visitDate)
+          this.PendingInfoRow('ç”¨è¯', this.pendingRecord.prescription)
+
+          Row() {
+            Button('ä¸å¯¹ï¼Œå–æ¶ˆ')
+              .fontSize(16)
+              .fontColor('#7A8A96')
+              .backgroundColor('#EEF3F6')
+              .layoutWeight(1)
+              .margin({ right: 10 })
+              .onClick(() => {
+                this.onDiscardPendingRecord();
+              })
+            Button('ç¡®è®¤æ— è¯¯')
+              .fontSize(16)
+              .fontColor('#FFFFFF')
+              .backgroundColor('#2E6F8E')
+              .layoutWeight(1)
+              .onClick(() => {
+                this.onConfirmPendingRecord();
+              })
+          }
+          .width('100%')
+          .margin({ top: 12 })
+        }
+        .width('90%')
+        .padding(18)
+        .backgroundColor('#FFFFFF')
+        .borderRadius(16)
+        .margin({ bottom: 12 })
+      }
+
+      // è¿›åº¦é¢æ¿ï¼šè®©ç”¨æˆ·çœ‹è§ Agent æ­£åœ¨æ›¿ä»–åšä»€ä¹ˆ
+      if (this.progress.length > 0) {
+        Column() {
+          Text('æ­£åœ¨ä¸ºæ‚¨å®‰æ’')
+            .fontSize(17)
+            .fontColor('#5A6A76')
+            .width('100%')
+            .margin({ bottom: 4 })
+          ForEach(this.progress, (item: ProgressItem) => {
+            this.ProgressRow(item);
+          }, (item: ProgressItem) => item.taskId)
+        }
+        .width('90%')
+        .padding(18)
+        .backgroundColor('#FFFFFF')
+        .borderRadius(16)
+        .margin({ bottom: 12 })
+      }
+
+      // å¯¹è¯åŒº
+      Scroll(this.scroller) {
+        Column() {
+          ForEach(this.chats, (item: ChatItem, idx: number) => {
+            this.ChatBubble(item);
+          }, (item: ChatItem, idx: number) => `${idx}_${item.text.length}`)
+        }
+        .width('100%')
+        .padding({ left: 18, right: 18 })
+      }
+      .layoutWeight(1)
+      .scrollBar(BarState.Off)
+
+      // åº•éƒ¨è¾“å…¥åŒº
+      Column() {
+        Row() {
+          TextInput({ text: this.inputText, placeholder: 'ä¹Ÿå¯ä»¥æ‰“å­—å‘Šè¯‰æˆ‘' })
+            .fontSize(19)
+            .height(52)
+            .layoutWeight(1)
+            .backgroundColor('#FFFFFF')
+            .borderRadius(26)
+            .onChange((v: string) => {
+              this.inputText = v;
+            })
+          Button('å‘é€')
+            .fontSize(18)
+            .height(52)
+            .margin({ left: 10 })
+            .backgroundColor('#2E6F8E')
+            .onClick(() => {
+              this.submit(this.inputText);
+            })
+        }
+        .width('92%')
+        .margin({ bottom: 14 })
+
+        // å¤§å·è¯­éŸ³æŒ‰é’® â€”â€” è€äººä¸»è¦å…¥å£
+        Button() {
+          Column() {
+            Text(this.listening ? 'æ­£åœ¨å¬â€¦' : 'æŒ‰ä½è¯´è¯')
+              .fontSize(23)
+              .fontColor('#FFFFFF')
+              .fontWeight(FontWeight.Medium)
+          }
+        }
+        .width('84%')
+        .height(72)
+        .borderRadius(36)
+        .backgroundColor(this.listening ? '#1F566E' : '#2E6F8E')
+        .enabled(!this.busy)
+        .onClick(() => {
+          this.onVoiceTap();
+        })
+      }
+      .width('100%')
+      .padding({ top: 12, bottom: 22 })
+    }
+    .width('100%')
+    .height('100%')
+    .backgroundColor('#EEF3F6')
+  }
+}
+ÀÔrC›¬@ohos.router¼@ohos.file.photoAccessHelper¶@ohos.multimedia.image­@ohos.file.fs²../core/AgentTypes°../core/EventBus½../services/DeviceSyncServiceº../services/WeatherService½../services/OcrCaptureService´../core/ContextStore¶../agents/CentralAgentÔrD—ªassertions¨external¢id¤meta±moduleSideEffectsªresolvedByµsyntheticNamedExportsAÃÙQ hvigor_ignore_D:_DevEco Studio_sdk_default_openharmony_ets_api_@ohos.router.d.tsÔrE‘¯hostModulesInfo‘ÔrF’²hostDependencyName®hostModuleName¬@ohos.router¥entryÃªoh-resolveÂDAÃÙa hvigor_ignore_D:_DevEco Studio_sdk_default_openharmony_ets_api_@ohos.file.photoAccessHelper.d.tsE‘F¼@ohos.file.photoAccessHelper¥entryÃªoh-resolveÂDAÃÙ[ hvigor_ignore_D:_DevEco Studio_sdk_default_openharmony_ets_api_@ohos.multimedia.image.d.tsE‘F¶@ohos.multimedia.image¥entryÃªoh-resolveÂDAÃÙR hvigor_ignore_D:_DevEco Studio_sdk_default_openharmony_ets_api_@ohos.file.fs.d.tsE‘F­@ohos.file.fs¥entryÃªoh-resolveÂDAÂÙ9D:\CareAgent\agent\entry\src\main\ets\core\AgentTypes.etsAÃªoh-resolveÂDAÂÙ7D:\CareAgent\agent\entry\src\main\ets\core\EventBus.etsAÃªoh-resolveÂDAÂÙDD:\CareAgent\agent\entry\src\main\ets\services\DeviceSyncService.etsAÃªoh-resolveÂDAÂÙAD:\CareAgent\agent\entry\src\main\ets\services\WeatherService.etsAÃªoh-resolveÂDAÂÙDD:\CareAgent\agent\entry\src\main\ets\services\OcrCaptureService.etsAÃªoh-resolveÂDAÂÙ;D:\CareAgent\agent\entry\src\main\ets\core\ContextStore.etsAÃªoh-resolveÂDAÂÙ=D:\CareAgent\agent\entry\src\main\ets\agents\CentralAgent.etsAÃªoh-resolveÂ“ÔrG–§version¤fileªsourceRoot§sources¥names¨mappings¨Index.js ‘©Index.etsÜ$‘”    ‘” –”  
+ ” 
+	” 
+” 
+”! 
+#”" 
+$–”   ” 	” ” "”< 8”= 9–”   ” 	” ” ”* %”+ &–”   ” 	” ” ”" )”# *š”   ” ”	 ” ” ” ”! ”' ”; ”< ˜”   ” ”	 	” ” ” ”+ +”, ,˜”   ” ”	 	” ” ” ”5 5”6 6˜”   ” ”	 	” ” ” ”3 3”4 4˜”   ” ”	 	” ” ”" "”ÌA ÌA”ÌB ÌB˜”   ” ”	 	” ” ” ”; ;”< <˜”   ” ”	 	” ” ”" "”ÌA ÌA”ÌB ÌB’”   ” “”   ” ” •” ” ” ” ” (—” ” ” ” ”  ”!  ”4 3•” ” ” ” ” —”  ”  ”  	”  ”  ”  ”  —” !” !” !	” !” !” !” !’” "” "‘” #’”  % ” %“”  & ” &” &—” +” +” +” +” ++” +-”% +;•” '” '” '” '” '•” (” (” (” (” (•” )” )” )” )”  )—” ,” ,” ,	” ,” ,” ,” ,—” -” -” -	” -” -” -” -—” .” .” .	” .” .” .” .’” /” /‘” 0’” 4” 4‘” 2 ’”4 5”6 5’”7 6$”9 6&’”8 7”= 7#’”3 8”8 8’”8 9”: 9’”< :/”Ì@ :3’”; ;!”Ì@ ;&”” ="” =&”' =2”) =4”” >” >#”$ >+”& >-‘” 0’” 5	” 5’” 5	” 5’” 6	” 6’” 6	” 6’” 7	” 7’” 7	” 7’” 8	” 8’” 8	” 8’” 9	” 9’” 9	” 9’” :	” :’” :	” :’” ;	” ;’” ;	” ;’” Ì@” Ì@–” ÌA” ÌA” ÌA	” ÌA” ÌA” ÌA–” ÌB” ÌB” ÌB	” ÌB” ÌB” ÌBÜ ” ÌC” ÌC” ÌC	” ÌC” ÌC” ÌC” ÌC” ÌC”$ ÌC ”% ÌC!”0 ÌC,”2 ÌD”ÌR ÌD&”ÌS ÌD'”ÌT ÌD(”ÌU ÌD)’” ÌE” ÌE’” ÌG” ÌG–” ÌH” ÌH” ÌH” ÌH” ÌH” ÌH–” ÌI” ÌI” ÌI”( ÌI$”* ÌI&”+ ÌI'’” ÌJ” ÌJ”” ÌL
+”	 ÌL”
+ ÌL” ÌL™” ÌM” ÌM
+” ÌM” ÌM” ÌM” ÌM”# ÌM”$ ÌM;”% ÌM<œ” ÌN” ÌN
+” ÌN” ÌN”& ÌN"”( ÌN$”) ÌN%”- ÌN)”. ÌN*”1 ÌN-”2 ÌN.”3 ÌN/–” ÌO” ÌO” ÌO” ÌO”! ÌO”" ÌO—” ÌP” ÌP
+” ÌP” ÌP”" ÌP”$ ÌP ”% ÌP!’” ÌQ” ÌQ’” ÌS”  ÌS”” ÌT
+”	 ÌT”
+ ÌT” ÌT™” ÌU” ÌU
+” ÌU” ÌU ”" ÌU,”# ÌU-”. ÌU8”0 ÌU:”1 ÌU;™” ÌV” ÌV
+” ÌV” ÌV” ÌV” ÌV”" ÌV”$ ÌV ”% ÌV!š” ÌW” ÌW” ÌW	” ÌW
+” ÌW” ÌW” ÌW” ÌW” ÌW” ÌW’” ÌX” ÌX‘”	 ÌY–” ÌZ” ÌZ
+” ÌZ” ÌZ” ÌZ”  ÌZ”” Ì[” Ì[
+” Ì[” Ì[”” Ì\” Ì\	” Ì\” Ì\”” Ì]” Ì]” Ì]”$ Ì]–” Ì^” Ì^”  Ì^”! Ì^”* Ì^$”+ Ì^%–” Ì_” Ì_” Ì_” Ì_” Ì_”  Ì_”” Ì`” Ì`” Ì`”# Ì`”” Ìa” Ìa” Ìa”+ Ìa%“”	 Ìb”
+ Ìb” Ìb–” Ìc” Ìc
+” Ìc” Ìc” Ìc” Ìc”” Ìd” Ìd” Ìd” Ìd”” Ìe” Ìe” Ìe” Ìe”” Ìf” Ìf” Ìf” Ìf”” Ìg” Ìg” Ìg”" Ìg”” Ìh” Ìh” Ìh”# Ìh”” Ìi” Ìi” Ìi” Ìi”” Ìj” Ìj” Ìj”/ Ìj)–” Ìk” Ìk” Ìk”  Ìk”! Ìk”- Ìk'–” Ìl” Ìl” Ìl” Ìl” Ìl”5 Ìl1“”	 Ìm”
+ Ìm” Ìm’” Ìn” Ìn’” Ìp”  Ìp’” Ìq
+” Ìq” Ìr” Ìr” Ìr” Ìr” Ìr” Ìr” Ìr”) Ìr%”+ Ìr'”, Ìr(”/ Ìr7”1 Ìr9”3 Ìr;” Ìs” Ìs” Ìs” Ìs” Ìs!” Ìs"”# Ìs'”$ Ìs(”' Ìs+”( Ìs,”/ Ìs3”0 ÌsÌ@”1 ÌsÌA–” Ìt” Ìt” Ìt” Ìt#” Ìt%” Ìt&Ü ” Ìu” Ìu” Ìu” Ìu” Ìu” Ìu” Ìu” Ìu”  Ìu”$ Ìu”% Ìu”* Ìu$”+ Ìu%”1 Ìu+”3 Ìu-”4 Ìu.”6 Ìu0”8 Ìu2›” Ìv” Ìv” Ìv” Ìv” Ìv ” Ìv!”$ Ìv&”% Ìv'”& Ìv(”' Ìv)”( Ìv*Ü ” Ìw” Ìw” Ìw” Ìw” Ìw” Ìw”* Ìw"”+ Ìw#”, Ìw$”- Ìw%”/ Ìw'”1 Ìw)”2 Ìw*”3 Ìw+”8 Ìw0”: Ìw2”; Ìw3”< Ìw4”ÌB ÌwÌD”ÌC ÌwÌE”ÌD ÌwÌF”ÌE ÌwÌG‘” Ìx—” Ìy” Ìy
+” Ìy” Ìy” Ìy”  Ìy”! Ìy”” Ìz”	 Ìz”
+ Ìz” Ìz” Ì|” Ì|” Ì|” Ì|” Ì|” Ì|” Ì|”) Ì|%”+ Ì|'”, Ì|(”/ Ì|7”1 Ì|9”3 Ì|;” Ì}” Ì}” Ì}” Ì}*” Ì}.” Ì}/”" Ì}4”# Ì}5”& Ì}8”' Ì}9”. Ì}Ì@”/ Ì}Ì[”0 Ì}Ì\” Ì~” Ì~
+” Ì~” Ì~”  Ì~”# Ì~”$ Ì~”, Ì~&”- Ì~'”/ Ì~)”8 Ì~2”9 Ì~3”: Ì~4”” Ì”	 Ì”
+ Ì” Ì” Ì” Ì” Ì” Ì” Ì” Ì” Ì”* Ì&”, Ì(”- Ì)”0 Ì8”2 Ì:”4 Ì<” Ì‚” Ì‚” Ì‚” Ì‚” Ì‚!” Ì‚"”  Ì‚'”! Ì‚(”$ Ì‚+”% Ì‚,”, Ì‚3”- Ì‚ÌC”. Ì‚ÌDÜ ” Ìƒ” Ìƒ
+” Ìƒ” Ìƒ”  Ìƒ”! Ìƒ”" Ìƒ”( Ìƒ"”* Ìƒ$”+ Ìƒ%”, Ìƒ&”3 Ìƒ-”4 Ìƒ.”5 Ìƒ/”6 Ìƒ0”? Ìƒ9”Ì@ Ìƒ:”ÌA Ìƒ;”ÌB Ìƒ<”ÌJ ÌƒÌD”ÌK ÌƒÌE”ÌL ÌƒÌF”” Ì„”	 Ì„”
+ Ì„” Ì„” Ì†” Ì†” Ì†” Ì†” Ì†” Ì†” Ì†”" Ì†”$ Ì† ”% Ì†!”( Ì†0”* Ì†2”, Ì†4” Ì‡” Ì‡” Ì‡” Ì‡*” Ì‡.” Ì‡/”" Ì‡4”# Ì‡5”& Ì‡8”' Ì‡9”. Ì‡Ì@”/ Ì‡Ì[”0 Ì‡Ì\” Ìˆ” Ìˆ
+” Ìˆ” Ìˆ” Ìˆ”% Ìˆ”' Ìˆ!”* Ìˆ$”+ Ìˆ%”1 Ìˆ+”2 Ìˆ,”3 Ìˆ-”4 Ìˆ.”” Ì‰”	 Ì‰”
+ Ì‰” Ì‰›” Ì‹” Ì‹” Ì‹” Ì‹” Ì‹” Ì‹” Ì‹”- Ì‹)”/ Ì‹+”2 Ì‹.”4 Ì‹0—” ÌŒ” ÌŒ
+” ÌŒ” ÌŒ” ÌŒ” ÌŒ” ÌŒ”” Ì”	 Ì”
+ Ì” Ì’” Ì” Ì–” Ì
+” Ì” Ì” Ì'” Ì)”! Ì7–” Ì‘” Ì‘
+” Ì‘” Ì‘!” Ì‘#” Ì‘$Ü ” Ì’” Ì’	” Ì’” Ì’” Ì’” Ì’” Ì’” Ì’” Ì’”  Ì’”! Ì’”) Ì’%”* Ì’&”0 Ì’,”2 Ì’.”3 Ì’/”5 Ì’1”7 Ì’3›” Ì“” Ì“” Ì“” Ì“” Ì“"” Ì“#”# Ì“+”$ Ì“,”% Ì“-”& Ì“.”' Ì“/˜” Ì”” Ì”
+” Ì”” Ì”” Ì”” Ì””# Ì””% Ì”Ü ” Ì•” Ì•” Ì•” Ì•” Ì•” Ì•”* Ì•"”+ Ì•#”, Ì•$”- Ì•%”3 Ì•+”5 Ì•-”6 Ì•.”7 Ì•/”< Ì•4”> Ì•6”ÌD Ì•<”ÌE Ì•=”ÌF Ì•>”ÌG Ì•?‘” Ì–‘” Ì–˜” Ì—” Ì—” Ì—” Ì—” Ì—” Ì—” Ì—” Ì—‘” Ì˜‘”	 Ì™—” Ìš” Ìš” Ìš	” Ìš” Ìš” Ìš” Ìš’” Ì›” Ì›–” Ì
+” Ì” Ì” Ì” Ì!” Ì-Ü ” Ì” Ì” Ì	” Ì” Ì” Ì” Ì” Ì”$ Ì ”% Ì!”) Ì%”+ Ì'”/ Ì+”0 Ì,”1 Ì-”2 Ì.•” ÌŸ” ÌŸ” ÌŸ” ÌŸ” ÌŸœ” Ì ” Ì 
+” Ì ” Ì ” Ì ”$ Ì ”% Ì ”) Ì #”* Ì $”0 Ì *”1 Ì +”2 Ì ,–” Ì¡”	 Ì¡” Ì¡” Ì¡	” Ì¡
+” Ì¡’” Ì¢” Ì¢’” Ì¤” Ì¤–” Ì¥
+”	 Ì¥”
+ Ì¥” Ì¥” Ì¥” Ì¥#œ” Ì¦” Ì¦” Ì¦” Ì¦” Ì¦” Ì¦” Ì¦”! Ì¦”% Ì¦!”& Ì¦"”* Ì¦&”, Ì¦(’” Ì§” Ì§‘”	 Ì¨—” Ì©” Ì©” Ì©	” Ì©” Ì©” Ì©” Ì©š” Ìª” Ìª” Ìª	” Ìª” Ìª” Ìª” Ìª”" Ìª”# Ìª”$ Ìª —” Ì«” Ì«” Ì«	” Ì«” Ì«” Ì«” Ì«’” Ì­” Ì­š” Ì®” Ì®” Ì®” Ì®!” Ì®'”! Ì®+”" Ì®,”5 Ì®?”7 Ì®ÌA”8 Ì®ÌBÜ ” Ì¯” Ì¯” Ì¯” Ì¯”" Ì¯$”& Ì¯(”' Ì¯)”. Ì¯0”/ Ì¯1”Ì@ Ì¯ÌB”ÌA Ì¯ÌC”ÌE Ì¯ÌG”ÌG Ì¯ÌI”ÌI Ì¯ÌK”ÌJ Ì¯ÌL”ÌK Ì¯ÌM˜” Ì°” Ì°
+” Ì°” Ì°” Ì°”! Ì°”" Ì°”$ Ì°š” Ì±” Ì±” Ì±” Ì±” Ì±”) Ì±!”+ Ì±#”2 Ì±*”3 Ì±+”4 Ì±,‘” Ì²‘”	 Ì³”” Ì³” Ì³” Ì³” Ì³š” Ì´” Ì´
+” Ì´” Ì´” Ì´”% Ì´”' Ì´!”7 Ì´1”8 Ì´2”9 Ì´3š” Ìµ” Ìµ” Ìµ” Ìµ” Ìµ”3 Ìµ-”4 Ìµ.”6 Ìµ0”7 Ìµ1”8 Ìµ2‘”	 Ì¶‘” Ì¶—” Ì·” Ì·
+” Ì·” Ì·” Ì·” Ì·” Ì·‘”	 Ì¸’” Ì¹” Ì¹’” Ì»”7 Ì»5‘” Ì½‘” ÌÀ”” ÌÁ
+”	 ÌÁ”
+ ÌÁ” ÌÁ–” ÌÂ” ÌÂ” ÌÂ” ÌÂ” ÌÂ” ÌÂ’” ÌÃ” ÌÃ‘”	 ÌÄ—” ÌÅ” ÌÅ” ÌÅ	” ÌÅ” ÌÅ”  ÌÅ”! ÌÅ’” ÌÆ” ÌÆš” ÌÇ” ÌÇ” ÌÇ” ÌÇ8” ÌÇ<”0 ÌÇÌM”1 ÌÇÌN”Ì@ ÌÇÌ]”ÌB ÌÇÌ_”ÌC ÌÇÌ`™” ÌÈ” ÌÈ” ÌÈ” ÌÈ”! ÌÈ”' ÌÈ!”( ÌÈ"”. ÌÈ(”/ ÌÈ)˜” ÌÉ” ÌÉ” ÌÉ”+ ÌÉ#”, ÌÉ$”> ÌÉ6”? ÌÉ7”ÌI ÌÉÌA”” ÌÊ” ÌÊ”! ÌÊ”" ÌÊ“” ÌË” ÌË” ÌË	Ü ” ÌÌ” ÌÌ
+” ÌÌ” ÌÌ”  ÌÌ”% ÌÌ”. ÌÌ(”2 ÌÌ,”8 ÌÌ2”9 ÌÌ3”ÌB ÌÌ<”ÌC ÌÌ=”ÌI ÌÌÌC”ÌN ÌÌÌH”ÌO ÌÌÌI”ÌQ ÌÌÌK—” ÌÍ” ÌÍ” ÌÍ”! ÌÍ”$ ÌÍ”) ÌÍ!”* ÌÍ"’” ÌÎ” ÌÎ‘” ÌÏÜ ” ÌÑ” ÌÑ” ÌÑ” ÌÑ'”# ÌÑ-”' ÌÑ1”( ÌÑ2”4 ÌÑ>”5 ÌÑ?”; ÌÑÌE”< ÌÑÌF”ÌE ÌÑÌO”ÌF ÌÑÌP”ÌG ÌÑÌQ”ÌH ÌÑÌR”ÌI ÌÑÌS”ÌJ ÌÑÌTœ” ÌÒ” ÌÒ” ÌÒ” ÌÒ+”! ÌÒ1”2 ÌÒÌB”3 ÌÒÌC”ÌC ÌÒÌS”ÌD ÌÒÌT”ÌL ÌÒÌ\”ÌM ÌÒÌ]”ÌN ÌÒÌ^–” ÌÔ” ÌÔ
+” ÌÔ” ÌÔ” ÌÔ”! ÌÔš” ÌÕ” ÌÕ” ÌÕ” ÌÕ” ÌÕ”) ÌÕ!”+ ÌÕ#”ÌF ÌÕ>”ÌG ÌÕ?”ÌH ÌÕÌ@‘” ÌÖ‘” ÌÖ—” Ì×” Ì×” Ì×”" Ì×”% Ì×”+ Ì×#”, Ì×$‘” ÌØ‘”	 ÌÙ”” ÌÙ” ÌÙ” ÌÙ” ÌÙš” ÌÚ” ÌÚ” ÌÚ” ÌÚ” ÌÚ”; ÌÚ5”< ÌÚ6”> ÌÚ8”? ÌÚ9”Ì@ ÌÚ:š” ÌÛ” ÌÛ
+” ÌÛ” ÌÛ” ÌÛ”% ÌÛ”' ÌÛ!”8 ÌÛ2”9 ÌÛ3”: ÌÛ4‘”	 ÌÜ‘” ÌÜ—” Ìİ” Ìİ
+” Ìİ” Ìİ”  Ìİ”% Ìİ”& Ìİ ‘”	 ÌŞ’” Ìß” Ìß’” Ìá”' Ìá%–” Ìâ
+”	 Ìâ”
+ Ìâ” Ìâ” Ìâ” Ìâ(Ü ” Ìã” Ìã
+” Ìã” Ìã” Ìã”! Ìã”" Ìã”& Ìã"”' Ìã#”* Ìã&”, Ìã(”2 Ìã.”3 Ìã/”; Ìã7”< Ìã8”ÌE ÌãÌA”ÌF ÌãÌB”ÌG ÌãÌC’” Ìä” Ìä” Ìå” Ìå” Ìå” Ìå(”  Ìå-”! Ìå.”2 Ìå?”3 ÌåÌ@”7 ÌåÌD”8 ÌåÌE”: ÌåÌG”; ÌåÌH”< ÌåÌIš” Ìæ” Ìæ” Ìæ” Ìæ'”# Ìæ-”) Ìæ3”* Ìæ4”8 ÌæÌB”: ÌæÌD”; ÌæÌE—” Ìç” Ìç” Ìç” Ìç”  Ìç”" Ìç”# Ìç”” Ìè” Ìè” Ìè” Ìè‘”	 Ìé‘” Ìé›” Ìê” Ìê” Ìê” Ìê” Ìê” Ìê”# Ìê”$ Ìê”& Ìê ”' Ìê!”( Ìê"‘”	 Ìë’” Ìì” Ìì’” Ìî”  Ìî”” Ìï
+”	 Ìï”
+ Ìï”  Ìï&˜” Ìğ” Ìğ” Ìğ” Ìğ” Ìğ”# Ìğ”' Ìğ#”) Ìğ%’” Ìñ” Ìñ‘”	 Ìò”” Ìó” Ìó
+” Ìó” Ìó%˜” Ìô” Ìô” Ìô” Ìô” Ìô”( Ìô"”) Ìô#”1 Ìô+˜” Ìõ” Ìõ” Ìõ” Ìõ” Ìõ”( Ìõ"”) Ìõ#”1 Ìõ+˜” Ìö” Ìö” Ìö” Ìö” Ìö”* Ìö$”+ Ìö%”5 Ìö/˜” Ì÷” Ì÷” Ì÷” Ì÷” Ì÷”* Ì÷$”+ Ì÷%”5 Ì÷/˜” Ìø” Ìø” Ìø” Ìø” Ìø”) Ìø#”* Ìø$”3 Ìø-˜” Ìù” Ìù” Ìù” Ìù” Ìù”, Ìù&”- Ìù'”9 Ìù3˜” Ìú” Ìú” Ìú” Ìú” Ìú”, Ìú&”- Ìú'”9 Ìú3˜” Ìû” Ìû” Ìû” Ìû” Ìû”& Ìû ”' Ìû!”- Ìû'”” Ìü” Ìü” Ìü” Ìü’”	 Ìı”
+ Ìıœ” Ìş” Ìş
+” Ìş” Ìş”& Ìş"”( Ìş$”) Ìş%”2 Ìş.”3 Ìş/”< Ìş8”= Ìş9”> Ìş:Ü ” Ìÿ” Ìÿ” Ìÿ	” Ìÿ” Ìÿ”! Ìÿ”# Ìÿ”) Ìÿ%”2 Ìÿ.”3 Ìÿ/”; Ìÿ7”> Ìÿ:”ÌG ÌÿÌC”ÌH ÌÿÌD”ÌR ÌÿÌN”Ì\ ÌÿÌX”Ì] ÌÿÌY”Ì^ ÌÿÌZ—” Í ” Í ” Í 	” Í ” Í ”! Í ”" Í ’” Í” Í’” Í
+” Í —” Í” Í” Í	” Í” Í”! Í”" Í’” Í” Í‘” Í‘” Í”” Í
+”	 Í”
+ Í” Í#œ” Í” Í
+” Í” Í”$ Í ”% Í!”0 Í,”2 Í.”3 Í/”= Í9”? Í;”Ì@ Í<–” Í” Í
+” Í” Í” Í” Í –” Í” Í
+” Í” Í” Í ” Í!’” Í”= Í9š” Í” Í
+” Í” Í” Í"”, Í0”- Í1”7 Í;”9 Í=”: Í>’” Í” Í”” Í” Í” Í” Í”” Í” Í” Í” Í–” Í” Í” Í”# Í”$ Í”/ Í)—” Í” Í” Í” Í” Í” Í” Í”” Í” Í” Í” Í”” Í” Í” Í” Í’”	 Í”
+ Í’” Í” Í’” Í” Í’” Í 
+” Í –” Í!” Í!” Í!” Í!” Í!” Í!’” Í"” Í"‘”	 Í#—” Í$” Í$” Í$	” Í$” Í$” Í$” Í$’” Í%”# Í%•” Í&” Í&” Í&” Í&” Í&—” Í'” Í'
+” Í'” Í'” Í'”" Í'”# Í'˜” Í(” Í(
+” Í(” Í(” Í(”( Í("”) Í(#”* Í($–” Í)”	 Í)” Í)” Í)” Í)” Í)’” Í*” Í*’” Í,”3 Í,1”” Í/” Í/” Í/” Í/’” Í0” Í0–” Í0” Í0” ÍF” ÍF
+” ÍF” ÍFš” Í0” Í0” ÍG” ÍG” ÍG” ÍG” ÍG”! ÍG”# ÍG”% ÍG˜” Í1” Í1
+” Í1” Í1” Í1” Í1”$ Í1”& Í1 ’” Í2” Í2’” Í2” Í2–” Í3” Í3”$ Í3”( Í3”) Í3”- Í3–” Í3” Í3” Í4”% Í4”& Í4”( Í4–” Í3” Í3” Í5”& Í5”' Í5”0 Í5Ü ” Í3” Í3” Í6”$ Í6”% Í6”' Í6”+ Í6”- Í6”/ Í6”1 Í6”6 Í6$”8 Í6&”: Í6(”< Í6*”? Í6-”ÌA Í6/”ÌC Í61”ÌE Í63”ÌK Í69”ÌM Í6;”ÌO Í6=”ÌQ Í6?–” Í3” Í3” Í7”, Í7”- Í7”6 Í7$–” Í3” Í3” Í8”) Í8”* Í8”, Í8š” Í3” Í3” Í9”+ Í9”, Í9”. Í9”6 Í9$”8 Í9&”= Í9+”? Í9-’” Í3” Í3‘” Í:‘” Í:–” Í;” Í;”$ Í;”( Í;”) Í;”- Í;–” Í;” Í;” Í<”% Í<”& Í<”( Í<–” Í;” Í;” Í=”& Í=”' Í=”0 Í=–” Í;” Í;” Í>”' Í>”( Í>”* Í>Ü ” Í;” Í;” Í?”$ Í?”% Í?”' Í?”+ Í?”- Í?”/ Í?”1 Í?”6 Í?$”8 Í?&”: Í?(”< Í?*”? Í?-”ÌA Í?/”ÌC Í?1”ÌE Í?3”ÌK Í?9”ÌM Í?;”ÌO Í?=”ÌQ Í??–” Í;” Í;” Í@”, Í@”- Í@”6 Í@$–” Í;” Í;” ÍA”) ÍA”* ÍA”, ÍAš” Í;” Í;” ÍB”+ ÍB”, ÍB”. ÍB”6 ÍB$”8 ÍB&”= ÍB+”? ÍB-’” Í;” Í;’” ÍC” ÍC’” ÍC” ÍC‘” ÍD’” Í0” Í0‘” ÍH–” ÍK” ÍK” ÍK” ÍK” ÍK ” ÍK-’” ÍL” ÍL–” ÍL” ÍL” ÍV” ÍV
+” ÍV” ÍV” ÍL” ÍL” ÍW” ÍW” ÍW” ÍW” ÍW” ÍW”  ÍW”" ÍW”( ÍW”* ÍW”+ ÍW ”- ÍW"”” ÍM” ÍM
+” ÍM” ÍM–” ÍM” ÍM
+” ÍN	” ÍN” ÍN” ÍN–” ÍM” ÍM
+” ÍO	” ÍO” ÍO”$ ÍO–” ÍM” ÍM
+” ÍP	” ÍP” ÍP” ÍP’” ÍM” ÍM
+Ü ” ÍQ” ÍQ
+” ÍQ” ÍQ” ÍQ”$ ÍQ”' ÍQ”( ÍQ”) ÍQ”* ÍQ”+ ÍQ”0 ÍQ#”1 ÍQ$”2 ÍQ%”3 ÍQ&”ÌA ÍQ4–” ÍQ” ÍQ
+” ÍR	” ÍR” ÍR” ÍRÜ ” ÍQ” ÍQ
+” ÍS	” ÍS” ÍS”  ÍS”! ÍS”' ÍS”* ÍS"”+ ÍS#”, ÍS$”- ÍS%”. ÍS&”7 ÍS/”8 ÍS0”9 ÍS1”: ÍS2”ÌC ÍS;–” ÍQ” ÍQ
+” ÍT	” ÍT” ÍT” ÍT’” ÍQ” ÍQ
+’” ÍL” ÍL‘” ÍX”” Í[” Í[” Í[” Í[ ’” Í\” Í\–” Í\” Í\” Íh” Íh
+” Íh” Íh” Í\” Í\” Íi” Íi” Íi” Íi” Íi” Íi”! Íi”# Íi”) Íi”+ Íi ”- Íi"”/ Íi$›” Í]” Í]
+” Í]” Í]” Í]”' Í]”( Í]”, Í]”- Í] ”3 Í]&”4 Í]'–” Í]” Í]
+” Í^	” Í^” Í^” Í^–” Í]” Í]
+” Í_	” Í_” Í_” Í_’” Í]” Í]
+–” Í`” Í`
+” Í`” Í`” Í`”" Í`–” Í`” Í`
+” Ía	” Ía” Ía” ÍaÜ ” Í`” Í`
+” Íb	” Íb” Íb” Íb”  Íb”& Íb”+ Íb#”4 Íb,”5 Íb-”6 Íb.”7 Íb/”Ì@ Íb8”ÌA Íb9”ÌB Íb:”ÌC Íb;”ÌL ÍbÌD–” Í`” Í`
+” Íc	” Íc” Íc” Íc’” Í`” Í`
+›” Íd” Íd
+” Íd” Íd” Íd”( Íd”) Íd”- Íd ”. Íd!”4 Íd'”5 Íd(–” Íd” Íd
+” Íe	” Íe” Íe” Íe–” Íd” Íd
+” Íf	” Íf” Íf”$ Íf’” Íd” Íd
+’” Í\” Í\‘” Íj”” Íl
+” Íl” Íl” Íl–” Ím” Ím” Ím	” Ím” Ím” Ím”” Ín” Ín” Ín” Ín‘”	 Ío–” Íp” Íp” Íp	” Íp” Íp” Íp”” Íq” Íq” Íq” Íq‘”	 Ír–” Ís” Ís” Ís	” Ís” Ís” Ís”” Ít” Ít” Ít” Ít‘”	 Íu”” Ív” Ív” Ív” Ív’” Íw” Íw”” Íy
+” Íy” Íy” Íy–” Íz” Íz” Íz	” Íz” Íz” Íz”” Í{” Í{” Í{” Í{‘”	 Í|–” Í}” Í}” Í}	” Í}” Í}” Í}”” Í~” Í~” Í~” Í~‘”	 Í–” Í€” Í€” Í€	” Í€” Í€” Í€”” Í” Í” Í” Í‘”	 Í‚”” Íƒ” Íƒ” Íƒ” Íƒ’” Í„” Í„‘” Í†’” Í‡” Í‡
+–” Í‡” Í‡
+” Í$” Í$
+” Í$” Í$–” Í‡” Í‡
+” Í%” Í%” Í%”  Í%–” Í‡” Í‡
+” Í&”" Í&”# Í&”, Í&’” Íˆ” Íˆ’” Í‰” Í‰	’” Íˆ” Íˆ–” Í‰” Í‰	” Í¤” Í¤” Í¤” Í¤’” Íˆ” ÍˆÜ ” Í‰” Í‰	” Í¥” Í¥” Í¥” Í¥” Í¥”  Í¥”" Í¥”$ Í¥”) Í¥ ”+ Í¥"”- Í¥$”/ Í¥&”2 Í¥)”4 Í¥+”6 Í¥-”8 Í¥/”> Í¥5”Ì@ Í¥7”ÌB Í¥9”ÌD Í¥;’” ÍŠ” ÍŠ˜” ÍŠ” ÍŠ” Í”	” Í”” Í””- Í”#”. Í”$”3 Í”)”” Í‹
+” Í‹” Í‹” Í‹–” Í‹
+” Í‹” ÍŒ” ÍŒ” ÍŒ” ÍŒ˜” Í‹
+” Í‹” Í” Í” Í”& Í"”' Í#”+ Í'–” Í‹
+” Í‹” Í” Í” Í”$ Í ’” Í‹
+” Í‹”” Í
+” Í” Í”# Í–” Í
+” Í” Í” Í” Í” Í–” Í
+” Í” Í‘” Í‘” Í‘”$ Í‘ š” Í
+” Í” Í’” Í’” Í’” Í’” Í’” Í’”  Í’”" Í’’” Í
+” Í’” ÍŠ” ÍŠ’” Í•” Í•’” Í•” Í•”” Í–” Í–” Í–” Í––” Í–” Í–” Í—” Í—” Í—” Í—–” Í–” Í–” Í˜” Í˜” Í˜”$ Í˜—” Í–” Í–” Í™” Í™” Í™” Í™” Í™œ” Íš” Íš” Íš” Íš” Íš”! Íš”$ Íš ”& Íš"”9 Íš5”; Íš7”< Íš8”= Íš9’” Í›
+” Í›’” Í–” Í–”” Íœ” Íœ” Íœ” Íœ–” Íœ” Íœ” Í” Í” Í” Í–” Íœ” Íœ” Í” Í” Í”$ Íš” Íœ” Íœ” ÍŸ” ÍŸ” ÍŸ” ÍŸ” ÍŸ”  ÍŸ”" ÍŸ”$ ÍŸ—” Íœ” Íœ” Í ” Í ” Í ” Í ” Í –” Í¡” Í¡” Í¡”# Í¡”% Í¡!”& Í¡"’” Í¢
+” Í¢’” Íœ” Íœ’” Íˆ” Íˆ’” Í‰” Í‰	’” Í§”- Í§'˜” Í¨” Í¨
+” Í¨” Í¨”" Í¨”' Í¨!”+ Í¨%”- Í¨'’” Í©” Í©–” Í©” Í©” ÍĞ	”$ ÍĞ”% ÍĞ”* ÍĞ–” Í©” Í©” ÍÑ	”& ÍÑ”' ÍÑ”) ÍÑ–” Í©” Í©” ÍÒ	”. ÍÒ”/ ÍÒ”8 ÍÒ"–” Í©” Í©” ÍÓ	”+ ÍÓ”, ÍÓ”. ÍÓš” Í©” Í©” ÍÔ	”% ÍÔ”& ÍÔ”( ÍÔ”. ÍÔ”0 ÍÔ”2 ÍÔ”4 ÍÔ’” Íª
+” Íª–” Íª
+” Íª” Í±”! Í±”" Í±”( Í±š” Íª
+” Íª” Í²”" Í²”# Í²”% Í²”+ Í²”- Í²”/ Í²”1 Í² ”” Í«” Í«”$ Í«”6 Í«#–” Í«” Í«” Í¬”% Í¬”& Í¬”( Í¬˜” Í«” Í«” Í­”' Í­”( Í­”2 Í­$”3 Í­%”9 Í­+–” Í«” Í«” Í®”& Í®”' Í®”0 Í®"’” Í«” Í«’” Í¯” Í¯’” Í¯” Í¯’” Íª
+” Íª” Í´
+” Í´” Í´”' Í´”3 Í´”7 Í´"”9 Í´$”= Í´(”> Í´)”ÌK Í´6”ÌL Í´7”ÌT Í´?”ÌU Í´Ì@” Íµ
+” Íµ” Íµ”' Íµ”3 Íµ”7 Íµ"”9 Íµ$”= Íµ(”> Íµ)”ÌK Íµ6”ÌL Íµ7”ÌV ÍµÌA”ÌW ÍµÌB” Í¶
+” Í¶” Í¶”' Í¶”3 Í¶”7 Í¶"”9 Í¶$”= Í¶(”> Í¶)”ÌK Í¶6”ÌL Í¶7”ÌV Í¶ÌA”ÌW Í¶ÌB” Í·
+” Í·” Í·”' Í·”3 Í·”7 Í·"”9 Í·$”= Í·(”> Í·)”ÌK Í·6”ÌL Í·7”ÌU Í·Ì@”ÌV Í·ÌA” Í¸
+” Í¸” Í¸”' Í¸”3 Í¸”7 Í¸"”9 Í¸$”= Í¸(”> Í¸)”ÌK Í¸6”ÌL Í¸7”ÌX Í¸ÌC”ÌY Í¸ÌD’” Íº
+” Íº–” Íº
+” Íº” ÍÍ”! ÍÍ”" ÍÍ”( ÍÍš” Íº
+” Íº” ÍÎ”" ÍÎ”# ÍÎ”% ÍÎ”( ÍÎ”* ÍÎ”, ÍÎ”. ÍÎ”” Í»” Í»”/ Í»”6 Í»–” Í»” Í»” Í¼”' Í¼”( Í¼”* Í¼–” Í»” Í»” Í½”( Í½”) Í½”2 Í½"–” Í»” Í»” Í¾”. Í¾”/ Í¾”8 Í¾(–” Í»” Í»” Í¿”+ Í¿”, Í¿”- Í¿š” Í»” Í»” ÍÀ”% ÍÀ”& ÍÀ”( ÍÀ”- ÍÀ”/ ÍÀ”1 ÍÀ!”3 ÍÀ#—” Í»” Í»” ÍÁ”& ÍÁ”' ÍÁ”* ÍÁ”, ÍÁ–” ÍÂ”  ÍÂ”! ÍÂ”7 ÍÂ+”9 ÍÂ-”: ÍÂ.’” ÍÃ” ÍÃ’” Í»” Í»”” ÍÄ” ÍÄ”/ ÍÄ”5 ÍÄ–” ÍÄ” ÍÄ” ÍÅ”' ÍÅ”( ÍÅ”* ÍÅ–” ÍÄ” ÍÄ” ÍÆ”( ÍÆ”) ÍÆ”2 ÍÆ"–” ÍÄ” ÍÄ” ÍÇ”. ÍÇ”/ ÍÇ”8 ÍÇ(–” ÍÄ” ÍÄ” ÍÈ”+ ÍÈ”, ÍÈ”- ÍÈ—” ÍÄ” ÍÄ” ÍÉ”& ÍÉ”' ÍÉ”* ÍÉ”, ÍÉ–” ÍÊ”  ÍÊ”! ÍÊ”7 ÍÊ+”9 ÍÊ-”: ÍÊ.’” ÍË” ÍË’” ÍÄ” ÍÄ’” Íº
+” Íº’” Í©” Í©‘” ÍÕ’” Í×”' Í×!‘” ÍÕ’” Í×”' Í×!š” ÍØ” ÍØ
+” ÍØ” ÍØ” ÍØ” ÍØ”$ ÍØ”' ÍØ!”( ÍØ"”* ÍØ$’” ÍÙ” ÍÙ–” ÍÙ” ÍÙ” Íã	”$ Íã”% Íã”* Íã–” ÍÙ” ÍÙ” Íä	”& Íä”' Íä”) Íä–” ÍÙ” ÍÙ” Íå	”. Íå”/ Íå”8 Íå"–” ÍÙ” ÍÙ” Íæ	”+ Íæ”, Íæ”. Íæš” ÍÙ” ÍÙ” Íç	”% Íç”& Íç”( Íç”. Íç”0 Íç”2 Íç”4 Íç”” ÍÚ
+” ÍÚ”$ ÍÚ”, ÍÚ–” ÍÚ
+” ÍÚ” ÍÛ”% ÍÛ”& ÍÛ”( ÍÛ–” ÍÚ
+” ÍÚ” ÍÜ”& ÍÜ”' ÍÜ”0 ÍÜ –” ÍÚ
+” ÍÚ” Íİ”" Íİ”# Íİ”) Íİš” ÍÚ
+” ÍÚ” ÍŞ”# ÍŞ”$ ÍŞ”& ÍŞ”, ÍŞ”. ÍŞ”/ ÍŞ”1 ÍŞ!’” ÍÚ
+” ÍÚ’” Íß
+” Íß—” Íà”  Íà”! Íà”, Íà”8 Íà”< Íà!”= Íà"”; Íß”? Íß”Ì@ Íß”ÌH Íß”Ìb Íá”Ìc Íá”Ìg Íá ”Ìi Íá"”Ìk Íá$”Ìl Íá%”Ìp Íá)”Ìq Íá*”Ìw Íá0’” Íß
+” Íß’” ÍÙ” ÍÙ‘” Íè’” Íê” Íê‘” Íè’” Íê” Íê–” Íë” Íë” Íë” Íë” Íë”' Íë’” Íê” Íê–” Íë” Íë” Íô” Íô”  Íô”! Íô’” Íê” Íê˜” Íë” Íë” Íõ” Íõ” Íõ”% Íõ”& Íõ”) Íõ’” Íì” Íì–” Íì” Íì” Íñ	” Íñ” Íñ” Íñ” Íì” Íì” Íò	” Íò” Íò” Íò”! Íò”# Íò”% Íò”' Íò”, Íò"”. Íò$”0 Íò&”2 Íò(’” Íí
+” Íí’”3 Íí/”6 Íí:—” Íî” Íî” Íî” Íî”+ Íî”/ Íî ”0 Íî!Ü ”/ Íí”3 Íí”4 Íí”9 Íí”ÌS Íï”ÌT Íï”ÌX Íï”ÌZ Íï”Ì] Íï)”Ì_ Íï+”Ìa Íï-”Ìb Íï.”Ìe Íï1”Ìh Íï4”Ìl Íï8”Ìp Íï<”Ìq Íï=”Ìu ÍïÌA”Ìv ÍïÌB”Ì| ÍïÌH”Ì~ ÍïÌJ’” Íí
+” Íí’” Íì” Íì’” Íê” Íê’” Íë” Íë’” Í÷” Í÷’” Íø” Íø’” Í÷” Í÷–” Íø” Íø” Í!” Í!” Í!” Í!’” Í÷” Í÷” Íø” Íø” Í"” Í"” Í"” Í"”  Í"”" Í"”$ Í"”& Í"”, Í" ”. Í""”0 Í"$”2 Í"&’” Íù” Íù–” Íù” Íù” Í	” Í” Í” Íš” Íù” Íù” Í	” Í” Í” Í” Í”! Í”# Í”% Í” Íú
+” Íú” Íú” Íú”# Íú”% Íú”) Íú ”* Íú!”3 Íú*”5 Íú,”Ì@ Íú7”ÌB Íú9”ÌL ÍúÌC”ÌN ÍúÌE–” Íú
+” Íú” Íû” Íû” Íû”! Íû–” Íú
+” Íú” Íü” Íü” Íü” Íü–” Íú
+” Íú” Íı”" Íı”# Íı”$ Íı–” Íú
+” Íú” Íş”% Íş”& Íş”/ Íş&–” Íú
+” Íú” Íÿ”" Íÿ”# Íÿ”% Íÿ™” Íú
+” Íú” Í ” Í ” Í ”  Í ”! Í  ”# Í "”% Í $—” Í” Í” Í” Í”! Í”" Í ”# Í!’” Í” Í”” Í
+” Í”# Í”' Í–” Í
+” Í” Í” Í” Í” Í–” Í
+” Í” Í” Í” Í” Íš” Í
+” Í” Í” Í” Í” Í”  Í”" Í”$ Í”& Í –” Í
+” Í” Í”" Í”# Í”, Í&—” Í
+” Í” Í” Í” Í” Í”  Íš” Í	” Í	” Í	” Í	” Í	”  Í	”! Í	”* Í	(”+ Í	)”, Í	*’” Í
+” Í
+’” Í
+” Í’” Íù” Íù’” Í” Í’” Í” Í’” Í” Í–” Í” Í” Í	” Í” Í” Í’” Í” Í–” Í” Í” Í	” Í” Í” Í’” Í” Í–” Í” Í” Í	” Í”  Í”" Í’” Í” ÍÜ ” Í” Í” Í	”" Í”# Í”' Í”( Í”1 Í'”2 Í(”3 Í)”4 Í*”= Í3”> Í4”? Í5”Ì@ Í6”ÌI Í?’” Í” Í™” Í” Í” Í	” Í” Í” Í”  Í”! Í”% Í’” Í” Í—” Í” Í” Í	” Í” Í” Í”  Í–” Í
+” Í” Í” Í”! Í”" Í’” Í” Í	’” Í
+” Í” Í” Í” Í” Í” Í”& Í”' Í ”( Í!”) Í"”/ Í(”0 Í)”1 Í*”2 Í+”8 Í1–” Í” Í” Í” Í” Í” Í–” Í” Í” Í” Í” Í”$ Í"˜” Í” Í” Í” Í” Í”& Í$”' Í%”- Í+’” Í” Í’” Í
+” Í’” Í” Í’” Í” Í’” Í÷” Í÷’” Íø” Íø’” Í‡” Í‡
+‘” Í'ÔrH–§version¤file§sources®sourcesContent¥names¨mappingsÀ‘À‘ÀÜ-‘”    ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”  	 ‘”  
+ ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”    ‘”  ! ‘”  " ‘”  # ‘”  $ ‘”  % ‘”  & ‘”  ' ‘”  ( ‘”  ) ‘”  * ‘”  + ‘”  , ‘”  - ‘”  . ‘”  / ‘”  0 ‘”  1 ‘”  2 ‘”  3 ‘”  4 ‘”  5 ‘”  6 ‘”  7 ‘”  8 ‘”  9 ‘”  : ‘”  ; ‘”  < ‘”  = ‘”  > ‘”  ? ‘”  Ì@ ‘”  ÌA ‘”  ÌB ‘”  ÌC ‘”  ÌD ‘”  ÌE ‘”  ÌF ‘”  ÌG ‘”  ÌH ‘”  ÌI ‘”  ÌJ ‘”  ÌK ‘”  ÌL ‘”  ÌM ‘”  ÌN ‘”  ÌO ‘”  ÌP ‘”  ÌQ ‘”  ÌR ‘”  ÌS ‘”  ÌT ‘”  ÌU ‘”  ÌV ‘”  ÌW ‘”  ÌX ‘”  ÌY ‘”  ÌZ ‘”  Ì[ ‘”  Ì\ ‘”  Ì] ‘”  Ì^ ‘”  Ì_ ‘”  Ì` ‘”  Ìa ‘”  Ìb ‘”  Ìc ‘”  Ìd ‘”  Ìe ‘”  Ìf ‘”  Ìg ‘”  Ìh ‘”  Ìi ‘”  Ìj ‘”  Ìk ‘”  Ìl ‘”  Ìm ‘”  Ìn ‘”  Ìo ‘”  Ìp ‘”  Ìq ‘”  Ìr ‘”  Ìs ‘”  Ìt ‘”  Ìu ‘”  Ìv ‘”  Ìw ‘”  Ìx ‘”  Ìy ‘”  Ìz ‘”  Ì{ ‘”  Ì| ‘”  Ì} ‘”  Ì~ ‘”  Ì ‘”  Ì€ ‘”  Ì ‘”  Ì‚ ‘”  Ìƒ ‘”  Ì„ ‘”  Ì… ‘”  Ì† ‘”  Ì‡ ‘”  Ìˆ ‘”  Ì‰ ‘”  ÌŠ ‘”  Ì‹ ‘”  ÌŒ ‘”  Ì ‘”  Ì ‘”  Ì ‘”  Ì ‘”  Ì‘ ‘”  Ì’ ‘”  Ì“ ‘”  Ì” ‘”  Ì• ‘”  Ì– ‘”  Ì— ‘”  Ì˜ ‘”  Ì™ ‘”  Ìš ‘”  Ì› ‘”  Ìœ ‘”  Ì ‘”  Ì ‘”  ÌŸ ‘”  Ì  ‘”  Ì¡ ‘”  Ì¢ ‘”  Ì£ ‘”  Ì¤ ‘”  Ì¥ ‘”  Ì¦ ‘”  Ì§ ‘”  Ì¨ ‘”  Ì© ‘”  Ìª ‘”  Ì« ‘”  Ì¬ ‘”  Ì­ ‘”  Ì® ‘”  Ì¯ ‘”  Ì° ‘”  Ì± ‘”  Ì² ‘”  Ì³ ‘”  Ì´ ‘”  Ìµ ‘”  Ì¶ ‘”  Ì· ‘”  Ì¸ ‘”  Ì¹ ‘”  Ìº ‘”  Ì» ‘”  Ì¼ ‘”  Ì½ ‘”  Ì¾ ‘”  Ì¿ ‘”  ÌÀ ‘”  ÌÁ ‘”  ÌÂ ‘”  ÌÃ ‘”  ÌÄ ‘”  ÌÅ ‘”  ÌÆ ‘”  ÌÇ ‘”  ÌÈ ‘”  ÌÉ ‘”  ÌÊ ‘”  ÌË ‘”  ÌÌ ‘”  ÌÍ ‘”  ÌÎ ‘”  ÌÏ ‘”  ÌĞ ‘”  ÌÑ ‘”  ÌÒ ‘”  ÌÓ ‘”  ÌÔ ‘”  ÌÕ ‘”  ÌÖ ‘”  Ì× ‘”  ÌØ ‘”  ÌÙ ‘”  ÌÚ ‘”  ÌÛ ‘”  ÌÜ ‘”  Ìİ ‘”  ÌŞ ‘”  Ìß ‘”  Ìà ‘”  Ìá ‘”  Ìâ ‘”  Ìã ‘”  Ìä ‘”  Ìå ‘”  Ìæ ‘”  Ìç ‘”  Ìè ‘”  Ìé ‘”  Ìê ‘”  Ìë ‘”  Ìì ‘”  Ìí ‘”  Ìî ‘”  Ìï ‘”  Ìğ ‘”  Ìñ ‘”  Ìò ‘”  Ìó ‘”  Ìô ‘”  Ìõ ‘”  Ìö ‘”  Ì÷ ‘”  Ìø ‘”  Ìù ‘”  Ìú ‘”  Ìû ‘”  Ìü ‘”  Ìı ‘”  Ìş ‘”  Ìÿ ‘”  Í  ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í	 ‘”  Í
+ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í  ‘”  Í! ‘”  Í" ‘”  Í# ‘”  Í$ ‘”  Í% ‘”  Í& ‘”  Í' ‘”  Í( ‘”  Í) ‘”  Í* ‘”  Í+ ‘”  Í, ‘”  Í- ‘”  Í. ‘”  Í/ ‘”  Í0 ‘”  Í1 ‘”  Í2 ‘”  Í3 ‘”  Í4 ‘”  Í5 ‘”  Í6 ‘”  Í7 ‘”  Í8 ‘”  Í9 ‘”  Í: ‘”  Í; ‘”  Í< ‘”  Í= ‘”  Í> ‘”  Í? ‘”  Í@ ‘”  ÍA ‘”  ÍB ‘”  ÍC ‘”  ÍD ‘”  ÍE ‘”  ÍF ‘”  ÍG ‘”  ÍH ‘”  ÍI ‘”  ÍJ ‘”  ÍK ‘”  ÍL ‘”  ÍM ‘”  ÍN ‘”  ÍO ‘”  ÍP ‘”  ÍQ ‘”  ÍR ‘”  ÍS ‘”  ÍT ‘”  ÍU ‘”  ÍV ‘”  ÍW ‘”  ÍX ‘”  ÍY ‘”  ÍZ ‘”  Í[ ‘”  Í\ ‘”  Í] ‘”  Í^ ‘”  Í_ ‘”  Í` ‘”  Ía ‘”  Íb ‘”  Íc ‘”  Íd ‘”  Íe ‘”  Íf ‘”  Íg ‘”  Íh ‘”  Íi ‘”  Íj ‘”  Ík ‘”  Íl ‘”  Ím ‘”  Ín ‘”  Ío ‘”  Íp ‘”  Íq ‘”  Ír ‘”  Ís ‘”  Ít ‘”  Íu ‘”  Ív ‘”  Íw ‘”  Íx ‘”  Íy ‘”  Íz ‘”  Í{ ‘”  Í| ‘”  Í} ‘”  Í~ ‘”  Í ‘”  Í€ ‘”  Í ‘”  Í‚ ‘”  Íƒ ‘”  Í„ ‘”  Í… ‘”  Í† ‘”  Í‡ ‘”  Íˆ ‘”  Í‰ ‘”  ÍŠ ‘”  Í‹ ‘”  ÍŒ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í‘ ‘”  Í’ ‘”  Í“ ‘”  Í” ‘”  Í• ‘”  Í– ‘”  Í— ‘”  Í˜ ‘”  Í™ ‘”  Íš ‘”  Í› ‘”  Íœ ‘”  Í ‘”  Í ‘”  ÍŸ ‘”  Í  ‘”  Í¡ ‘”  Í¢ ‘”  Í£ ‘”  Í¤ ‘”  Í¥ ‘”  Í¦ ‘”  Í§ ‘”  Í¨ ‘”  Í© ‘”  Íª ‘”  Í« ‘”  Í¬ ‘”  Í­ ‘”  Í® ‘”  Í¯ ‘”  Í° ‘”  Í± ‘”  Í² ‘”  Í³ ‘”  Í´ ‘”  Íµ ‘”  Í¶ ‘”  Í· ‘”  Í¸ ‘”  Í¹ ‘”  Íº ‘”  Í» ‘”  Í¼ ‘”  Í½ ‘”  Í¾ ‘”  Í¿ ‘”  ÍÀ ‘”  ÍÁ ‘”  ÍÂ ‘”  ÍÃ ‘”  ÍÄ ‘”  ÍÅ ‘”  ÍÆ ‘”  ÍÇ ‘”  ÍÈ ‘”  ÍÉ ‘”  ÍÊ ‘”  ÍË ‘”  ÍÌ ‘”  ÍÍ ‘”  ÍÎ ‘”  ÍÏ ‘”  ÍĞ ‘”  ÍÑ ‘”  ÍÒ ‘”  ÍÓ ‘”  ÍÔ ‘”  ÍÕ ‘”  ÍÖ ‘”  Í× ‘”  ÍØ ‘”  ÍÙ ‘”  ÍÚ ‘”  ÍÛ ‘”  ÍÜ ‘”  Íİ ‘”  ÍŞ ‘”  Íß ‘”  Íà ‘”  Íá ‘”  Íâ ‘”  Íã ‘”  Íä ‘”  Íå ‘”  Íæ ‘”  Íç ‘”  Íè ‘”  Íé ‘”  Íê ‘”  Íë ‘”  Íì ‘”  Íí ‘”  Íî ‘”  Íï ‘”  Íğ ‘”  Íñ ‘”  Íò ‘”  Íó ‘”  Íô ‘”  Íõ ‘”  Íö ‘”  Í÷ ‘”  Íø ‘”  Íù ‘”  Íú ‘”  Íû ‘”  Íü ‘”  Íı ‘”  Íş ‘”  Íÿ ‘”  Í  ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í	 ‘”  Í
+ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í  ‘”  Í! ‘”  Í" ‘”  Í# ‘”  Í$ ‘”  Í% ‘”  Í& ‘”  Í' ‘”  Í( ‘”  Í) ‘”  Í* ‘”  Í+ ‘”  Í, ‘”  Í- ‘”  Í. ‘”  Í/ ‘”  Í0 ‘”  Í1 ‘”  Í2 ‘”  Í3 ‘”  Í4 ‘”  Í5 ‘”  Í6 ‘”  Í7 ‘”  Í8 ‘”  Í9 ‘”  Í: ‘”  Í; ‘”  Í< ‘”  Í= ‘”  Í> ‘”  Í? ‘”  Í@ ‘”  ÍA ‘”  ÍB ‘”  ÍC ‘”  ÍD ‘”  ÍE ‘”  ÍF ‘”  ÍG ‘”  ÍH ‘”  ÍI ‘”  ÍJ ‘”  ÍK ‘”  ÍL ‘”  ÍM ‘”  ÍN ‘”  ÍO ‘”  ÍP ‘”  ÍQ ‘”  ÍR ‘”  ÍS ‘”  ÍT ‘”  ÍU ‘”  ÍV ‘”  ÍW ‘”  ÍX ‘”  ÍY ‘”  ÍZ ‘”  Í[ ‘”  Í\ ‘”  Í] ‘”  Í^ ‘”  Í_ ‘”  Í` ‘”  Ía ‘”  Íb ‘”  Íc ‘”  Íd ‘”  Íe ‘”  Íf ‘”  Íg ‘”  Íh ‘”  Íi ‘”  Íj ‘”  Ík ‘”  Íl ‘”  Ím ‘”  Ín ‘”  Ío ‘”  Íp ‘”  Íq ‘”  Ír ‘”  Ís ‘”  Ít ‘”  Íu ‘”  Ív ‘”  Íw ‘”  Íx ‘”  Íy ‘”  Íz ‘”  Í{ ‘”  Í| ‘”  Í} ‘”  Í~ ‘”  Í ‘”  Í€ ‘”  Í ‘”  Í‚ ‘”  Íƒ ‘”  Í„ ‘”  Í… ‘”  Í† ‘”  Í‡ ‘”  Íˆ ‘”  Í‰ ‘”  ÍŠ ‘”  Í‹ ‘”  ÍŒ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í‘ ‘”  Í’ ‘”  Í“ ‘”  Í” ‘”  Í• ‘”  Í– ‘”  Í— ‘”  Í˜ ‘”  Í™ ‘”  Íš ‘”  Í› ‘”  Íœ ‘”  Í ‘”  Í ‘”  ÍŸ ‘”  Í  ‘”  Í¡ ‘”  Í¢ ‘”  Í£ ‘”  Í¤ ‘”  Í¥ ‘”  Í¦ ‘”  Í§ ‘”  Í¨ ‘”  Í© ‘”  Íª ‘”  Í« ‘”  Í¬ ‘”  Í­ ‘”  Í® ‘”  Í¯ ‘”  Í° ‘”  Í± ‘”  Í² ‘”  Í³ ‘”  Í´ ‘”  Íµ ‘”  Í¶ ‘”  Í· ‘”  Í¸ ‘”  Í¹ ‘”  Íº ‘”  Í» ‘”  Í¼ ‘”  Í½ ‘”  Í¾ ‘”  Í¿ ‘”  ÍÀ ‘”  ÍÁ ‘”  ÍÂ ‘”  ÍÃ ‘”  ÍÄ ‘”  ÍÅ ‘”  ÍÆ ‘”  ÍÇ ‘”  ÍÈ ‘”  ÍÉ ‘”  ÍÊ ‘”  ÍË ‘”  ÍÌ ‘”  ÍÍ ‘”  ÍÎ ‘”  ÍÏ ‘”  ÍĞ ‘”  ÍÑ ‘”  ÍÒ ‘”  ÍÓ ‘”  ÍÔ ‘”  ÍÕ ‘”  ÍÖ ‘”  Í× ‘”  ÍØ ‘”  ÍÙ ‘”  ÍÚ ‘”  ÍÛ ‘”  ÍÜ ‘”  Íİ ‘”  ÍŞ ‘”  Íß ‘”  Íà ‘”  Íá ‘”  Íâ ‘”  Íã ‘”  Íä ‘”  Íå ‘”  Íæ ‘”  Íç ‘”  Íè ‘”  Íé ‘”  Íê ‘”  Íë ‘”  Íì ‘”  Íí ‘”  Íî ‘”  Íï ‘”  Íğ ‘”  Íñ ‘”  Íò ‘”  Íó ‘”  Íô ‘”  Íõ ‘”  Íö ‘”  Í÷ ‘”  Íø ‘”  Íù ‘”  Íú ‘”  Íû ‘”  Íü ‘”  Íı ‘”  Íş ‘”  Íÿ ‘”  Í  ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í	 ‘”  Í
+ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í  ‘”  Í! ‘”  Í" ‘”  Í# ‘”  Í$ ‘”  Í% ‘”  Í& ‘”  Í' ‘”  Í( ‘”  Í) ‘”  Í* ‘”  Í+ ‘”  Í, ÔrI’§missing¦pluginÃ¦genAbcÂÔ  ÔrJ”²dynamicImportCache¹exportAllDeclarationCache»exportNamedDeclarationCache«importCache›ÔrK•¤type¥start£endªspecifiers¦source±ImportDeclarationÍÍ9‘ÔrL”¤type¥start£end¥local¶ImportDefaultSpecifierÍÍ$ÔrM”¤type¥start£end¤nameªIdentifierÍÍ$¦routerÔrN•¤type¥start£end¥value£raw§LiteralÍ*Í8¬@ohos.router®"@ohos.router"K±ImportDeclarationÍ;Íx‘L¶ImportDefaultSpecifierÍBÍSMªIdentifierÍBÍS±photoAccessHelperN§LiteralÍYÍw¼@ohos.file.photoAccessHelper¾"@ohos.file.photoAccessHelper"K±ImportDeclarationÍzÍ¥‘L¶ImportDefaultSpecifierÍÍ†MªIdentifierÍÍ†¥imageN§LiteralÍŒÍ¤¶@ohos.multimedia.image¸"@ohos.multimedia.image"K±ImportDeclarationÍ§ÍÊ‘L¶ImportDefaultSpecifierÍ®Í´MªIdentifierÍ®Í´¦fileIoN§LiteralÍºÍÉ­@ohos.file.fs¯"@ohos.file.fs"K±ImportDeclarationÍÌÍ’ÔrO•¤type¥start£end¨imported¥local¯ImportSpecifierÍÕÍİMªIdentifierÍÕÍİ¨BusEventMªIdentifierÍÕÍİ¨BusEventO¯ImportSpecifierÍßÍëMªIdentifierÍßÍë¬RecordSourceMªIdentifierÍßÍë¬RecordSourceN§LiteralÍóÍ²../core/AgentTypes´'../core/AgentTypes'K±ImportDeclarationÍ
+Í6‘O¯ImportSpecifierÍÍMªIdentifierÍÍ¨eventBusMªIdentifierÍÍ¨eventBusN§LiteralÍ#Í5°../core/EventBus²'../core/EventBus'K±ImportDeclarationÍ8Ín‘O¯ImportSpecifierÍAÍMMªIdentifierÍAÍM¬CentralAgentMªIdentifierÍAÍM¬CentralAgentN§LiteralÍUÍm¶../agents/CentralAgent¸'../agents/CentralAgent'K±ImportDeclarationÍpÍ¤‘O¯ImportSpecifierÍyÍ…MªIdentifierÍyÍ…¬ContextStoreMªIdentifierÍyÍ…¬ContextStoreN§LiteralÍÍ£´../core/ContextStore¶'../core/ContextStore'K±ImportDeclarationÍ¦Íè‘O¯ImportSpecifierÍ¯ÍÀMªIdentifierÍ¯ÍÀ±DeviceSyncServiceMªIdentifierÍ¯ÍÀ±DeviceSyncServiceN§LiteralÍÈÍç½../services/DeviceSyncService¿'../services/DeviceSyncService'K±ImportDeclarationÍêÍ&‘O¯ImportSpecifierÍóÍMªIdentifierÍóÍ®WeatherServiceMªIdentifierÍóÍ®WeatherServiceN§LiteralÍ	Í%º../services/WeatherService¼'../services/WeatherService'K±ImportDeclarationÍ(Íj‘O¯ImportSpecifierÍ1ÍBMªIdentifierÍ1ÍB±OcrCaptureServiceMªIdentifierÍ1ÍB±OcrCaptureServiceN§LiteralÍJÍi½../services/OcrCaptureService¿'../services/OcrCaptureService'

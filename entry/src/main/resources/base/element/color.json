@@ -1,0 +1,12 @@
+{
+  "color": [
+    { "name": "start_window_background", "value": "#EEF3F6" },
+    { "name": "brand_primary",   "value": "#2E6F8E" },
+    { "name": "brand_accent",    "value": "#E8874A" },
+    { "name": "text_primary",    "value": "#1B2A34" },
+    { "name": "text_secondary",  "value": "#7A8A96" },
+    { "name": "surface_card",    "value": "#FFFFFF" },
+    { "name": "surface_page",    "value": "#EEF3F6" },
+    { "name": "status_success",  "value": "#3B7A57" }
+  ]
+}
