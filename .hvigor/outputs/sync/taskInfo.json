@@ -491,12 +491,6 @@
       "GROUP": "Sync",
       "DESCRIPTION": "Sync and refresh project",
       "SOURCE_PLUGIN_ID": "hvigor-ohos-plugin"
-    },
-    {
-      "TASK_NAME": "clean",
-      "GROUP": "Other",
-      "DESCRIPTION": "Clear the cache information.",
-      "SOURCE_PLUGIN_ID": "hvigor-ohos-plugin"
     }
   ],
   "ohos-project": [

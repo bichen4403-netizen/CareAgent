@@ -1,6 +1,6 @@
 import http from "@ohos:net.http";
-const AMAP_KEY: string = ''; // 在这里粘贴你的高德 Web服务 Key
-const DEFAULT_CITY_CODE: string = '330100'; // 默认杭州，换成你的城市编码
+const AMAP_KEY: string = 'b4b4685618bc827d74c8c10503240fcb'; // 在这里粘贴你的高德 Web服务 Key
+const DEFAULT_CITY_CODE: string = '110000'; // 默认北京，换成你的城市编码
 export interface WeatherProvider {
     getWeather(cityCode: string): Promise<string>;
 }

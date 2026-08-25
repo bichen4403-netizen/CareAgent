@@ -11,7 +11,7 @@
 
 import { http } from '@kit.NetworkKit';
 
-const AMAP_KEY: string = '';   // 在这里粘贴你的高德 Web服务 Key（和 WeatherService 里的一样）
+const AMAP_KEY: string = 'b4b4685618bc827d74c8c10503240fcb';   // 在这里粘贴你的高德 Web服务 Key（和 WeatherService 里的一样）
 
 export interface DrivingResult {
   durationMin: number;

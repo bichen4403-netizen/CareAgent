@@ -23,9 +23,9 @@ import { CentralAgent } from '../agents/CentralAgent';
  * 只要是 OpenAI 兼容格式（messages/choices结构），endpoint 和 model 换掉即可。
  * 留空则自动使用离线 Mock Provider，保证演示不依赖网络。
  */
-const LLM_ENDPOINT: string = 'https://api.deepseek.com/chat/completions';
-const LLM_TOKEN: string = '把你申请到的 DeepSeek API Key 粘贴到这里，形如 sk-xxxxxxxxxxxx';
-const LLM_MODEL: string = 'deepseek-chat';
+const LLM_ENDPOINT: string = 'https://api.siliconflow.cn/v1';
+const LLM_TOKEN: string = 'sk-zsyymbmohkykefhejqrdtnuxmmzkhrisnmtjwjkunfljbgfd';
+const LLM_MODEL: string = 'deepseek-ai/DeepSeek-V4-Flash';
 
 /** 主动服务巡检间隔：4 小时 */
 const PROACTIVE_INTERVAL_MS: number = 4 * 3600 * 1000;
@@ -50,7 +50,8 @@ export default class EntryAbility extends UIAbility {
 
     // 跨设备协同服务
     DeviceSyncService.start();
-
+    // 初始化语音合成引擎（失败也不影响其它功能，只是没声音）
+    await DeviceSyncService.initTts();
     // 主动服务：定时扫描到期复诊
     this.startProactiveCheck();
   }
@@ -68,6 +69,7 @@ export default class EntryAbility extends UIAbility {
       clearInterval(this.proactiveTimer);
     }
     DeviceSyncService.clearReminders();
+    DeviceSyncService.releaseTts();
     console.info('[EntryAbility] onDestroy');
   }
 

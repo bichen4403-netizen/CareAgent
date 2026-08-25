@@ -11,11 +11,14 @@
 import { BusEvent, BusMessage, DeviceNotifyCmd, ReminderItem } from '../core/AgentTypes';
 import { eventBus } from '../core/EventBus';
 import { notificationManager } from '@kit.NotificationKit';
+import { textToSpeech } from '@kit.CoreSpeechKit';
+
 
 export class DeviceSyncService {
   private static started: boolean = false;
   private static timers: number[] = [];
-
+  private static ttsEngine: textToSpeech.TextToSpeechEngine | null = null;   // ← 新增
+  private static ttsReady: boolean = false;
   /** App 启动时调用一次，挂上事件监听 */
   static start(): void {
     if (DeviceSyncService.started) {
@@ -92,15 +95,80 @@ export class DeviceSyncService {
   }
 
   /**
-   * 语音播报
-   * 真实实现：调用系统 TTS 能力；老年模式下语速放慢、音量提高
+   * 初始化语音合成引擎，App 启动时调用一次
+   * 失败不影响其它功能，只是没声音而已，所以这里吞掉异常不往上抛
+   */
+  static async initTts(): Promise<void> {
+    if (DeviceSyncService.ttsEngine !== null) {
+      return;
+    }
+    try {
+      const extraParam: Record<string, Object> = {
+        'style': 'interaction-broadcast',
+        'locate': 'CN',
+        'name': 'EngineName'
+      };
+      const params: textToSpeech.CreateEngineParams = {
+        language: 'zh-CN',
+        person: 0,        // 音色，0 为默认音色
+        online: 0,        // 0=离线合成，不依赖网络，老人场景更稳
+        extraParams: extraParam
+      };
+      DeviceSyncService.ttsEngine = await textToSpeech.createEngine(params);
+      DeviceSyncService.ttsReady = true;
+      console.info('[TTS] engine ready');
+    } catch (e) {
+      DeviceSyncService.ttsReady = false;
+      console.error(`[TTS] init failed, 将只打印日志不发声: ${e}`);
+    }
+  }
+
+  /**
+   * 语音播报 —— 老年模式：语速放慢、音量调高
+   * 引擎不可用时降级为只打印日志，不会导致崩溃
    */
   static speak(text: string): void {
     if (text === undefined || text.length === 0) {
       return;
     }
     console.info(`[TTS] ${text}`);
-    // TODO: 接入系统语音合成能力，设置老年友好的语速与音量
+
+    if (!DeviceSyncService.ttsReady || DeviceSyncService.ttsEngine === null) {
+      return;
+    }
+
+    try {
+      const extraParam: Record<string, Object> = {
+        'queueMode': 0,        // 0=打断当前播报，避免多条提醒排队积压
+        'speed': 0.8,          // 语速放慢到 0.8 倍，老人听得清
+        'volume': 2,           // 音量调高
+        'pitch': 1,
+        'languageContext': 'zh-CN',
+        'audioType': 'ad',
+        'soundChannel': 3,
+        'playType': 1
+      };
+      const speakParams: textToSpeech.SpeakParams = {
+        requestId: `tts_${Date.now()}`,
+        extraParams: extraParam
+      };
+      DeviceSyncService.ttsEngine.speak(text, speakParams);
+    } catch (e) {
+      console.error(`[TTS] speak failed: ${e}`);
+    }
+  }
+
+  /** App 退出时释放引擎 */
+  static releaseTts(): void {
+    if (DeviceSyncService.ttsEngine !== null) {
+      try {
+        DeviceSyncService.ttsEngine.shutdown();
+      } catch (e) {
+        console.error(`[TTS] shutdown failed: ${e}`);
+      }
+      DeviceSyncService.ttsEngine = null;
+      DeviceSyncService.ttsReady = false;
+    }
   }
 
   /**
