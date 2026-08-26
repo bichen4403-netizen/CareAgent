@@ -1,16 +1,17 @@
 {
 	"CommonInfo":{
-		"project.ide.version":"6.1.1.300",
+		"project.ide.version":"26.0.0.621",
 		"current.select.product":"default",
 		"current.select.buildMode":"",
 		"crossplatform.projectType":""
 	},
 	"BuildOptions":{
 		"SELECT_BUILD_PRODUCT":"default",
-		"BUNDLE_NAME":"com.example.zhihutongxing",
+		"BUNDLE_NAME":"com.whatpressure.zhihutongxing",
 		"BUILD_PATH":{
 			"OUTPUT_PATH":"D:\\AAAprojects\\C4\\build\\outputs\\default"
 		},
 		"SELECT_BUILD_MODE":""
-	}
+	},
+	"CertConfig":{}
 }

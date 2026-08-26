@@ -15,17 +15,13 @@ import { CentralAgent } from '../agents/CentralAgent';
 /**
  * ⚠️ 配置项：接入真实大模型
  *
- * 已改为 DeepSeek（OpenAI 兼容格式），去 platform.deepseek.com 注册后
- * 在"API Keys"页面创建一个 Key，把下面 LLM_TOKEN 换成你自己的。
- * LLM_ENDPOINT 和 LLM_MODEL 不用改，DeepSeek 固定就是这两个值。
- *
- * 也可以换成小艺开放平台提供的模型接口、通义千问、讯飞星火等，
- * 只要是 OpenAI 兼容格式（messages/choices结构），endpoint 和 model 换掉即可。
- * 留空则自动使用离线 Mock Provider，保证演示不依赖网络。
+ * 客户端源码中不得保存模型 Token。Demo 默认使用离线 Mock Provider；
+ * 后续如需接入真实模型，应通过受控后端代理请求，并在后端保存和轮换密钥。
+ * 小艺开放平台通过系统 Agent / Skill 机制接入，不需要在这里配置平台密钥。
  */
-const LLM_ENDPOINT: string = 'https://api.siliconflow.cn/v1';
-const LLM_TOKEN: string = 'sk-zsyymbmohkykefhejqrdtnuxmmzkhrisnmtjwjkunfljbgfd';
-const LLM_MODEL: string = 'deepseek-ai/DeepSeek-V4-Flash';
+const LLM_ENDPOINT: string = '';
+const LLM_TOKEN: string = '';
+const LLM_MODEL: string = '';
 
 /** 主动服务巡检间隔：4 小时 */
 const PROACTIVE_INTERVAL_MS: number = 4 * 3600 * 1000;
@@ -41,7 +37,7 @@ export default class EntryAbility extends UIAbility {
     await ContextStore.getInstance().init(this.context);
 
     // 注入大模型 Provider
-    if (LLM_ENDPOINT.length > 0) {
+    if (LLM_ENDPOINT.length > 0 && LLM_TOKEN.length > 0 && LLM_MODEL.length > 0) {
       LLMService.setProvider(new HttpLLMProvider(LLM_ENDPOINT, LLM_TOKEN, LLM_MODEL));
       console.info('[EntryAbility] LLM provider: HTTP');
     } else {

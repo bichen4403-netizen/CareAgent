@@ -1,0 +1,2887 @@
+{
+  "runtimeOS": "HarmonyOS",
+  "sdkInfo": "false:26:26.0.0.32:Beta2",
+  "fileList": {
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.scriptManager.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\skills\\medical-assist\\scripts\\MedicalAssistSkill.ets",
+        "D:\\AAAprojects\\C4\\entry\\skills\\travel-plan\\scripts\\TravelPlanSkill.ets",
+        "D:\\AAAprojects\\C4\\entry\\skills\\hospital-nav\\scripts\\HospitalNavSkill.ets",
+        "D:\\AAAprojects\\C4\\entry\\skills\\care-reminder\\scripts\\CareReminderSkill.ets"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\skills\\medical-assist\\scripts\\MedicalAssistSkill.ets",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.appManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.resourceManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.rpc.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.mediaquery.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.inspector.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.promptAction.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.router.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.observer.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\component\\navigation.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.componentSnapshot.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.dragController.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.unifiedDataChannel.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityHelper.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.ability.featureAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.rdb.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimodalInput.pointer.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.preferences.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\skills\\travel-plan\\scripts\\TravelPlanSkill.ets",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.http.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.connection.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.socket.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.security.cert.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.security.cryptoFramework.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\skills\\hospital-nav\\scripts\\HospitalNavSkill.ets",
+        "D:\\AAAprojects\\C4\\entry\\skills\\care-reminder\\scripts\\CareReminderSkill.ets",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.wantAgent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.wantAgent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notification.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\hms\\ets\\api\\@hms.ai.textToSpeech.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formProvider.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.file.photoAccessHelper.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.file.fs.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.util.stream.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.events.emitter.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.util.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneResources.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\embedded_component.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.request.cacheDownload.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\nav_destination.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\navigation.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\pattern_lock.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\video.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.web.webview.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.print.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MedicalAssistService.ets": {
+      "mtimeMs": 1787751145971.6206,
+      "children": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\ContextStore.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MockDataSource.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\AppLinkService.ets"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\skills\\medical-assist\\scripts\\MedicalAssistSkill.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\MedicalAgent.ets"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\skills\\medical-assist\\scripts\\MedicalAssistSkill.ets": {
+      "mtimeMs": 1787751150029.3774,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.scriptManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MedicalAssistService.ets"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\EventHub.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ApplicationInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\BaseContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.resourceManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.contextConstant.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.scriptManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AbilityStageContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.file.photoAccessHelper.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.print.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\EventHub.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ApplicationInfo.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\Metadata.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\global\\resource.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\AbilityInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\BundleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ExtensionAbilityInfo.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationContext.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ProcessInformation.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.ConfigurationConstant.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.EnvironmentCallback.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AbilityLifecycleCallback.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.ApplicationStateChangeCallback.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.systemConfiguration.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.UIAbility.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\BaseContext.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.rdb.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.preferences.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.resourceManager.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\global\\rawFileDescriptor.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\global\\resource.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.drawableDescriptor.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.contextConstant.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.StartOptions.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\Metadata.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ApplicationInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\AbilityInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\HapModuleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ExtensionAbilityInfo.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\global\\resource.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ApplicationInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.resourceManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.drawing.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\units.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\Metadata.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ElementName.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ApplicationInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\AbilityInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\BundleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\HapModuleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ExtensionAbilityInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\Skill.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ApplicationInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\AbilityInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\BundleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\HapModuleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ExtensionAbilityInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ProcessInformation.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.StartOptions.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ElementName.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.CompletionHandler.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\connectOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AbilityStageContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\abilityResult.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.dialogRequest.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.UIAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.unifiedDataChannel.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\FormEditExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\LiveFormExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.ability.featureAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\startAbilityParameter.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\entryability\\EntryAbility.ets",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.wantAgent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\wantAgent\\wantAgentInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.wantAgent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\wantAgent\\triggerInfo.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\widget\\CareCardAbility.ets",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.FormExtensionAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formProvider.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\embedded_component.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\AbilityInfo.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ApplicationInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\Metadata.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\Skill.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\HapModuleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\BundleInfo.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ApplicationInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\HapModuleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\HapModuleInfo.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\AbilityInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ExtensionAbilityInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\Metadata.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\BundleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AbilityStageContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ExtensionAbilityInfo.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ApplicationInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\Metadata.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\Skill.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\HapModuleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ExtensionContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\Skill.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\AbilityInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ExtensionAbilityInfo.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ProcessInformation.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.appManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.appManager.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.ConfigurationConstant.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Configuration.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.systemConfiguration.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\BaseContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.node.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.ConfigurationConstant.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.StartOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.UIAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\component\\navigation.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.ability.featureAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AbilityLifecycleCallback.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\entryability\\EntryAbility.ets",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\folder_stack.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\nav_destination.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\navigation.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.EnvironmentCallback.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AbilityConstant.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Configuration.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AbilityLifecycleCallback.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.UIAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.ApplicationStateChangeCallback.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.systemConfiguration.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.ConfigurationConstant.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.UIAbility.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Ability.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AbilityConstant.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.rpc.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AbilityLifecycleCallback.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\entryability\\EntryAbility.ets"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.appManager.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ProcessInformation.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationStateObserver.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AbilityStateData.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AppStateData.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ProcessData.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ProcessInformation.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AbilityConstant.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationStateObserver.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AppStateData.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AbilityStateData.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ProcessData.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.appManager.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AbilityStateData.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.appManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationStateObserver.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AppStateData.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.appManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationStateObserver.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ProcessData.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.appManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationStateObserver.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.colorSpaceManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.resourceManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.rpc.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.drawableDescriptor.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.drawing.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.StartOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.componentSnapshot.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.unifiedDataChannel.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\PhotoEditorExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimodalInput.pointer.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationRequest.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\Index.ets",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.file.photoAccessHelper.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\OcrCaptureService.ets",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.web.webview.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.font.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.mediaquery.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.inspector.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.promptAction.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.router.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.componentUtils.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.node.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.animator.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.observer.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.animator.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.measure.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.componentSnapshot.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.dragController.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimodalInput.pointer.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\BuilderNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\FrameNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\ComponentContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\NodeController.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\XComponentNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.node.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\BuilderNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\BuilderNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\BuilderNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\BuilderNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\NodeController.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\FrameNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\FrameNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\FrameNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\RenderNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\XComponentNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Content.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\ComponentContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\ComponentContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\NodeContent.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.observer.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\content_slot.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\node_container.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.colorSpaceManager.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.drawing.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.componentSnapshot.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.rpc.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\connectOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.UIAbility.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\global\\rawFileDescriptor.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.resourceManager.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.drawableDescriptor.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.drawing.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.resourceManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\tab_content.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.drawing.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.common2D.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\global\\resource.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.colorSpaceManager.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.drawableDescriptor.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\canvas.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.text.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.common2D.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.drawing.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.text.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.font.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.mediaquery.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.inspector.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.promptAction.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\action_sheet.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\alert_dialog.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\custom_dialog_controller.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.router.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\Index.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\JourneyPage.ets"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.componentUtils.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.animator.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.observer.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\component\\navigation.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.node.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.measure.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.componentSnapshot.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.colorSpaceManager.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.dragController.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.unifiedDataChannel.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AbilityStageContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ApplicationContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\BaseContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\FormExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\FormEditExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\LiveFormExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\EventHub.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\VpnExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\EmbeddableUIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\PhotoEditorExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIServiceProxy.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIServiceExtensionConnectCallback.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\abilityResult.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AbilityStartCallback.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\connectOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityHelper.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AgentCard.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AgentHostProxy.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AgentExtensionContext.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\ContextStore.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\AppLinkService.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\widget\\CardDataStore.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\Index.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\JourneyPage.ets"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimodalInput.pointer.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\BuilderNode.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\FrameNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.node.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\ComponentContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\XComponentNode.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\NodeController.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\FrameNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.node.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\FrameNode.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\RenderNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\ComponentContent.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.node.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\BuilderNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\NodeController.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\XComponentNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\NodeContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\canvas.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.drawing.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.common2D.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\global\\resource.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.node.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\BuilderNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\FrameNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\RenderNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\NodeController.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\particle.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\units.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\RenderNode.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.node.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\FrameNode.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\XComponentNode.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\BuilderNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\FrameNode.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.node.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Content.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.node.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\ComponentContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\NodeContent.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\ComponentContent.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\BuilderNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Content.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.node.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\FrameNode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\NodeContent.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Content.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\FrameNode.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.node.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AbilityConstant.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIServiceProxy.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIServiceExtensionConnectCallback.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\AbilityInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\abilityResult.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.dialogRequest.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\HapModuleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.OpenLinkOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.StartOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Configuration.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\connectOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.UIAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AtomicServiceOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.ConfigurationConstant.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AbilityStartCallback.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.observer.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.UIAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\EmbeddableUIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formProvider.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\component\\navigation.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.uiMaterial.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.observer.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AbilityConstant.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.appManager.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.UIAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Ability.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.EnvironmentCallback.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\entryability\\EntryAbility.ets"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIServiceProxy.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIExtensionContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIServiceExtensionConnectCallback.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIExtensionContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\abilityResult.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AbilityStartCallback.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\FormEditExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\PhotoEditorExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.ability.featureAbility.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.dialogRequest.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.OpenLinkOptions.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.CompletionHandler.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIExtensionContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.StartOptions.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.contextConstant.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.bundleManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.CompletionHandler.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AtomicServiceOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIExtensionContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Configuration.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.ConfigurationConstant.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Ability.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AbilityStageContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.EnvironmentCallback.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.FormExtensionAbility.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\connectOptions.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ElementName.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.rpc.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.ability.featureAbility.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AtomicServiceOptions.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.CompletionHandlerForAtomicService.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.StartOptions.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIExtensionContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AbilityStartCallback.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\abilityResult.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.CompletionHandlerForAbilityStartCallback.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.CompletionHandler.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ElementName.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.OpenLinkOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.StartOptions.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Ability.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AbilityConstant.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Configuration.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.UIAbility.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.CompletionHandlerForAtomicService.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AtomicServiceOptions.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.CompletionHandlerForAbilityStartCallback.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AbilityStartCallback.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.uiMaterial.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\component\\navigation.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\navigation.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\tabs.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.unifiedDataChannel.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.dragController.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIExtensionContext.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.ConfigurationConstant.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.StartOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.OpenLinkOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AtomicServiceOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\abilityResult.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\connectOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIServiceProxy.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIServiceExtensionConnectCallback.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\FormEditExtensionContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AbilityStageContext.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\HapModuleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Configuration.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ElementName.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ExtensionContext.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\HapModuleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Configuration.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundleManager\\ExtensionAbilityInfo.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\FormExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\LiveFormExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\VpnExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\PhotoEditorExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AgentExtensionContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\FormExtensionContext.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ExtensionContext.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.FormExtensionAbility.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\FormEditExtensionContext.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\abilityResult.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\LiveFormExtensionContext.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\VpnExtensionContext.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ExtensionContext.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\EmbeddableUIAbilityContext.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\PhotoEditorExtensionContext.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\abilityResult.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityHelper.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\data\\rdb\\resultSet.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityOperation.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityResult.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.dataAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.rdb.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.ability.featureAbility.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AgentCard.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.agent.agentConstant.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AgentExtensionContext.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AgentHostProxy.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AgentExtensionContext.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AgentCard.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\ExtensionContext.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\data\\rdb\\resultSet.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityHelper.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.rdb.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityOperation.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.ability.featureAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.dataAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.rdb.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityHelper.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityResult.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityHelper.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.dataAbility.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.rdb.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityHelper.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityOperation.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.rdb.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\data\\rdb\\resultSet.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\BaseContext.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityHelper.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityOperation.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.dataAbility.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.ability.featureAbility.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\startAbilityParameter.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\abilityResult.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\appVersionInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityHelper.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\connectOptions.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\processInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\dataAbilityOperation.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\ability\\startAbilityParameter.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.ability.featureAbility.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\appVersionInfo.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.ability.featureAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\context.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\context.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\applicationInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\processInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\elementName.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\BaseContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\hapModuleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\appVersionInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\abilityInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.ability.featureAbility.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\processInfo.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.ability.featureAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\context.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\applicationInfo.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\moduleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\customizeData.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\abilityInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\bundleInfo.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\elementName.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\context.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\hapModuleInfo.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\abilityInfo.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\bundleInfo.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\abilityInfo.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\applicationInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\customizeData.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\hapModuleInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\bundleInfo.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\applicationInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\abilityInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\bundleInfo.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\app\\context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\abilityInfo.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\moduleInfo.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\applicationInfo.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\customizeData.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\applicationInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\abilityInfo.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\bundleInfo.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\abilityInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\applicationInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\bundle\\hapModuleInfo.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.bundle.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.agent.agentConstant.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AgentCard.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets": {
+      "mtimeMs": 1787743676419.8042,
+      "children": [],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MedicalAssistService.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\ContextStore.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MockDataSource.ets",
+        "D:\\AAAprojects\\C4\\entry\\skills\\travel-plan\\scripts\\TravelPlanSkill.ets",
+        "D:\\AAAprojects\\C4\\entry\\skills\\hospital-nav\\scripts\\HospitalNavSkill.ets",
+        "D:\\AAAprojects\\C4\\entry\\skills\\care-reminder\\scripts\\CareReminderSkill.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\DeviceSyncService.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\EventBus.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\CentralAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\IntentParser.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\TaskPlanner.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\BaseAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\MedicalAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\TravelAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\NavigationAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\ReminderAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\Index.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\OcrCaptureService.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\JourneyPage.ets"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\ContextStore.ets": {
+      "mtimeMs": 1787743676420.8015,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.preferences.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MedicalAssistService.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\entryability\\EntryAbility.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\IntentParser.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\TravelAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\ReminderAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\Index.ets"
+      ],
+      "error": true,
+      "errorCodes": [
+        28040
+      ]
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MockDataSource.ets": {
+      "mtimeMs": 1787743676424.8025,
+      "children": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MedicalAssistService.ets",
+        "D:\\AAAprojects\\C4\\entry\\skills\\travel-plan\\scripts\\TravelPlanSkill.ets",
+        "D:\\AAAprojects\\C4\\entry\\skills\\hospital-nav\\scripts\\HospitalNavSkill.ets",
+        "D:\\AAAprojects\\C4\\entry\\skills\\care-reminder\\scripts\\CareReminderSkill.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\TravelAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\NavigationAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\ReminderAgent.ets"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\AppLinkService.ets": {
+      "mtimeMs": 1787743676422.7998,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MedicalAssistService.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\JourneyPage.ets"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.preferences.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\BaseContext.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\ContextStore.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\widget\\CardDataStore.ets"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\TravelService.ets": {
+      "mtimeMs": 1787749730724.1978,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.http.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\skills\\travel-plan\\scripts\\TravelPlanSkill.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\TravelAgent.ets"
+      ],
+      "error": true,
+      "errorCodes": [
+        28040
+      ]
+    },
+    "D:\\AAAprojects\\C4\\entry\\skills\\travel-plan\\scripts\\TravelPlanSkill.ets": {
+      "mtimeMs": 1787750645826.7295,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.scriptManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MockDataSource.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\TravelService.ets"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.http.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.connection.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.security.cert.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\TravelService.ets",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.connection.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\LLMService.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\WeatherService.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\OcrCaptureService.ets"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.connection.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.http.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.socket.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.http.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.socket.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.security.cert.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.security.cryptoFramework.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.http.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.socket.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.web.webview.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.socket.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.connection.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.security.cert.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.connection.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.security.cryptoFramework.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.security.cert.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\skills\\hospital-nav\\scripts\\HospitalNavSkill.ets": {
+      "mtimeMs": 1787750648088.8125,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.scriptManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MockDataSource.ets"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\skills\\care-reminder\\scripts\\CareReminderSkill.ets": {
+      "mtimeMs": 1787750650486.2449,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.scriptManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MockDataSource.ets"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\DeviceSyncService.ets": {
+      "mtimeMs": 1787743676423.8237,
+      "children": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\EventBus.ets",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\hms\\ets\\api\\@hms.ai.textToSpeech.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\entryability\\EntryAbility.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\Index.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\JourneyPage.ets"
+      ],
+      "error": true,
+      "errorCodes": [
+        28007
+      ]
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\LLMService.ets": {
+      "mtimeMs": 1787743676423.8237,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.http.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\entryability\\EntryAbility.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\IntentParser.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\OcrCaptureService.ets"
+      ],
+      "error": true,
+      "errorCodes": [
+        28040
+      ]
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\CentralAgent.ets": {
+      "mtimeMs": 1787743676417.8027,
+      "children": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\IntentParser.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\TaskPlanner.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\EventBus.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\BaseAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\MedicalAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\TravelAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\NavigationAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\ReminderAgent.ets"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\entryability\\EntryAbility.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\Index.ets"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\entryability\\EntryAbility.ets": {
+      "mtimeMs": 1787749691265.592,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.UIAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AbilityConstant.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\ContextStore.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\DeviceSyncService.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\LLMService.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\CentralAgent.ets"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\EventBus.ets": {
+      "mtimeMs": 1787743676420.8015,
+      "children": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\DeviceSyncService.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\CentralAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\BaseAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\TravelAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\NavigationAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\ReminderAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\Index.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\JourneyPage.ets"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\NotificationCommonDef.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationActionButton.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationRequest.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationRequest.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationSlot.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationTemplate.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationUserInput.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationRequest.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\DeviceSyncService.ets",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationRequest.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationSlot.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\hms\\ets\\api\\@hms.ai.textToSpeech.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\DeviceSyncService.ets"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\NotificationCommonDef.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationActionButton.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationUserInput.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.wantAgent.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationRequest.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\global\\resource.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notification.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationRequest.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationRequest.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationActionButton.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationTemplate.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationFlags.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notification.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.wantAgent.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notification.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationSlot.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notification.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notification.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationTemplate.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationRequest.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationUserInput.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationActionButton.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.wantAgent.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\wantAgent\\wantAgentInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\wantAgent\\triggerInfo.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationActionButton.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\wantAgent\\wantAgentInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationRequest.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\wantAgent\\wantAgentInfo.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.wantAgent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.wantAgent.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.wantAgent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.wantAgent.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\wantAgent\\triggerInfo.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.wantAgent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.wantAgent.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.wantAgent.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\wantAgent\\wantAgentInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\wantAgent\\triggerInfo.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\wantAgent\\wantAgentInfo.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notification.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationRequest.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationSlot.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationRequest.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationSlot.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationFlags.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationRequest.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\IntentParser.ets": {
+      "mtimeMs": 1787743676420.8015,
+      "children": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\ContextStore.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\LLMService.ets"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\CentralAgent.ets"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\TaskPlanner.ets": {
+      "mtimeMs": 1787743676420.8015,
+      "children": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\CentralAgent.ets"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\BaseAgent.ets": {
+      "mtimeMs": 1787743676417.8027,
+      "children": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\EventBus.ets"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\CentralAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\MedicalAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\TravelAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\NavigationAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\ReminderAgent.ets"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\MedicalAgent.ets": {
+      "mtimeMs": 1787751147908.5442,
+      "children": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\BaseAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MedicalAssistService.ets"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\CentralAgent.ets"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\TravelAgent.ets": {
+      "mtimeMs": 1787743676419.8042,
+      "children": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\BaseAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\EventBus.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\ContextStore.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\TravelService.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MockDataSource.ets"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\CentralAgent.ets"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\NavigationAgent.ets": {
+      "mtimeMs": 1787743676418.8203,
+      "children": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\BaseAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\EventBus.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MockDataSource.ets"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\CentralAgent.ets"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\ReminderAgent.ets": {
+      "mtimeMs": 1787743676418.8203,
+      "children": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\BaseAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\EventBus.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\MockDataSource.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\ContextStore.ets"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\CentralAgent.ets"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.FormExtensionAbility.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formBindingData.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\FormExtensionContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Configuration.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\widget\\CareCardAbility.ets"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formBindingData.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\widget\\CareCardAbility.ets",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.FormExtensionAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formProvider.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\widget\\CardDataStore.ets"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formProvider.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formBindingData.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\UIAbilityContext.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\widget\\CareCardAbility.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\widget\\CardDataStore.ets"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formInfo.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\widget\\CareCardAbility.ets",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.FormExtensionAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formProvider.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\widget\\CardDataStore.ets": {
+      "mtimeMs": 1787743676425.9673,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.preferences.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formProvider.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formBindingData.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\widget\\CareCardAbility.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\JourneyPage.ets"
+      ],
+      "error": true,
+      "errorCodes": [
+        28040
+      ]
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\widget\\CareCardAbility.ets": {
+      "mtimeMs": 1787743676426.9683,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.FormExtensionAbility.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formBindingData.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formProvider.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.form.formInfo.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\widget\\CardDataStore.ets"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.file.photoAccessHelper.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.dataSharePredicates.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\Index.ets"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.file.fs.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.util.stream.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\Index.ets"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\WeatherService.ets": {
+      "mtimeMs": 1787749732855.546,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.http.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\Index.ets"
+      ],
+      "error": true,
+      "errorCodes": [
+        28040
+      ]
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\OcrCaptureService.ets": {
+      "mtimeMs": 1787743676424.8025,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.net.http.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.util.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\LLMService.ets"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\Index.ets"
+      ],
+      "error": true,
+      "errorCodes": [
+        28007,
+        28040
+      ]
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\Index.ets": {
+      "mtimeMs": 1787743676422.7998,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.router.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.file.photoAccessHelper.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.file.fs.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\EventBus.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\agents\\CentralAgent.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\ContextStore.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\DeviceSyncService.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\WeatherService.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\OcrCaptureService.ets"
+      ],
+      "parent": [],
+      "error": true,
+      "errorCodes": [
+        28007,
+        28040
+      ]
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.dataSharePredicates.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.ValuesBucket.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.file.photoAccessHelper.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.ValuesBucket.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.dataSharePredicates.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.util.stream.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.events.emitter.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.file.fs.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.events.emitter.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.util.stream.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.util.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\OcrCaptureService.ets"
+      ],
+      "error": false
+    },
+    "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\pages\\JourneyPage.ets": {
+      "mtimeMs": 1787743676422.7998,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.router.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\core\\EventBus.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\DeviceSyncService.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\widget\\CardDataStore.ets",
+        "D:\\AAAprojects\\C4\\entry\\src\\main\\ets\\services\\AppLinkService.ets"
+      ],
+      "parent": [],
+      "error": true,
+      "errorCodes": [
+        28007
+      ]
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\action_sheet.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.promptAction.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.promptAction.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\alert_dialog.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.promptAction.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\canvas.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.drawing.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\FrameNode.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.uniformTypeDescriptor.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimodalInput.intentionCode.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\ImageModifier.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\SymbolGlyphModifier.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.shape.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.matrix4.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\image.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.uiEffect.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.theme.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\with_theme.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.dragController.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.dragController.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimodalInput.pointer.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.unifiedDataChannel.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.unifiedDataChannel.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.uniformTypeDescriptor.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.unifiedDataChannel.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.data.unifiedDataChannel.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimodalInput.intentionCode.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\ImageModifier.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\SymbolGlyphModifier.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.shape.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.shape.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.shape.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.shape.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.matrix4.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.uiMaterial.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.observer.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.observer.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.observer.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.UIContext.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.uiEffect.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.uiEffect.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\ComponentContent.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.theme.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.promptAction.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.scene.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\ScenePostProcessSettings.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneTypes.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneTypes.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneResources.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneResources.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneNodes.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\Scene.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\Scene.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneTypes.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\Scene.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\component3d.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\component3d.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.scene.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\ScenePostProcessSettings.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.scene.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneNodes.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneTypes.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.scene.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneResources.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneNodes.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\Scene.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneResources.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneTypes.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.scene.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneNodes.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\Scene.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneNodes.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneResources.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\Scene.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneTypes.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\ScenePostProcessSettings.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.scene.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\Scene.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\Scene.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneResources.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneNodes.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneTypes.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.scene.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\graphics3d\\SceneNodes.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\content_slot.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.node.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\custom_dialog_controller.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.promptAction.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\embedded_component.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\folder_stack.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.request.cacheDownload.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\image.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\image.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.drawableDescriptor.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.drawing.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.drawing.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.matrix4.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.request.cacheDownload.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\nav_destination.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\navigation.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.uiMaterial.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\node_container.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.node.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\particle.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\pattern_lock.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\CommonModifier.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\tabs.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\tabs.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.uiMaterial.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\CommonModifier.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\tab_content.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.drawableDescriptor.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.text.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.drawing.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.common2D.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\text_common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.inputMethod.ExtraConfig.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\text_common.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\text_common.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.text.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.text.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.text.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.text.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.text.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.text.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.inputMethod.ExtraConfig.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.graphics.text.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.intl.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\time_picker.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\time_picker.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.intl.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\with_theme.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.arkui.theme.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\units.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\global\\resource.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\arkui\\Graphics.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\video.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.web.webview.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.security.cert.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.multimedia.image.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.print.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.web.netErrorList.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\web.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\web.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.web.webview.d.ts"
+      ],
+      "parent": [],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.print.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts"
+      ],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.web.webview.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.web.netErrorList.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\Program Files\\devecostudio\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.web.webview.d.ts"
+      ],
+      "error": false
+    }
+  }
+}

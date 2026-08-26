@@ -18,6 +18,7 @@ color surface_card 0x01000006
 color surface_page 0x01000007
 color text_primary 0x01000008
 color text_secondary 0x01000009
+media agent_avatar 0x01000018
 media app_icon 0x01000000
 media icon 0x01000015
 profile form_config 0x01000016

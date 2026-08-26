@@ -303,5 +303,5 @@ class CareCard extends ViewPU {
     }
 }
 ViewStackProcessor.StartGetAccessRecordingFor(ViewStackProcessor.AllocateNewElmetIdForNextComponent());
-loadEtsCard(new CareCard(undefined, {}, storage), "com.example.zhihutongxing/entry/ets/widget/pages/CareCard");
+loadEtsCard(new CareCard(undefined, {}, storage), "com.whatpressure.zhihutongxing/entry/ets/widget/pages/CareCard");
 ViewStackProcessor.StopGetAccessRecording();

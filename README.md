@@ -131,15 +131,10 @@ T1 医疗 ──────────┤
 
 ### 接入真实大模型
 
-编辑 `entryability/EntryAbility.ets` 顶部配置：
+Demo 默认使用离线 Mock，答辩现场断网也能完整演示。真实模型应通过受控后端代理接入，
+由后端保存和轮换 Token；不要把模型 Token、地图 Web 服务 Key 等凭证写入 ArkTS 客户端源码。
 
-```typescript
-const LLM_ENDPOINT: string = 'https://your-endpoint/v1/chat/completions';
-const LLM_TOKEN: string = 'your-token';
-const LLM_MODEL: string = 'your-model';
-```
-
-留空则自动降级到离线 Mock，答辩现场断网也能完整演示。
+小艺开放平台通过系统 Agent / Skill 机制接入，不需要把小艺平台密钥写入 App。
 
 ### 接入小艺开放平台
 

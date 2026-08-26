@@ -17,14 +17,14 @@ import type common from "@ohos:app.ability.common";
 import photoAccessHelper from "@ohos:file.photoAccessHelper";
 import image from "@ohos:multimedia.image";
 import fileIo from "@ohos:file.fs";
-import { BusEvent, RecordSource } from "@bundle:com.example.zhihutongxing/entry/ets/core/AgentTypes";
-import type { RuntimeContext, BusMessage, TaskPlan, TaskNode, AgentResult, ServiceRecord } from "@bundle:com.example.zhihutongxing/entry/ets/core/AgentTypes";
-import { eventBus } from "@bundle:com.example.zhihutongxing/entry/ets/core/EventBus";
-import { CentralAgent } from "@bundle:com.example.zhihutongxing/entry/ets/agents/CentralAgent";
-import { ContextStore } from "@bundle:com.example.zhihutongxing/entry/ets/core/ContextStore";
-import { DeviceSyncService } from "@bundle:com.example.zhihutongxing/entry/ets/services/DeviceSyncService";
-import { WeatherService } from "@bundle:com.example.zhihutongxing/entry/ets/services/WeatherService";
-import { OcrCaptureService } from "@bundle:com.example.zhihutongxing/entry/ets/services/OcrCaptureService";
+import { BusEvent, RecordSource } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/core/AgentTypes";
+import type { RuntimeContext, BusMessage, TaskPlan, TaskNode, AgentResult, ServiceRecord } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/core/AgentTypes";
+import { eventBus } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/core/EventBus";
+import { CentralAgent } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/agents/CentralAgent";
+import { ContextStore } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/core/ContextStore";
+import { DeviceSyncService } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/services/DeviceSyncService";
+import { WeatherService } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/services/WeatherService";
+import { OcrCaptureService } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/services/OcrCaptureService";
 /** 对话气泡 */
 class ChatItem {
     role: string = 'assistant'; // user / assistant
@@ -822,4 +822,4 @@ class Index extends ViewPU {
         return "Index";
     }
 }
-registerNamedRoute(() => new Index(undefined, {}), "", { bundleName: "com.example.zhihutongxing", moduleName: "entry", pagePath: "pages/Index", pageFullPath: "entry/src/main/ets/pages/Index", integratedHsp: "false", moduleType: "followWithHap" });
+registerNamedRoute(() => new Index(undefined, {}), "", { bundleName: "com.whatpressure.zhihutongxing", moduleName: "entry", pagePath: "pages/Index", pageFullPath: "entry/src/main/ets/pages/Index", integratedHsp: "false", moduleType: "followWithHap" });

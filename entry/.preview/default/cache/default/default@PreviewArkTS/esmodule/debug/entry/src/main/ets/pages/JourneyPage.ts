@@ -10,14 +10,14 @@ interface JourneyPage_Params {
 }
 import router from "@ohos:router";
 import type common from "@ohos:app.ability.common";
-import { BookingStatus } from "@bundle:com.example.zhihutongxing/entry/ets/core/AgentTypes";
-import type { Appointment, TravelPlan, IndoorNavPlan, NavStep, ReminderItem, AgentResult } from "@bundle:com.example.zhihutongxing/entry/ets/core/AgentTypes";
-import { blackboard } from "@bundle:com.example.zhihutongxing/entry/ets/core/EventBus";
-import { DeviceSyncService } from "@bundle:com.example.zhihutongxing/entry/ets/services/DeviceSyncService";
-import { CardDataStore } from "@bundle:com.example.zhihutongxing/entry/ets/widget/CardDataStore";
-import type { CardSnapshot } from "@bundle:com.example.zhihutongxing/entry/ets/widget/CardDataStore";
-import { OfficialChannelRegistry, AppLinkService } from "@bundle:com.example.zhihutongxing/entry/ets/services/AppLinkService";
-import type { OfficialChannel } from "@bundle:com.example.zhihutongxing/entry/ets/services/AppLinkService";
+import { BookingStatus } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/core/AgentTypes";
+import type { Appointment, TravelPlan, IndoorNavPlan, NavStep, ReminderItem, AgentResult } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/core/AgentTypes";
+import { blackboard } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/core/EventBus";
+import { DeviceSyncService } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/services/DeviceSyncService";
+import { CardDataStore } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/widget/CardDataStore";
+import type { CardSnapshot } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/widget/CardDataStore";
+import { OfficialChannelRegistry, AppLinkService } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/services/AppLinkService";
+import type { OfficialChannel } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/services/AppLinkService";
 class JourneyPage extends ViewPU {
     constructor(parent, params, __localStorage, elmtId = -1, paramsLambda = undefined, extraInfo) {
         super(parent, __localStorage, elmtId, extraInfo);
@@ -649,4 +649,4 @@ function __Column__cardStyle(): void {
     Column.margin({ bottom: 14 });
     Column.alignItems(HorizontalAlign.Start);
 }
-registerNamedRoute(() => new JourneyPage(undefined, {}), "", { bundleName: "com.example.zhihutongxing", moduleName: "entry", pagePath: "pages/JourneyPage", pageFullPath: "entry/src/main/ets/pages/JourneyPage", integratedHsp: "false", moduleType: "followWithHap" });
+registerNamedRoute(() => new JourneyPage(undefined, {}), "", { bundleName: "com.whatpressure.zhihutongxing", moduleName: "entry", pagePath: "pages/JourneyPage", pageFullPath: "entry/src/main/ets/pages/JourneyPage", integratedHsp: "false", moduleType: "followWithHap" });

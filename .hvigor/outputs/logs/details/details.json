@@ -34,19 +34,21 @@
     "IS_PARALLEL": true,
     "IS_HVIGORFILE_TYPE_CHECK": false,
     "IS_EXECUTION_OHPM_BY_HVIGOR": false,
+    "IS_SYNCNATIVE_COMPILATION": false,
     "BUILD_ANALYSIS_MODE": "normal",
+    "OPTIMIZATION_STRATEGY": "memory",
     "TASK_TIME": {
       "923fe53966c6cd9343e11af776cd4b05be315ea4b200b02e4d5dfb0f929b73bf": {
-        "CreateModuleInfo": 860600,
-        "PreCheckSyscap": 437000,
-        "GeneratePkgContextInfo": 5474300,
-        "ProcessStartupConfig": 2019800,
-        "PreviewProcessResource": 4266600,
-        "PreviewHookCompileResource": 458900,
-        "ReplacePreviewerPage": 512700,
-        "buildPreviewerResource": 313000,
-        "PreviewArkTS": 26404400,
-        "PreviewBuild": 486400
+        "CreateModuleInfo": 1771300,
+        "PreCheckSyscap": 596100,
+        "GeneratePkgContextInfo": 2247300,
+        "ProcessStartupConfig": 1489700,
+        "PreviewProcessResource": 2519100,
+        "PreviewHookCompileResource": 333900,
+        "ReplacePreviewerPage": 572200,
+        "buildPreviewerResource": 312000,
+        "PreviewArkTS": 7720787500,
+        "PreviewBuild": 344900
       }
     },
     "CUSTOM_TASK_TIME": {},
@@ -59,7 +61,7 @@
       "ENABLE_CPP_FUNCTION_LEVEL_INCREMENTAL": false
     },
     "CONFIG_PROPERTIES": {},
-    "TOTAL_TIME": 390226500,
-    "BUILD_ID": "202608261946053650"
+    "TOTAL_TIME": 7912465000,
+    "BUILD_ID": "202608262308013400"
   }
 }

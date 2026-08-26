@@ -1,9 +1,9 @@
 /**
  * 智护同行 - 出行路况服务
  *
- * ⚠️ 配置说明：同 WeatherService，用同一个高德 Web服务 Key。
- * 调用高德"驾车路径规划"接口，拿到真实的车程时间、距离、路况拥堵情况。
- * 留空则自动使用 Mock 数据，保证离线也能演示。
+ * ⚠️ 配置说明：调用高德"驾车路径规划"接口时应由受控后端代理，
+ * 不要把 Web 服务 Key 写入客户端源码。当前 Key 留空，自动使用 Mock 数据，
+ * 保证 Demo 离线也能演示。
  *
  * 经纬度格式要求："经度,纬度"，注意高德是经度在前、纬度在后，
  * 和很多其他地图服务的顺序相反，容易填反。
@@ -11,7 +11,8 @@
 
 import { http } from '@kit.NetworkKit';
 
-const AMAP_KEY: string = 'b4b4685618bc827d74c8c10503240fcb';   // 在这里粘贴你的高德 Web服务 Key（和 WeatherService 里的一样）
+// 客户端不保存 Web 服务密钥。留空时使用 Mock；真实服务应由受控后端代理。
+const AMAP_KEY: string = '';
 
 export interface DrivingResult {
   durationMin: number;

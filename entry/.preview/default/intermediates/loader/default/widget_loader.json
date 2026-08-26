@@ -11,7 +11,12 @@
   "hspNameOhmMap": {},
   "harNameOhmMap": {},
   "packageManagerType": "ohpm",
-  "compileEntry": [],
+  "compileEntry": [
+    "D:\\AAAprojects\\C4\\entry\\skills\\medical-assist\\scripts\\MedicalAssistSkill.ets",
+    "D:\\AAAprojects\\C4\\entry\\skills\\travel-plan\\scripts\\TravelPlanSkill.ets",
+    "D:\\AAAprojects\\C4\\entry\\skills\\hospital-nav\\scripts\\HospitalNavSkill.ets",
+    "D:\\AAAprojects\\C4\\entry\\skills\\care-reminder\\scripts\\CareReminderSkill.ets"
+  ],
   "otherCompileFiles": [],
   "dynamicImportLibInfo": {},
   "routerMap": [],

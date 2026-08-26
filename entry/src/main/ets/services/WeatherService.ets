@@ -1,10 +1,9 @@
 /**
  * 智护同行 - 天气服务
  *
- * ⚠️ 配置说明：
- * 去 lbs.amap.com 注册开发者账号，创建应用后添加一个"Web服务"类型的 Key，
- * 把下面 AMAP_KEY 换成你自己的，天气就会是真实数据。
- * 留空则自动使用 Mock 数据（固定返回"小雨"），保证离线也能演示。
+ * ⚠️ 配置说明：真实天气请求应由受控后端代理，不要把高德 Web 服务 Key
+ * 写入客户端源码。当前 Key 留空，自动使用 Mock 数据（固定返回"小雨"），
+ * 保证 Demo 离线也能演示。
  *
  * 高德天气 API 用的是"城市编码"（adcode）而不是经纬度，
  * 常见城市编码可以在这里查：https://lbs.amap.com/api/webservice/download
@@ -13,7 +12,8 @@
 
 import { http } from '@kit.NetworkKit';
 
-const AMAP_KEY: string = 'b4b4685618bc827d74c8c10503240fcb';                 // 在这里粘贴你的高德 Web服务 Key
+// 客户端不保存 Web 服务密钥。留空时使用 Mock；真实服务应由受控后端代理。
+const AMAP_KEY: string = '';
 const DEFAULT_CITY_CODE: string = '110000';  // 默认北京，换成你的城市编码
 
 export interface WeatherProvider {
