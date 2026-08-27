@@ -5,15 +5,29 @@ description: 院内导航技能。当用户到达医院后需要找科室、找�
 
 # 院内导航 Skill
 
-## 使用场景
+## 触发场景
+
+当用户明确表达需要院内路线指引时调用，例如：
 
 - 用户到达医院、进入门诊楼后自动激活
-- 用户问"诊室在哪""药房怎么走""在几楼"
+- 用户问"诊室在哪""药房怎么走""在几楼""缴费窗口在哪"
+
+不要调用的情况：
+
+- 用户询问的是从家到医院的路线或出发时间（属于 travel-plan 技能）。
+- 用户询问疾病诊断、检查结果解读或治疗建议。
+- 用户尚未确定要去的医院，无法定位院内路线。
 
 ## 为什么需要这个技能
 
 老年用户在医院最容易迷路的不是"怎么到医院"，而是**进门之后**。
 门诊楼指示牌信息密集、字小、术语多，本技能把它翻译成一步一步的口语指引。
+
+## 安全边界
+
+- 院内地图数据以医院官方发布为准，不臆造楼层和房间号。
+- 若目标位置信息缺失，如实告知并建议就近询问导医台，不猜测。
+- 不采集用户在院内的移动轨迹。
 
 ## 执行流程
 
@@ -22,23 +36,196 @@ description: 院内导航技能。当用户到达医院后需要找科室、找�
 3. 通过耳机逐步语音播报，用户走到一个节点再播下一步
 4. 就诊场景导航到诊室；取药场景导航到缴费窗口再到药房
 
-## 输出约定
+### 场景 1：查询院内路线（getIndoorRoute）
+
+## 执行参数
+
+exec-cli(command: ohos-arkTSScript --skillName 'hospital-nav' --scriptPath 'scripts/HospitalNavSkill.ets' --functionName 'getIndoorRoute' --args '{
+  "arg1": "市第一人民医院",
+  "arg2": "门诊楼",
+  "arg3": "3楼",
+  "arg4": "316诊室",
+  "arg5": "clinic"
+}')
 
 ```json
 {
-  "entrance": "门诊楼正门",
-  "targetRoom": "3楼316诊室",
-  "estimatedWalkMin": 6,
-  "steps": [
-    { "order": 1, "instruction": "从门诊楼正门进入，前方10米右手边是自助机", "landmark": "门诊大厅" },
-    { "order": 2, "instruction": "在自助机取号，或直接到人工窗口报手机号取号", "landmark": "取号区" },
-    { "order": 3, "instruction": "乘坐正对面的2号电梯上到3楼", "landmark": "2号电梯" },
-    { "order": 4, "instruction": "出电梯后向左走，第三个房间即为316诊室", "landmark": "316诊室" }
+  "args": {
+    "type": "object",
+    "required": ["arg1"],
+    "additionalProperties": false,
+    "properties": {
+      "arg1": {
+        "type": "string",
+        "minLength": 1,
+        "description": "医院名称，必须已明确，不得为空"
+      },
+      "arg2": {
+        "type": "string",
+        "description": "门诊楼/建筑名称；targetType 为 pharmacy 时可传空字符串"
+      },
+      "arg3": {
+        "type": "string",
+        "description": "楼层；targetType 为 pharmacy 时可传空字符串"
+      },
+      "arg4": {
+        "type": "string",
+        "description": "诊室/房间号；targetType 为 pharmacy 时可传空字符串"
+      },
+      "arg5": {
+        "type": "string",
+        "enum": ["clinic", "pharmacy"],
+        "description": "目标类型：clinic 表示诊室导航，pharmacy 表示药房导航；未指定时默认为 clinic"
+      }
+    }
+  }
+}
+```
+
+参数按 `arg1` 至 `arg5` 的顺序传入 `getIndoorRoute`。当 `arg5` 为 `clinic`（含未传时的默认值）时，`arg2`（门诊楼）、`arg3`（楼层）、`arg4`（诊室）三者必须同时提供，否则应先向用户澄清；当 `arg5` 为 `pharmacy` 时，`arg2`~`arg4` 可以为空字符串。
+
+## 执行返回值
+
+### 成功：生成院内路线
+
+```json
+{
+  "type": "result",
+  "status": "success",
+  "data": {
+    "navPlan": {
+      "entrance": "门诊楼正门",
+      "targetRoom": "3楼316诊室",
+      "estimatedWalkMin": 6,
+      "steps": [
+        { "order": 1, "instruction": "从门诊楼正门进入，前方10米右手边是自助机", "landmark": "门诊大厅" },
+        { "order": 2, "instruction": "在自助机取号，或直接到人工窗口报手机号取号", "landmark": "取号区" },
+        { "order": 3, "instruction": "乘坐正对面的2号电梯上到3楼", "landmark": "2号电梯" },
+        { "order": 4, "instruction": "出电梯后向左走，第三个房间即为316诊室", "landmark": "316诊室" }
+      ]
+    },
+    "dataSource": "demo",
+    "speech": "从门诊楼正门进入，步行大约6分钟到3楼316诊室"
+  }
+}
+```
+
+### 失败：医院信息缺失
+
+```json
+{
+  "type": "result",
+  "status": "failed",
+  "errCode": "ERR_INVALID_PARAMS",
+  "errMsg": "hospital is empty",
+  "suggestion": "请先确认要去的医院"
+}
+```
+
+### 失败：诊室位置信息不完整
+
+```json
+{
+  "type": "result",
+  "status": "failed",
+  "errCode": "ERR_NEED_CLARIFICATION",
+  "errMsg": "clinic location is incomplete",
+  "suggestion": "还需要确认门诊楼、楼层和诊室"
+}
+```
+
+### 失败：内部服务异常
+
+```json
+{
+  "type": "result",
+  "status": "failed",
+  "errCode": "ERR_INTERNAL",
+  "errMsg": "no indoor map data",
+  "suggestion": "暂时没有该医院的院内路线，请咨询导医台"
+}
+```
+
+### 返回值 JSON Schema
+
+```json
+{
+  "type": "object",
+  "required": ["type", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "type": { "type": "string", "const": "result" },
+    "status": { "type": "string", "enum": ["success", "failed"] },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["navPlan", "dataSource", "speech"],
+      "properties": {
+        "navPlan": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["entrance", "targetRoom", "steps", "estimatedWalkMin"],
+          "properties": {
+            "entrance": { "type": "string", "minLength": 1 },
+            "targetRoom": { "type": "string", "minLength": 1 },
+            "estimatedWalkMin": { "type": "number", "minimum": 0 },
+            "steps": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["order", "instruction", "landmark"],
+                "properties": {
+                  "order": { "type": "number", "minimum": 1 },
+                  "instruction": { "type": "string", "minLength": 1 },
+                  "landmark": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          }
+        },
+        "dataSource": { "type": "string", "const": "demo" },
+        "speech": { "type": "string", "minLength": 1 }
+      }
+    },
+    "errCode": {
+      "type": "string",
+      "enum": ["ERR_INVALID_PARAMS", "ERR_NEED_CLARIFICATION", "ERR_INTERNAL"]
+    },
+    "errMsg": { "type": "string", "minLength": 1 },
+    "suggestion": { "type": "string", "minLength": 1 }
+  },
+  "oneOf": [
+    {
+      "properties": { "status": { "const": "success" } },
+      "required": ["data"]
+    },
+    {
+      "properties": {
+        "status": { "const": "failed" },
+        "errCode": { "const": "ERR_INVALID_PARAMS" }
+      },
+      "required": ["errCode", "errMsg", "suggestion"]
+    },
+    {
+      "properties": {
+        "status": { "const": "failed" },
+        "errCode": { "const": "ERR_NEED_CLARIFICATION" }
+      },
+      "required": ["errCode", "errMsg", "suggestion"]
+    },
+    {
+      "properties": {
+        "status": { "const": "failed" },
+        "errCode": { "const": "ERR_INTERNAL" }
+      },
+      "required": ["errCode", "errMsg", "suggestion"]
+    }
   ]
 }
 ```
 
-## 指引文案要求
+## 播报要求
 
 **每一步必须包含一个可见的参照物**，不能只说方向。
 
@@ -50,16 +237,12 @@ description: 院内导航技能。当用户到达医院后需要找科室、找�
 - 用"电梯""窗口""大厅"这类日常词，不用"A区""B座""3号通道"
 - 每步控制在 20 字以内，适合语音朗读
 
-## 边界与安全
-
-- 院内地图数据以医院官方发布为准，不臆造楼层和房间号
-- 若目标位置信息缺失，如实告知并建议就近询问导医台，不猜测
-- 不采集用户在院内的移动轨迹
-
 ## 异常处理
 
-| 异常 | 处理方式 |
+| 异常 | 返回方式 / 处理方式 |
 |---|---|
-| 诊室临时变更 | 重新生成路线并主动播报变更 |
+| 医院未确定 | `ERR_INVALID_PARAMS` |
+| clinic 场景下楼层/诊室信息不全 | `ERR_NEED_CLARIFICATION` |
+| 无该医院院内地图或内部异常 | `ERR_INTERNAL`，并提供到门诊楼层的粗粒度指引 |
+| 诊室临时变更 | 重新调用本技能生成路线并主动播报变更 |
 | 院内定位精度不足 | 降级为楼层级指引 + 参照物描述 |
-| 无该医院院内地图 | 提供到门诊楼层的粗粒度指引，并提示咨询导医台 |

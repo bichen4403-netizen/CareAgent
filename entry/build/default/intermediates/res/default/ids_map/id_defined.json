@@ -95,5 +95,9 @@
 			"type":	"profile",
 			"name":	"main_pages",
 			"id":	"0x01000017"
+		}, {
+			"type":	"media",
+			"name":	"agent_avatar",
+			"id":	"0x01000018"
 		}]
 }

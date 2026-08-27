@@ -2,49 +2,49 @@
   "version": 1,
   "ohos-module-entry": {
     "SELECT_TARGET": "default",
-    "MODULE_BUILD_DIR": "D:\\AAAprojects\\C4\\entry\\build",
+    "MODULE_BUILD_DIR": "D:\\Care\\entry\\build",
     "TARGETS": {
       "default": {
-        "SOURCE_ROOT": "D:\\AAAprojects\\C4\\entry\\src\\main",
+        "SOURCE_ROOT": "D:\\Care\\entry\\src\\main",
         "RESOURCES_PATH": [
-          "D:\\AAAprojects\\C4\\entry\\src\\main\\resources"
+          "D:\\Care\\entry\\src\\main\\resources"
         ],
         "BUILD_PATH": {
-          "OUTPUT_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\outputs\\default",
-          "INTERMEDIA_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates",
-          "JS_ASSETS_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\loader_out\\default",
-          "JS_LITE_ASSETS_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\loader_out_lite\\default",
-          "RES_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\res\\default",
-          "RES_PROFILE_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\res\\default\\resources\\base\\profile",
-          "ETS_SUPER_VISUAL_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\cache\\default\\default@CompileArkTS\\esmodule",
-          "JS_SUPER_VISUAL_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\cache\\default\\default@CompileJS\\jsbundle",
-          "WORKER_LOADER": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\loader\\default\\loader.json",
-          "MANIFEST_JSON": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\manifest\\default",
-          "OUTPUT_METADATA_JSON": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\hap_metadata\\default\\output_metadata.json",
-          "SOURCE_MAP_DIR": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\source_map\\default"
+          "OUTPUT_PATH": "D:\\Care\\entry\\build\\default\\outputs\\default",
+          "INTERMEDIA_PATH": "D:\\Care\\entry\\build\\default\\intermediates",
+          "JS_ASSETS_PATH": "D:\\Care\\entry\\build\\default\\intermediates\\loader_out\\default",
+          "JS_LITE_ASSETS_PATH": "D:\\Care\\entry\\build\\default\\intermediates\\loader_out_lite\\default",
+          "RES_PATH": "D:\\Care\\entry\\build\\default\\intermediates\\res\\default",
+          "RES_PROFILE_PATH": "D:\\Care\\entry\\build\\default\\intermediates\\res\\default\\resources\\base\\profile",
+          "ETS_SUPER_VISUAL_PATH": "D:\\Care\\entry\\build\\default\\cache\\default\\default@CompileArkTS\\esmodule",
+          "JS_SUPER_VISUAL_PATH": "D:\\Care\\entry\\build\\default\\cache\\default\\default@CompileJS\\jsbundle",
+          "WORKER_LOADER": "D:\\Care\\entry\\build\\default\\intermediates\\loader\\default\\loader.json",
+          "MANIFEST_JSON": "D:\\Care\\entry\\build\\default\\intermediates\\manifest\\default",
+          "OUTPUT_METADATA_JSON": "D:\\Care\\entry\\build\\default\\intermediates\\hap_metadata\\default\\output_metadata.json",
+          "SOURCE_MAP_DIR": "D:\\Care\\entry\\build\\default\\intermediates\\source_map\\default"
         },
         "BUILD_OPTION": {
           "debuggable": true
         }
       },
       "ohosTest": {
-        "SOURCE_ROOT": "D:\\AAAprojects\\C4\\entry\\src\\ohosTest",
+        "SOURCE_ROOT": "D:\\Care\\entry\\src\\ohosTest",
         "RESOURCES_PATH": [
-          "D:\\AAAprojects\\C4\\entry\\src\\ohosTest\\resources"
+          "D:\\Care\\entry\\src\\ohosTest\\resources"
         ],
         "BUILD_PATH": {
-          "OUTPUT_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\outputs\\ohosTest",
-          "INTERMEDIA_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates",
-          "JS_ASSETS_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\loader_out\\ohosTest",
-          "JS_LITE_ASSETS_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\loader_out_lite\\ohosTest",
-          "RES_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\res\\ohosTest",
-          "RES_PROFILE_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\res\\ohosTest\\resources\\base\\profile",
-          "ETS_SUPER_VISUAL_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\cache\\ohosTest\\ohosTest@OhosTestCompileArkTS\\esmodule",
-          "JS_SUPER_VISUAL_PATH": "D:\\AAAprojects\\C4\\entry\\build\\default\\cache\\ohosTest\\ohosTest@OhosTestCompileJS\\jsbundle",
-          "WORKER_LOADER": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\loader\\ohosTest\\loader.json",
-          "MANIFEST_JSON": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\manifest\\ohosTest",
-          "OUTPUT_METADATA_JSON": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\hap_metadata\\ohosTest\\output_metadata.json",
-          "SOURCE_MAP_DIR": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\source_map\\ohosTest"
+          "OUTPUT_PATH": "D:\\Care\\entry\\build\\default\\outputs\\ohosTest",
+          "INTERMEDIA_PATH": "D:\\Care\\entry\\build\\default\\intermediates",
+          "JS_ASSETS_PATH": "D:\\Care\\entry\\build\\default\\intermediates\\loader_out\\ohosTest",
+          "JS_LITE_ASSETS_PATH": "D:\\Care\\entry\\build\\default\\intermediates\\loader_out_lite\\ohosTest",
+          "RES_PATH": "D:\\Care\\entry\\build\\default\\intermediates\\res\\ohosTest",
+          "RES_PROFILE_PATH": "D:\\Care\\entry\\build\\default\\intermediates\\res\\ohosTest\\resources\\base\\profile",
+          "ETS_SUPER_VISUAL_PATH": "D:\\Care\\entry\\build\\default\\cache\\ohosTest\\ohosTest@OhosTestCompileArkTS\\esmodule",
+          "JS_SUPER_VISUAL_PATH": "D:\\Care\\entry\\build\\default\\cache\\ohosTest\\ohosTest@OhosTestCompileJS\\jsbundle",
+          "WORKER_LOADER": "D:\\Care\\entry\\build\\default\\intermediates\\loader\\ohosTest\\loader.json",
+          "MANIFEST_JSON": "D:\\Care\\entry\\build\\default\\intermediates\\manifest\\ohosTest",
+          "OUTPUT_METADATA_JSON": "D:\\Care\\entry\\build\\default\\intermediates\\hap_metadata\\ohosTest\\output_metadata.json",
+          "SOURCE_MAP_DIR": "D:\\Care\\entry\\build\\default\\intermediates\\source_map\\ohosTest"
         },
         "BUILD_OPTION": {
           "debuggable": true
@@ -92,17 +92,17 @@
   },
   "ohos-project": {
     "SELECT_PRODUCT_NAME": "default",
-    "MODULE_BUILD_DIR": "D:\\AAAprojects\\C4\\build",
+    "MODULE_BUILD_DIR": "D:\\Care\\build",
     "BUNDLE_NAME": "com.whatpressure.zhihutongxing",
     "VERSION_CODE": 1000000,
     "VERSION_NAME": "1.0.0",
     "BUILD_PATH": {
-      "OUTPUT_PATH": "D:\\AAAprojects\\C4\\build\\outputs\\default"
+      "OUTPUT_PATH": "D:\\Care\\build\\outputs\\default"
     },
     "MODULES": [
       {
         "name": "entry",
-        "srcPath": "D:\\AAAprojects\\C4\\entry",
+        "srcPath": "D:\\Care\\entry",
         "targets": [
           {
             "name": "default",
@@ -111,7 +111,7 @@
             ]
           }
         ],
-        "belongProjectPath": "D:\\AAAprojects\\C4"
+        "belongProjectPath": "D:\\Care"
       }
     ],
     "PROFILE_OPT": {
@@ -156,7 +156,7 @@
       "hvigor.keepDependency": true
     },
     "OVERALL_PROJECT_PATHS": [
-      "D:\\AAAprojects\\C4"
+      "D:\\Care"
     ],
     "BUILD_CACHE_DIR": ""
   }
