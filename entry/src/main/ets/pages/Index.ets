@@ -142,6 +142,7 @@ struct Index {
   /** 订阅 Agent 层事件，驱动 UI 更新 */
   private bindEvents(): void {
     this.on(BusEvent.PLAN_UPDATED, (msg: BusMessage) => {
+      console.info(`[Index] recv PLAN_UPDATED: ${msg.payload}`);
       const plan: TaskPlan = JSON.parse(msg.payload) as TaskPlan;
       const list: ProgressItem[] = [];
       for (let i = 0; i < plan.nodes.length; i++) {
@@ -149,14 +150,17 @@ struct Index {
         list.push(new ProgressItem(n.id, n.title, n.status as string));
       }
       this.progress = list;
+      console.info(`[Index] progress set to ${this.progress.length} items after PLAN_UPDATED`);
     });
 
     this.on(BusEvent.TASK_STARTED, (msg: BusMessage) => {
+      console.info(`[Index] recv TASK_STARTED: ${msg.payload}`);
       const obj: Record<string, string> = JSON.parse(msg.payload) as Record<string, string>;
       this.updateProgress(obj['taskId'], 'RUNNING');
     });
 
     this.on(BusEvent.TASK_FINISHED, (msg: BusMessage) => {
+      console.info(`[Index] recv TASK_FINISHED: ${msg.payload}`);
       const r: AgentResult = JSON.parse(msg.payload) as AgentResult;
       this.updateProgress(r.taskId, r.success ? 'SUCCESS' : 'FAILED');
     });
@@ -172,16 +176,24 @@ struct Index {
   }
 
   private updateProgress(taskId: string, status: string): void {
+    console.info(`[Index] updateProgress taskId=${taskId} status=${status}, ` +
+      `current progress ids=[${this.progress.map((p: ProgressItem) => `${p.taskId}:${p.status}`).join(',')}]`);
     const list: ProgressItem[] = [];
+    let matched: boolean = false;
     for (let i = 0; i < this.progress.length; i++) {
       const p: ProgressItem = this.progress[i];
       if (p.taskId === taskId) {
+        matched = true;
         list.push(new ProgressItem(p.taskId, p.title, status));
       } else {
         list.push(p);
       }
     }
+    if (!matched) {
+      console.error(`[Index] updateProgress: taskId=${taskId} 在当前 progress 列表里找不到匹配项！`);
+    }
     this.progress = list;
+    console.info(`[Index] progress after update: [${this.progress.map((p: ProgressItem) => `${p.taskId}:${p.status}`).join(',')}]`);
   }
 
   private pushChat(role: string, text: string): void {
@@ -508,7 +520,7 @@ struct Index {
             .margin({ bottom: 4 })
           ForEach(this.progress, (item: ProgressItem) => {
             this.ProgressRow(item);
-          }, (item: ProgressItem) => item.taskId)
+          }, (item: ProgressItem) => `${item.taskId}_${item.status}`)
         }
         .width('90%')
         .padding(18)
