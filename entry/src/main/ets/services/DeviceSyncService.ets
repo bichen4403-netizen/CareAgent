@@ -12,11 +12,17 @@ import { BusEvent, BusMessage, DeviceNotifyCmd, ReminderItem } from '../core/Age
 import { eventBus } from '../core/EventBus';
 import { notificationManager } from '@kit.NotificationKit';
 import { textToSpeech } from '@kit.CoreSpeechKit';
+import { reminderAgentManager } from '@kit.BackgroundTasksKit';
 
+/** 一条已排期的提醒：前台定时器 + 系统级代理提醒 ID 的对应关系 */
+interface ScheduledEntry {
+  timerId: number;
+  reminderId: number;   // -1 表示系统代理提醒未成功发布（权限缺失等），仅前台定时器生效
+}
 
 export class DeviceSyncService {
   private static started: boolean = false;
-  private static timers: number[] = [];
+  private static scheduled: ScheduledEntry[] = [];
   private static ttsEngine: textToSpeech.TextToSpeechEngine | null = null;   // ← 新增
   private static ttsReady: boolean = false;
   /** App 启动时调用一次，挂上事件监听 */
@@ -172,8 +178,11 @@ export class DeviceSyncService {
   }
 
   /**
-   * 注册全流程提醒：把 ReminderAgent 产出的提醒项挂上定时器
-   * 生产环境应使用后台代理提醒能力，保证 App 退到后台仍能触发
+   * 注册全流程提醒：双通道排期
+   *  1) setTimeout —— App 存活时的前台通道，走完整 dispatch（择设备/语音播报/卡片）
+   *  2) reminderAgentManager —— 系统级后台代理提醒，即使 App 进程被系统杀掉，
+   *     到点后系统也会以通知形式弹出提醒，保证"主动提醒"这个核心功能不因进程回收而失效。
+   * 两者同时注册：App 在前台时体验更丰富（语音+震动择优），被杀后台后至少还有系统兜底通知。
    */
   static scheduleReminders(items: ReminderItem[]): void {
     DeviceSyncService.clearReminders();
@@ -185,7 +194,7 @@ export class DeviceSyncService {
       if (delay <= 0) {
         continue;
       }
-      // 演示期用 setTimeout；正式版改用 reminderAgentManager 后台提醒
+
       const timerId: number = setTimeout(() => {
         const cmd: DeviceNotifyCmd = {
           device: item.targetDevice,
@@ -196,15 +205,48 @@ export class DeviceSyncService {
         DeviceSyncService.dispatch(cmd);
         item.fired = true;
       }, delay);
-      DeviceSyncService.timers.push(timerId);
+
+      DeviceSyncService.publishAgentReminder(item, delay, timerId);
     }
-    console.info(`[DeviceSync] scheduled ${DeviceSyncService.timers.length} reminders`);
+    console.info(`[DeviceSync] scheduled ${items.length} reminders`);
+  }
+
+  /**
+   * 发布系统级代理提醒（后台兜底通道）
+   * 需要 module.json5 中声明并已在运行时授予 ohos.permission.PUBLISH_AGENT_REMINDER 权限，
+   * 未授权或设备不支持时静默失败，不影响上面的前台 setTimeout 通道。
+   */
+  private static async publishAgentReminder(item: ReminderItem, delay: number, timerId: number): Promise<void> {
+    let reminderId: number = -1;
+    try {
+      const numericId: number = parseInt(item.id.replace(/\D/g, ''), 10) || (Date.now() % 100000);
+      const request: reminderAgentManager.ReminderRequestTimer = {
+        reminderType: reminderAgentManager.ReminderType.REMINDER_TYPE_TIMER,
+        triggerTimeInSeconds: Math.max(1, Math.ceil(delay / 1000)),
+        title: item.title,
+        content: item.content,
+        notificationId: numericId,
+        ringDuration: 5
+      };
+      reminderId = await reminderAgentManager.publishReminder(request);
+    } catch (e) {
+      // 权限未授予 / 设备不支持等情况下静默降级：仅前台 setTimeout 通道生效
+      console.error(`[DeviceSync] publishReminder failed, 仅前台生效: ${e}`);
+    }
+    const entry: ScheduledEntry = { timerId: timerId, reminderId: reminderId };
+    DeviceSyncService.scheduled.push(entry);
   }
 
   static clearReminders(): void {
-    for (let i = 0; i < DeviceSyncService.timers.length; i++) {
-      clearTimeout(DeviceSyncService.timers[i]);
+    for (let i = 0; i < DeviceSyncService.scheduled.length; i++) {
+      const entry: ScheduledEntry = DeviceSyncService.scheduled[i];
+      clearTimeout(entry.timerId);
+      if (entry.reminderId >= 0) {
+        reminderAgentManager.cancelReminder(entry.reminderId).catch((e: Error) => {
+          console.error(`[DeviceSync] cancelReminder failed: ${e.message}`);
+        });
+      }
     }
-    DeviceSyncService.timers = [];
+    DeviceSyncService.scheduled = [];
   }
 }

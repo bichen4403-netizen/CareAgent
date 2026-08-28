@@ -42,43 +42,27 @@
     "OPTIMIZATION_STRATEGY": "memory",
     "TASK_TIME": {
       "923fe53966c6cd9343e11af776cd4b05be315ea4b200b02e4d5dfb0f929b73bf": {
-        "init": 914100,
-        "PreBuild": 199734900,
-        "CreateModuleInfo": 1111300,
-        "GenerateMetadata": 3043800,
-        "ConfigureCmake": 670100,
-        "MergeProfile": 6861200,
-        "CreateBuildProfile": 2486400,
-        "PreCheckSyscap": 850400,
-        "GeneratePkgContextInfo": 5560900,
-        "GeneratePkgSdkInfo": 5336800,
-        "ProcessIntegratedHsp": 977100,
-        "BuildNativeWithCmake": 606900,
-        "MakePackInfo": 8174200,
-        "SyscapTransform": 3811300,
-        "ProcessProfile": 640957600,
-        "ProcessRouterMap": 3367400,
-        "ProcessShareConfig": 1711700,
-        "ProcessStartupConfig": 1384800,
-        "BuildNativeWithNinja": 800600,
-        "ProcessResource": 9571500,
-        "GenerateLoaderJson": 16821500,
-        "ProcessLibs": 6875900,
-        "CompileResource": 773481100,
-        "DoNativeStrip": 4641800,
-        "BuildJS": 3506800,
-        "CacheNativeLibs": 1335531200,
-        "CompileArkTS": 18061424900,
-        "GeneratePkgModuleJson": 9255200,
-        "ProcessCompiledResources": 1736100,
-        "PackageHap": 1247284200,
-        "PackingCheck": 10552000,
-        "SignHap": 2639400,
-        "CollectDebugSymbol": 1779500,
-        "assembleHap": 313500
+        "init": 620900,
+        "CreateModuleInfo": 1536400,
+        "ConfigureCmake": 572600,
+        "PreCheckSyscap": 804000,
+        "GeneratePkgContextInfo": 9579500,
+        "ProcessIntegratedHsp": 3469300,
+        "BuildNativeWithCmake": 952700,
+        "SyscapTransform": 5538700,
+        "ProcessStartupConfig": 2061700,
+        "BuildNativeWithNinja": 1146400,
+        "BuildJS": 4945500,
+        "CompileArkTS": 17826658500,
+        "ProcessCompiledResources": 1059300,
+        "PackageHap": 4543438900,
+        "PackingCheck": 5518100,
+        "SignHap": 2520400,
+        "CollectDebugSymbol": 1017300,
+        "assembleHap": 180300
       },
       "APP": {
-        "init": 438800
+        "init": 405900
       }
     },
     "CUSTOM_TASK_TIME": {},
@@ -91,7 +75,7 @@
       "ENABLE_CPP_FUNCTION_LEVEL_INCREMENTAL": false
     },
     "CONFIG_PROPERTIES": {},
-    "BUILD_ID": "202608271754233730",
-    "TOTAL_TIME": 21232161000
+    "TOTAL_TIME": 22956048200,
+    "BUILD_ID": "202608281228100050"
   }
 }

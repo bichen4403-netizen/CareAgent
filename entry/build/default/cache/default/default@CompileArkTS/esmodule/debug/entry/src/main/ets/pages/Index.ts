@@ -11,6 +11,7 @@ interface Index_Params {
     capturingOcr?: boolean;
     central?: CentralAgent;
     scroller?: Scroller;
+    boundHandlers?: BoundHandler[];
 }
 import router from "@ohos:router";
 import type common from "@ohos:app.ability.common";
@@ -45,6 +46,14 @@ class ProgressItem {
         this.status = status;
     }
 }
+/**
+ * 页面自己注册过的总线监听记录，供 aboutToDisappear 精确解绑用。
+ * ArkTS 不允许匿名对象字面量当类型（arkts-no-obj-literals-as-types），必须显式声明接口。
+ */
+interface BoundHandler {
+    event: BusEvent;
+    handler: (msg: BusMessage) => void;
+}
 class Index extends ViewPU {
     constructor(parent, params, __localStorage, elmtId = -1, paramsLambda = undefined, extraInfo) {
         super(parent, __localStorage, elmtId, extraInfo);
@@ -58,8 +67,9 @@ class Index extends ViewPU {
         this.__inputText = new ObservedPropertySimplePU('', this, "inputText");
         this.__pendingRecord = new ObservedPropertyObjectPU(null, this, "pendingRecord");
         this.__capturingOcr = new ObservedPropertySimplePU(false, this, "capturingOcr");
-        this.central = new CentralAgent();
+        this.central = CentralAgent.getInstance();
         this.scroller = new Scroller();
+        this.boundHandlers = [];
         this.setInitiallyProvidedValue(params);
         this.finalizeConstruction();
     }
@@ -90,6 +100,9 @@ class Index extends ViewPU {
         }
         if (params.scroller !== undefined) {
             this.scroller = params.scroller;
+        }
+        if (params.boundHandlers !== undefined) {
+            this.boundHandlers = params.boundHandlers;
         }
     }
     updateStateVars(params: Index_Params) {
@@ -165,14 +178,32 @@ class Index extends ViewPU {
     }
     private central: CentralAgent;
     private scroller: Scroller;
+    /**
+     * eventBus 是全局单例，DeviceSyncService 等页面外的模块也订阅在同一条总线上。
+     * 之前 aboutToDisappear 直接 eventBus.clear() 会把它们的监听器一并清空，
+     * 而 DeviceSyncService.start() 有"只初始化一次"的幂等标记，被清空后不会自动重新挂载，
+     * 一旦 Index 被系统回收重建过一次，语音播报和设备通知就会永久失效且没有任何报错。
+     * 这里改成只记录、只解绑本页面自己注册的 handler，不影响总线上的其它订阅者。
+     */
+    private boundHandlers: BoundHandler[];
     aboutToAppear(): void {
         this.initServices();
         this.bindEvents();
         this.chats.push(new ChatItem('assistant', '您好，我是智护同行。您要去医院看病、取药，直接跟我说一句就行'));
     }
     aboutToDisappear(): void {
-        eventBus.clear();
+        for (let i = 0; i < this.boundHandlers.length; i++) {
+            const b = this.boundHandlers[i];
+            eventBus.off(b.event, b.handler);
+        }
+        this.boundHandlers = [];
         DeviceSyncService.clearReminders();
+    }
+    /** 注册一个总线监听，并记下来供 aboutToDisappear 精确解绑 */
+    private on(event: BusEvent, handler: (msg: BusMessage) => void): void {
+        eventBus.on(event, handler);
+        const entry: BoundHandler = { event: event, handler: handler };
+        this.boundHandlers.push(entry);
     }
     private async initServices(): Promise<void> {
         const ctx = getContext(this) as common.UIAbilityContext;
@@ -210,7 +241,7 @@ class Index extends ViewPU {
     }
     /** 订阅 Agent 层事件，驱动 UI 更新 */
     private bindEvents(): void {
-        eventBus.on(BusEvent.PLAN_UPDATED, (msg: BusMessage) => {
+        this.on(BusEvent.PLAN_UPDATED, (msg: BusMessage) => {
             const plan: TaskPlan = JSON.parse(msg.payload) as TaskPlan;
             const list: ProgressItem[] = [];
             for (let i = 0; i < plan.nodes.length; i++) {
@@ -219,19 +250,19 @@ class Index extends ViewPU {
             }
             this.progress = list;
         });
-        eventBus.on(BusEvent.TASK_STARTED, (msg: BusMessage) => {
+        this.on(BusEvent.TASK_STARTED, (msg: BusMessage) => {
             const obj: Record<string, string> = JSON.parse(msg.payload) as Record<string, string>;
             this.updateProgress(obj['taskId'], 'RUNNING');
         });
-        eventBus.on(BusEvent.TASK_FINISHED, (msg: BusMessage) => {
+        this.on(BusEvent.TASK_FINISHED, (msg: BusMessage) => {
             const r: AgentResult = JSON.parse(msg.payload) as AgentResult;
             this.updateProgress(r.taskId, r.success ? 'SUCCESS' : 'FAILED');
         });
-        eventBus.on(BusEvent.SPEAK, (msg: BusMessage) => {
+        this.on(BusEvent.SPEAK, (msg: BusMessage) => {
             const obj: Record<string, string> = JSON.parse(msg.payload) as Record<string, string>;
             this.pushChat('assistant', obj['text']);
         });
-        eventBus.on(BusEvent.ANOMALY_DETECTED, () => {
+        this.on(BusEvent.ANOMALY_DETECTED, () => {
             this.progress = [];
         });
     }

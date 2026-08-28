@@ -2956,7 +2956,9 @@
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\pattern_lock.d.ts",
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\video.d.ts",
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.web.webview.d.ts",
-        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.print.d.ts"
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.print.d.ts",
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.abilityAccessCtrl.d.ts",
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.reminderAgentManager.d.ts"
       ],
       "error": false
     },
@@ -3004,7 +3006,8 @@
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\AbilityStageContext.d.ts",
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.file.photoAccessHelper.d.ts",
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\declarations\\common.d.ts",
-        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.print.d.ts"
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.print.d.ts",
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.abilityAccessCtrl.d.ts"
       ],
       "error": false
     },
@@ -4699,12 +4702,13 @@
       "error": false
     },
     "D:\\Care\\entry\\src\\main\\ets\\services\\DeviceSyncService.ets": {
-      "mtimeMs": 1787743676000,
+      "mtimeMs": 1787891251093.2053,
       "children": [
         "D:\\Care\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
         "D:\\Care\\entry\\src\\main\\ets\\core\\EventBus.ets",
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts",
-        "D:\\DevEco Studio\\sdk\\default\\hms\\ets\\api\\@hms.ai.textToSpeech.d.ts"
+        "D:\\DevEco Studio\\sdk\\default\\hms\\ets\\api\\@hms.ai.textToSpeech.d.ts",
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.reminderAgentManager.d.ts"
       ],
       "parent": [
         "D:\\Care\\entry\\src\\main\\ets\\entryability\\EntryAbility.ets",
@@ -4732,7 +4736,7 @@
       ]
     },
     "D:\\Care\\entry\\src\\main\\ets\\agents\\CentralAgent.ets": {
-      "mtimeMs": 1787743676000,
+      "mtimeMs": 1787890675615.1113,
       "children": [
         "D:\\Care\\entry\\src\\main\\ets\\core\\AgentTypes.ets",
         "D:\\Care\\entry\\src\\main\\ets\\core\\IntentParser.ets",
@@ -4751,12 +4755,15 @@
       "error": false
     },
     "D:\\Care\\entry\\src\\main\\ets\\entryability\\EntryAbility.ets": {
-      "mtimeMs": 1787749690000,
+      "mtimeMs": 1787890704060.559,
       "children": [
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.UIAbility.d.ts",
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.AbilityConstant.d.ts",
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.Want.d.ts",
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.abilityAccessCtrl.d.ts",
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.abilityAccessCtrl.d.ts",
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.window.d.ts",
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts",
         "D:\\Care\\entry\\src\\main\\ets\\core\\ContextStore.ets",
         "D:\\Care\\entry\\src\\main\\ets\\services\\DeviceSyncService.ets",
         "D:\\Care\\entry\\src\\main\\ets\\services\\LLMService.ets",
@@ -4810,7 +4817,9 @@
         "D:\\Care\\entry\\src\\main\\ets\\services\\DeviceSyncService.ets",
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationContent.d.ts",
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationRequest.d.ts",
-        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationSlot.d.ts"
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationSlot.d.ts",
+        "D:\\Care\\entry\\src\\main\\ets\\entryability\\EntryAbility.ets",
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.reminderAgentManager.d.ts"
       ],
       "error": false
     },
@@ -4884,7 +4893,8 @@
       ],
       "parent": [
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts",
-        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notification.d.ts"
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notification.d.ts",
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.reminderAgentManager.d.ts"
       ],
       "error": false
     },
@@ -5209,7 +5219,7 @@
       ]
     },
     "D:\\Care\\entry\\src\\main\\ets\\pages\\Index.ets": {
-      "mtimeMs": 1787743676000,
+      "mtimeMs": 1787891226074.7913,
       "children": [
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.router.d.ts",
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.app.ability.common.d.ts",
@@ -5761,6 +5771,48 @@
       "children": [],
       "parent": [
         "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.web.webview.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.abilityAccessCtrl.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\permissions.d.ts",
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\application\\Context.d.ts",
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\security\\PermissionRequestResult.d.ts"
+      ],
+      "parent": [
+        "D:\\Care\\entry\\src\\main\\ets\\entryability\\EntryAbility.ets"
+      ],
+      "error": false
+    },
+    "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\permissions.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.abilityAccessCtrl.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\security\\PermissionRequestResult.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [],
+      "parent": [
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.abilityAccessCtrl.d.ts"
+      ],
+      "error": false
+    },
+    "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.reminderAgentManager.d.ts": {
+      "mtimeMs": 1784758463000,
+      "children": [
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts",
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.notificationManager.d.ts",
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\notification\\notificationSlot.d.ts",
+        "D:\\DevEco Studio\\sdk\\default\\openharmony\\ets\\api\\@ohos.base.d.ts"
+      ],
+      "parent": [
+        "D:\\Care\\entry\\src\\main\\ets\\services\\DeviceSyncService.ets"
       ],
       "error": false
     }
