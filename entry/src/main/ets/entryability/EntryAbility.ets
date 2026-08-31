@@ -5,14 +5,27 @@
  * 以及主动服务的后台巡检（扫描到期复诊）。
  */
 
-import { UIAbility, AbilityConstant, Want } from '@kit.AbilityKit';
+import { UIAbility, AbilityConstant, Want, abilityAccessCtrl, Permissions } from '@kit.AbilityKit';
 import { window } from '@kit.ArkUI';
+import { notificationManager } from '@kit.NotificationKit';
 import { ContextStore } from '../core/ContextStore';
 import { DeviceSyncService } from '../services/DeviceSyncService';
 import { LLMService, HttpLLMProvider } from '../services/LLMService';
 import { CentralAgent } from '../agents/CentralAgent';
 import { OcrCaptureService, SystemOcrProvider } from '../services/OcrCaptureService';
 import { SpeechInputService } from '../services/SpeechInputService';
+
+/**
+ * module.json5 里声明的这几个是 user_grant 级权限，光声明不会自动生效，
+ * 必须在运行时调用 requestPermissionsFromUser 弹窗申请，否则系统会直接拒绝，
+ * 定位、麦克风、跨设备协同、系统代理提醒这些功能会在真机上"看似接了、实际用不了"。
+ */
+const RUNTIME_PERMISSIONS: Permissions[] = [
+  'ohos.permission.LOCATION',
+  'ohos.permission.MICROPHONE',
+  'ohos.permission.DISTRIBUTED_DATASYNC',
+  'ohos.permission.PUBLISH_AGENT_REMINDER'
+];
 
 /**
  * ⚠️ 配置项：接入真实大模型
@@ -30,13 +43,18 @@ const PROACTIVE_INTERVAL_MS: number = 4 * 3600 * 1000;
 
 export default class EntryAbility extends UIAbility {
   private proactiveTimer: number = -1;
-  private central: CentralAgent = new CentralAgent();
+  private central: CentralAgent = CentralAgent.getInstance();
 
   async onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): Promise<void> {
     console.info('[EntryAbility] onCreate');
 
     // 端侧记忆初始化
     await ContextStore.getInstance().init(this.context);
+
+    // 运行时权限申请：定位/麦克风/跨设备协同/系统代理提醒
+    await this.requestRuntimePermissions();
+    // 通知使能：不弹这个开关，手机通知卡片和系统代理提醒到点后都不会显示
+    await this.enableNotificationIfNeeded();
 
     // 注入大模型 Provider
     if (LLM_ENDPOINT.length > 0 && LLM_TOKEN.length > 0 && LLM_MODEL.length > 0) {
@@ -56,6 +74,29 @@ export default class EntryAbility extends UIAbility {
     await DeviceSyncService.initTts();
     // 主动服务：定时扫描到期复诊
     this.startProactiveCheck();
+  }
+
+  /** 申请 module.json5 里声明过但从未真正弹窗申请过的 user_grant 权限 */
+  private async requestRuntimePermissions(): Promise<void> {
+    try {
+      const atManager: abilityAccessCtrl.AtManager = abilityAccessCtrl.createAtManager();
+      await atManager.requestPermissionsFromUser(this.context, RUNTIME_PERMISSIONS);
+    } catch (e) {
+      // 用户拒绝或设备不支持时不阻断启动，相关功能会各自走已有的降级路径
+      console.error(`[EntryAbility] requestPermissionsFromUser failed: ${e}`);
+    }
+  }
+
+  /** 引导用户打开通知开关，否则通知卡片和系统代理提醒都发不出来 */
+  private async enableNotificationIfNeeded(): Promise<void> {
+    try {
+      const enabled: boolean = await notificationManager.isNotificationEnabled();
+      if (!enabled) {
+        await notificationManager.requestEnableNotification(this.context);
+      }
+    } catch (e) {
+      console.error(`[EntryAbility] requestEnableNotification failed: ${e}`);
+    }
   }
 
   private startProactiveCheck(): void {

@@ -9,9 +9,21 @@ import { TravelAgent } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/ag
 import { NavigationAgent } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/agents/NavigationAgent";
 import { ReminderAgent } from "@bundle:com.whatpressure.zhihutongxing/entry/ets/agents/ReminderAgent";
 export class CentralAgent {
+    /**
+     * 全局只应该有一个中枢实例：EntryAbility 的后台巡检（proactiveCheck）
+     * 和 Index 页面的用户交互（handleUserRequest）必须共用同一把 running 并发锁，
+     * 否则两条调度路径互不知情，可能出现同时抢占 Agent、结果互相覆盖的竞态。
+     */
+    private static instance: CentralAgent | null = null;
+    static getInstance(): CentralAgent {
+        if (CentralAgent.instance === null) {
+            CentralAgent.instance = new CentralAgent();
+        }
+        return CentralAgent.instance;
+    }
     private agents: Map<string, BaseAgent> = new Map();
     private running: boolean = false;
-    constructor() {
+    private constructor() {
         this.agents.set(TaskType.MEDICAL as string, new MedicalAgent());
         this.agents.set(TaskType.TRAVEL as string, new TravelAgent());
         this.agents.set(TaskType.NAVIGATION as string, new NavigationAgent());

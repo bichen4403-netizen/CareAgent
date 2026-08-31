@@ -1,10 +1,10 @@
 {
   "modulePathMap": {
-    "entry": "D:\\AAAprojects\\C4\\entry"
+    "entry": "D:\\Care\\entry"
   },
   "compileMode": "esmodule",
-  "projectRootPath": "D:\\AAAprojects\\C4",
-  "nodeModulesPath": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\loader_out\\default\\node_modules",
+  "projectRootPath": "D:\\Care",
+  "nodeModulesPath": "D:\\Care\\entry\\build\\default\\intermediates\\loader_out\\default\\node_modules",
   "byteCodeHarInfo": {},
   "declarationEntry": [],
   "moduleName": "entry",
@@ -12,11 +12,11 @@
   "harNameOhmMap": {},
   "packageManagerType": "ohpm",
   "compileEntry": [
-    "D:\\AAAprojects\\C4\\entry\\skills\\medical-assist\\scripts\\MedicalAssistSkill.ets",
-    "D:\\AAAprojects\\C4\\entry\\skills\\travel-plan\\scripts\\TravelPlanSkill.ets",
-    "D:\\AAAprojects\\C4\\entry\\skills\\hospital-nav\\scripts\\HospitalNavSkill.ets",
-    "D:\\AAAprojects\\C4\\entry\\skills\\care-reminder\\scripts\\CareReminderSkill.ets",
-    "D:\\AAAprojects\\C4\\entry\\build\\default\\generated\\r\\default\\ResourceTable.ts"
+    "D:\\Care\\entry\\skills\\medical-assist\\scripts\\MedicalAssistSkill.ets",
+    "D:\\Care\\entry\\skills\\travel-plan\\scripts\\TravelPlanSkill.ets",
+    "D:\\Care\\entry\\skills\\hospital-nav\\scripts\\HospitalNavSkill.ets",
+    "D:\\Care\\entry\\skills\\care-reminder\\scripts\\CareReminderSkill.ets",
+    "D:\\Care\\entry\\build\\default\\generated\\r\\default\\ResourceTable.ts"
   ],
   "otherCompileFiles": [],
   "dynamicImportLibInfo": {},
@@ -24,6 +24,9 @@
   "hspResourcesMap": {},
   "updateVersionInfo": {},
   "customizedHar": false,
-  "anBuildOutPut": "D:\\AAAprojects\\C4\\entry\\build\\default\\intermediates\\loader_out\\default\\an\\arm64-v8a",
-  "anBuildMode": "type"
+  "anBuildOutPut": "D:\\Care\\entry\\build\\default\\intermediates\\loader_out\\default\\an\\arm64-v8a",
+  "anBuildMode": "type",
+  "patchConfig": {
+    "changedFileList": "D:\\Care\\entry\\build\\default\\intermediates\\patch\\default\\changedFileList.json"
+  }
 }
