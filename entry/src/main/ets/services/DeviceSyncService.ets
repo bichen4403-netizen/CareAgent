@@ -11,12 +11,16 @@
 import { BusEvent, BusMessage, DeviceNotifyCmd, ReminderItem } from '../core/AgentTypes';
 import { eventBus } from '../core/EventBus';
 import { notificationManager } from '@kit.NotificationKit';
+import { common } from '@kit.AbilityKit';
+import { reminderAgentManager } from '@kit.BackgroundTasksKit';
 import { textToSpeech } from '@kit.CoreSpeechKit';
 
 
 export class DeviceSyncService {
   private static started: boolean = false;
   private static timers: number[] = [];
+  private static platformReminderIds: number[] = [];
+  private static notificationPermissionRequested: boolean = false;
   private static ttsEngine: textToSpeech.TextToSpeechEngine | null = null;   // ← 新增
   private static ttsReady: boolean = false;
   /** App 启动时调用一次，挂上事件监听 */
@@ -43,6 +47,20 @@ export class DeviceSyncService {
         console.error(`[DeviceSync] notify parse error: ${e}`);
       }
     });
+  }
+
+  /** 请求系统通知授权；未授权时仍保留页面内本地提醒兜底。 */
+  static async requestNotificationPermission(context: common.UIAbilityContext): Promise<void> {
+    if (DeviceSyncService.notificationPermissionRequested) {
+      return;
+    }
+    DeviceSyncService.notificationPermissionRequested = true;
+    try {
+      await notificationManager.requestEnableNotification(context);
+      console.info('[DeviceSync] notification permission ready');
+    } catch (e) {
+      console.warn(`[DeviceSync] notification permission unavailable: ${e}`);
+    }
   }
 
   /**
@@ -172,12 +190,37 @@ export class DeviceSyncService {
   }
 
   /**
-   * 注册全流程提醒：把 ReminderAgent 产出的提醒项挂上定时器
-   * 生产环境应使用后台代理提醒能力，保证 App 退到后台仍能触发
+   * 注册全流程提醒。
+   * 优先交给 HarmonyOS Agent Reminder（App 退到后台/被挂起后仍可触发），
+   * 发布失败的条目自动退回进程内定时器，保证 Preview 和模拟器也能演示。
    */
   static scheduleReminders(items: ReminderItem[]): void {
     DeviceSyncService.clearReminders();
+    DeviceSyncService.publishPlatformReminders(items).then((failed: ReminderItem[]) => {
+      DeviceSyncService.scheduleLocalFallback(failed);
+      console.info(`[DeviceSync] scheduled platform=${items.length - failed.length}, ` +
+                   `localFallback=${failed.length}`);
+    }).catch((e: Error) => {
+      console.warn(`[DeviceSync] platform reminder unavailable: ${e}`);
+      DeviceSyncService.scheduleLocalFallback(items);
+    });
+  }
 
+  static clearReminders(): void {
+    for (let i = 0; i < DeviceSyncService.timers.length; i++) {
+      clearTimeout(DeviceSyncService.timers[i]);
+    }
+    DeviceSyncService.timers = [];
+    const ids: number[] = DeviceSyncService.platformReminderIds;
+    DeviceSyncService.platformReminderIds = [];
+    for (let i = 0; i < ids.length; i++) {
+      reminderAgentManager.cancelReminder(ids[i]).catch((e: Error) => {
+        console.warn(`[DeviceSync] cancel platform reminder failed: ${e}`);
+      });
+    }
+  }
+
+  private static scheduleLocalFallback(items: ReminderItem[]): void {
     const now: number = Date.now();
     for (let i = 0; i < items.length; i++) {
       const item: ReminderItem = items[i];
@@ -185,7 +228,6 @@ export class DeviceSyncService {
       if (delay <= 0) {
         continue;
       }
-      // 演示期用 setTimeout；正式版改用 reminderAgentManager 后台提醒
       const timerId: number = setTimeout(() => {
         const cmd: DeviceNotifyCmd = {
           device: item.targetDevice,
@@ -198,13 +240,55 @@ export class DeviceSyncService {
       }, delay);
       DeviceSyncService.timers.push(timerId);
     }
-    console.info(`[DeviceSync] scheduled ${DeviceSyncService.timers.length} reminders`);
   }
 
-  static clearReminders(): void {
-    for (let i = 0; i < DeviceSyncService.timers.length; i++) {
-      clearTimeout(DeviceSyncService.timers[i]);
+  private static async publishPlatformReminders(items: ReminderItem[]): Promise<ReminderItem[]> {
+    const failed: ReminderItem[] = [];
+    const now: number = Date.now();
+    for (let i = 0; i < items.length; i++) {
+      const item: ReminderItem = items[i];
+      if (item.triggerAt <= now) {
+        continue;
+      }
+      const date: Date = new Date(item.triggerAt);
+      if (isNaN(date.getTime())) {
+        failed.push(item);
+        continue;
+      }
+      const request: reminderAgentManager.ReminderRequestCalendar = {
+        reminderType: reminderAgentManager.ReminderType.REMINDER_TYPE_CALENDAR,
+        dateTime: {
+          year: date.getFullYear(),
+          month: date.getMonth() + 1,
+          day: date.getDate(),
+          hour: date.getHours(),
+          minute: date.getMinutes(),
+          second: date.getSeconds()
+        },
+        title: item.title,
+        content: item.content,
+        notificationId: DeviceSyncService.notificationId(item),
+        groupId: 'zhihutongxing-care',
+        ringDuration: 10,
+        tapDismissed: true
+      };
+      try {
+        const reminderId: number = await reminderAgentManager.publishReminder(request);
+        DeviceSyncService.platformReminderIds.push(reminderId);
+      } catch (e) {
+        failed.push(item);
+        console.warn(`[DeviceSync] publish ${item.id} fallback to local: ${e}`);
+      }
     }
-    DeviceSyncService.timers = [];
+    return failed;
+  }
+
+  private static notificationId(item: ReminderItem): number {
+    let hash: number = 7;
+    const value: string = item.id + '_' + item.triggerAt.toString();
+    for (let i = 0; i < value.length; i++) {
+      hash = (hash * 31 + value.charCodeAt(i)) % 2147483647;
+    }
+    return hash;
   }
 }

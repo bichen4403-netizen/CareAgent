@@ -17,26 +17,48 @@
 import { image } from '@kit.ImageKit';
 import { http } from '@kit.NetworkKit';
 import { util } from '@kit.ArkTS';
+import { textRecognition } from '@kit.CoreVisionKit';
 import { ServiceRecord, RecordSource } from '../core/AgentTypes';
 import { LLMService, LLMMessage } from './LLMService';
 
 export interface OcrProvider {
   /** 传入图片 PixelMap，返回识别出的原始文字（不做结构化，只是纯文本） */
   recognizeText(pixelMap: image.PixelMap): Promise<string>;
+  /** 释放系统或网络识别资源；无状态 Provider 实现为空操作。 */
+  release(): Promise<void>;
 }
 
 /**
  * 系统 OCR（优先使用）
- * TODO: 对照本地 SDK 版本核实 @kit.CoreVisionKit 的具体 API，
- * 目前 HarmonyOS 5.x 起提供文字识别能力，函数名以官方文档为准。
+ * 使用 HarmonyOS Core Vision Kit 的通用文字识别能力。
+ * 注意：该能力不支持 DevEco 模拟器，模拟器中会由调用方显示人工输入兜底。
  */
 export class SystemOcrProvider implements OcrProvider {
+  private initialized: boolean = false;
+
   async recognizeText(pixelMap: image.PixelMap): Promise<string> {
-    // TODO: 替换为真实调用，示例（具体以官方文档为准）：
-    // import { textRecognition } from '@kit.CoreVisionKit';
-    // const result = await textRecognition.recognizeText({ pixelMap });
-    // return result.text ?? result.value?.map(b => b.text).join('\n') ?? '';
-    throw new Error('SystemOcrProvider not wired yet, see TODO in OcrCaptureService.ets');
+    if (!this.initialized) {
+      await textRecognition.init();
+      this.initialized = true;
+    }
+
+    const visionInfo: textRecognition.VisionInfo = {
+      pixelMap: pixelMap
+    };
+    const configuration: textRecognition.TextRecognitionConfiguration = {
+      isDirectionDetectionSupported: false
+    };
+    const result: textRecognition.TextRecognitionResult =
+      await textRecognition.recognizeText(visionInfo, configuration);
+    return result.value;
+  }
+
+  async release(): Promise<void> {
+    if (!this.initialized) {
+      return;
+    }
+    await textRecognition.release();
+    this.initialized = false;
   }
 }
 
@@ -79,6 +101,10 @@ export class HttpOcrProvider implements OcrProvider {
     }
   }
 
+  async release(): Promise<void> {
+    // HTTP Provider 没有需要释放的长生命周期资源。
+  }
+
   /** 用系统 Base64Helper 编码，避免用方括号动态取全局属性（ArkTS 不支持这种写法） */
   private static arrayBufferToBase64(buffer: ArrayBuffer): string {
     const bytes: Uint8Array = new Uint8Array(buffer);
@@ -92,6 +118,10 @@ export class MockOcrProvider implements OcrProvider {
   async recognizeText(pixelMap: image.PixelMap): Promise<string> {
     return '';
   }
+
+  async release(): Promise<void> {
+    // 离线兜底 Provider 无需释放资源。
+  }
 }
 
 const STRUCTURE_PROMPT: string = `你是病历信息整理助手。下面是一张处方单或检查单拍照识别出的原始文字，
@@ -103,13 +133,18 @@ const STRUCTURE_PROMPT: string = `你是病历信息整理助手。下面是一�
   "visitDate": "就诊日期 YYYY-MM-DD，识别不到则空字符串",
   "followUpDays": "医嘱复诊间隔天数，数字，没提到则填0",
   "prescription": "药品名称与用法用量，原样摘录，没有则空字符串"
-}`;
+}
+只提取原文明确出现的内容，不要根据常识补全或猜测；身份证号、医保卡号等敏感号码不要写入任何字段。`;
 
 export class OcrCaptureService {
   private static ocrProvider: OcrProvider = new MockOcrProvider();
 
   static setProvider(p: OcrProvider): void {
     OcrCaptureService.ocrProvider = p;
+  }
+
+  static async release(): Promise<void> {
+    await OcrCaptureService.ocrProvider.release();
   }
 
   /**

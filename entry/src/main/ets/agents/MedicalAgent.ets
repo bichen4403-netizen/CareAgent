@@ -42,6 +42,7 @@ export class MedicalAgent extends BaseAgent {
       'lastPrescription': response.lastPrescription,
       'isRevisit': response.isRevisit,
       'replanned': response.replanned,
+      'preparation': response.preparation,
       'officialChannel': response.officialChannel
     };
 

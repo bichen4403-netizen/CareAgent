@@ -43,7 +43,26 @@ export class IntentParser {
     const raw: string = await LLMService.chat(messages);
     let intent: ParsedIntent = IntentParser.safeParse(raw, userText);
     intent = IntentParser.enrichFromHistory(intent, store);
+    intent = IntentParser.ensureRequiredSlots(intent);
     return intent;
+  }
+
+  /** 日期是生成出行和提醒时间的必要条件，不能用“明天”等默认值代替。 */
+  private static ensureRequiredSlots(intent: ParsedIntent): ParsedIntent {
+    if ((intent.type === IntentType.MEDICAL_VISIT || intent.type === IntentType.MEDICINE_REFILL) &&
+        intent.expectedDate.length === 0 && !IntentParser.hasSlot(intent.missingSlots, 'expectedDate')) {
+      intent.missingSlots.push('expectedDate');
+    }
+    return intent;
+  }
+
+  private static hasSlot(slots: string[], name: string): boolean {
+    for (let i = 0; i < slots.length; i++) {
+      if (slots[i] === name) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /** 容错解析：模型可能带 markdown 包裹或多余文字 */
@@ -57,17 +76,37 @@ export class IntentParser {
 
     try {
       const obj: Record<string, Object> = JSON.parse(jsonStr) as Record<string, Object>;
-      const typeStr: string = (obj['type'] as string) ?? 'UNKNOWN';
-      const slots = obj['missingSlots'] as string[];
+      const typeStr: string = typeof obj['type'] === 'string' ? obj['type'] as string : 'UNKNOWN';
+      const hospital: string = typeof obj['hospital'] === 'string' ? obj['hospital'] as string : '';
+      const department: string = typeof obj['department'] === 'string'
+        ? obj['department'] as string : '';
+      const purpose: string = typeof obj['purpose'] === 'string'
+        ? obj['purpose'] as string : fallbackText;
+      const expectedDate: string = typeof obj['expectedDate'] === 'string'
+        ? obj['expectedDate'] as string : '';
+      const isRevisit: boolean = typeof obj['isRevisit'] === 'boolean'
+        ? obj['isRevisit'] as boolean : false;
+      const confidence: number = typeof obj['confidence'] === 'number'
+        ? Math.max(0, Math.min(1, obj['confidence'] as number)) : 0.5;
+      const slots: string[] = [];
+      const rawSlots: Object | undefined = obj['missingSlots'];
+      if (Array.isArray(rawSlots)) {
+        const slotValues: Object[] = rawSlots as Object[];
+        for (let i = 0; i < slotValues.length; i++) {
+          if (typeof slotValues[i] === 'string') {
+            slots.push(slotValues[i] as string);
+          }
+        }
+      }
       return {
         type: IntentParser.toIntentType(typeStr),
-        hospital: (obj['hospital'] as string) ?? '',
-        department: (obj['department'] as string) ?? '',
-        purpose: (obj['purpose'] as string) ?? fallbackText,
-        expectedDate: (obj['expectedDate'] as string) ?? '',
-        isRevisit: (obj['isRevisit'] as boolean) ?? false,
-        confidence: (obj['confidence'] as number) ?? 0.5,
-        missingSlots: slots ?? []
+        hospital: hospital.trim(),
+        department: department.trim(),
+        purpose: purpose.trim(),
+        expectedDate: expectedDate.trim(),
+        isRevisit: isRevisit,
+        confidence: confidence,
+        missingSlots: slots
       };
     } catch (e) {
       console.error(`[IntentParser] parse failed: ${e}`);
@@ -106,7 +145,15 @@ export class IntentParser {
       return intent;
     }
 
-    const last: ServiceRecord | null = store.findLastVisit(intent.hospital, intent.department);
+    // 历史科室只用于复诊/续方等明确的延续性请求。
+    // 新的检查或首次就诊不能套用上次科室（例如上次心内科、这次做胃镜）。
+    const allowHistory: boolean = intent.isRevisit ||
+      intent.type === IntentType.MEDICINE_REFILL ||
+      intent.purpose.indexOf('复查') >= 0 || intent.purpose.indexOf('复诊') >= 0 ||
+      intent.purpose.indexOf('拿药') >= 0 || intent.purpose.indexOf('取药') >= 0 ||
+      intent.purpose.indexOf('续方') >= 0;
+    const last: ServiceRecord | null = allowHistory
+      ? store.findLastVisit(intent.hospital, intent.department) : null;
     if (last === null) {
       const preferred: string[] = store.getProfile().preferredHospitals;
       if (intent.hospital.length === 0 && preferred.length > 0) {

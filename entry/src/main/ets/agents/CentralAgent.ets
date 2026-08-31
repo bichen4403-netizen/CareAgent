@@ -44,11 +44,23 @@ export class CentralAgent {
       return '我正在为您安排上一件事，稍等一下';
     }
 
+    // 紧急症状优先于普通意图解析和任务编排，避免模型/网络异常时
+    // 把需要立即就医的请求误判为普通陪诊需求。
+    if (CentralAgent.isEmergencyRequest(userText)) {
+      return '您描述的情况可能比较紧急，请立即联系身边的人，拨打急救电话或前往最近的急诊，不要等待应用安排。';
+    }
+
     // ---- 1. 意图理解 ----
     const intent: ParsedIntent = await IntentParser.parse(userText, rt);
 
     if (intent.type === IntentType.UNKNOWN || intent.confidence < 0.4) {
       return '我没太听清，您是想去医院看病、还是取药呢？';
+    }
+
+    // 查报告不需要进入挂号/出行 DAG，直接引导用户使用拍照录入，
+    // 避免把“查检查报告”误判成缺少医院或科室。
+    if (intent.type === IntentType.REPORT_QUERY) {
+      return '您可以点击右上角“拍照录入”，我会先整理检查单内容，再请您确认后保存。';
     }
 
     // ---- 2. 槽位澄清：一次只问一个问题 ----
@@ -57,20 +69,23 @@ export class CentralAgent {
     }
 
     // ---- 3. 任务规划 ----
+    // 新请求从干净的共享黑板开始，避免出行/导航读取上一条就诊方案。
+    blackboard.reset();
     const plan: TaskPlan = TaskPlanner.plan(intent);
     blackboard.setPlan(plan);
     eventBus.emit(BusEvent.PLAN_UPDATED, JSON.stringify(plan));
 
     // ---- 4. 调度执行 ----
-    await this.runPlan(plan, rt);
-    return '';
+    // 医疗任务可能因为缺少医院/科室而失败。把医疗 Agent 的澄清问题
+    // 直接返回给页面，避免被最终汇总语句吞掉，用户才能继续补充信息。
+    return await this.runPlan(plan, rt);
   }
 
   /**
    * 执行任务 DAG：每轮取出所有依赖已满足的任务并行执行
    * 这是"多 Agent 协同"的实际调度逻辑
    */
-  private async runPlan(plan: TaskPlan, rt: RuntimeContext): Promise<void> {
+  private async runPlan(plan: TaskPlan, rt: RuntimeContext): Promise<string> {
     this.running = true;
     try {
       let guard: number = 0;
@@ -94,16 +109,27 @@ export class CentralAgent {
         }
         await Promise.all(jobs);
 
+        // T1 医疗是整条链路的前置任务。若它需要用户补充信息，
+        // 立即把问题交还给调用页面，不继续播报“安排好了”。
+        const medicalNode: TaskNode | null = TaskPlanner.findNode(plan, 'T1');
+        if (medicalNode !== null && medicalNode.status === TaskStatus.FAILED) {
+          const medicalResult: AgentResult | undefined = blackboard.getResult('T1');
+          if (medicalResult !== undefined && medicalResult.speech.length > 0) {
+            return medicalResult.speech;
+          }
+        }
+
         // ---- 每轮结束后做一次异常监测 ----
         const anomaly: Anomaly = await this.detectAnomaly(plan, rt);
         if (anomaly.type !== AnomalyType.NONE) {
           await this.handleAnomaly(plan, anomaly, rt);
-          return;
+          return '';
         }
       }
 
       // ---- 5. 汇总播报 ----
       this.broadcastSummary(plan);
+      return '';
     } finally {
       this.running = false;
     }
@@ -186,6 +212,19 @@ export class CentralAgent {
   private speak(text: string): void {
     const payload: Record<string, Object> = { 'text': text };
     eventBus.emit(BusEvent.SPEAK, JSON.stringify(payload));
+  }
+
+  private static isEmergencyRequest(text: string): boolean {
+    const emergencyTerms: string[] = [
+      '胸痛', '胸口痛', '呼吸困难', '喘不上气', '昏迷', '意识不清',
+      '大出血', '止不住血', '抽搐', '严重过敏', '口角歪斜', '言语不清'
+    ];
+    for (let i = 0; i < emergencyTerms.length; i++) {
+      if (text.indexOf(emergencyTerms[i]) >= 0) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

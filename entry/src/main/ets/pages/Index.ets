@@ -9,7 +9,8 @@
  */
 
 import { router } from '@kit.ArkUI';
-import { common } from '@kit.AbilityKit';
+import { abilityAccessCtrl, common, Permissions } from '@kit.AbilityKit';
+import { geoLocationManager } from '@kit.LocationKit';
 import { photoAccessHelper } from '@kit.MediaLibraryKit';
 import { image } from '@kit.ImageKit';
 import { fileIo } from '@kit.CoreFileKit';
@@ -23,6 +24,7 @@ import { ContextStore } from '../core/ContextStore';
 import { DeviceSyncService } from '../services/DeviceSyncService';
 import { WeatherService } from '../services/WeatherService';
 import { OcrCaptureService } from '../services/OcrCaptureService';
+import { SpeechInputService } from '../services/SpeechInputService';
 
 /** 对话气泡 */
 class ChatItem {
@@ -61,6 +63,7 @@ struct Index {
 
   private central: CentralAgent = new CentralAgent();
   private scroller: Scroller = new Scroller();
+  private eventsBound: boolean = false;
 
   aboutToAppear(): void {
     this.initServices();
@@ -70,15 +73,30 @@ struct Index {
   }
 
   aboutToDisappear(): void {
-    eventBus.clear();
-    DeviceSyncService.clearReminders();
+    // 提醒由 Ability/系统 Agent Reminder 维护，页面离开不应取消。
+    SpeechInputService.cancel();
   }
 
   private async initServices(): Promise<void> {
     const ctx = getContext(this) as common.UIAbilityContext;
     await ContextStore.getInstance().init(ctx);
+    await this.requestLocationPermission(ctx);
     DeviceSyncService.start();
+    await DeviceSyncService.requestNotificationPermission(ctx);
     await this.seedDemoProfile();
+  }
+
+  /** 首次使用时申请位置权限；用户拒绝时仍保留演示坐标兜底。 */
+  private async requestLocationPermission(ctx: common.UIAbilityContext): Promise<void> {
+    try {
+      const permissions: Array<Permissions> = [
+        'ohos.permission.APPROXIMATELY_LOCATION' as Permissions,
+        'ohos.permission.LOCATION' as Permissions
+      ];
+      await abilityAccessCtrl.createAtManager().requestPermissionsFromUser(ctx, permissions);
+    } catch (e) {
+      console.warn(`[Index] location permission unavailable, use fallback: ${e}`);
+    }
   }
 
   /** 演示用：预置一份用户档案与一条历史就诊记录 */
@@ -112,6 +130,10 @@ struct Index {
 
   /** 订阅 Agent 层事件，驱动 UI 更新 */
   private bindEvents(): void {
+    if (this.eventsBound) {
+      return;
+    }
+    this.eventsBound = true;
     eventBus.on(BusEvent.PLAN_UPDATED, (msg: BusMessage) => {
       const plan: TaskPlan = JSON.parse(msg.payload) as TaskPlan;
       const list: ProgressItem[] = [];
@@ -261,18 +283,24 @@ struct Index {
     this.pendingRecord = null;
   }
 
-  /**
-   * 采集当前上下文：位置、天气、时间
-   *
-   * ⚠️ 定位目前仍是写死的经纬度（杭州附近）。
-   * 要接真实定位，需要在 module.json5 里已经声明的 LOCATION 权限基础上，
-   * 调用 @kit.LocationKit 的 geoLocationManager.getCurrentLocation() 获取真实经纬度，
-   * 这里先用固定坐标，保证没有定位权限时也能跑通全流程演示。
-   */
+  /** 采集当前上下文：位置、天气、时间；定位失败时使用演示坐标兜底。 */
   private async buildRuntimeContext(): Promise<RuntimeContext> {
     const profile = ContextStore.getInstance().getProfile();
-    const lat: number = 30.2741;
-    const lng: number = 120.1551;
+    let lat: number = 30.2741;
+    let lng: number = 120.1551;
+    try {
+      const location: geoLocationManager.Location = await geoLocationManager.getCurrentLocation({
+        timeoutMs: 3000,
+        maxAccuracy: 500
+      });
+      if (location !== null && isFinite(location.latitude) && isFinite(location.longitude) &&
+          Math.abs(location.latitude) <= 90 && Math.abs(location.longitude) <= 180) {
+        lat = location.latitude;
+        lng = location.longitude;
+      }
+    } catch (e) {
+      console.warn(`[Index] current location unavailable, use demo coordinates: ${e}`);
+    }
     // 天气改为真实接口（未配置 Key 时自动降级为 Mock，见 WeatherService.ets）
     const weather: string = await WeatherService.getWeather();
     return {
@@ -285,17 +313,34 @@ struct Index {
     };
   }
 
-  /** 模拟语音输入 */
-  private onVoiceTap(): void {
-    if (this.busy) {
+  /** 真机优先调用系统语音识别；Preview/模拟器自动使用演示语料。 */
+  private async onVoiceTap(): Promise<void> {
+    if (this.busy || this.listening) {
       return;
     }
     this.listening = true;
-    // TODO: 接入系统语音识别，此处用固定语料模拟
-    setTimeout(() => {
+    try {
+      const ctx = getContext(this) as common.UIAbilityContext;
+      const result = await abilityAccessCtrl.createAtManager().requestPermissionsFromUser(
+        ctx, ['ohos.permission.MICROPHONE' as Permissions]
+      );
+      const granted: boolean = result.authResults.length > 0 && result.authResults[0] === 0;
+      if (!granted) {
+        throw new Error('microphone permission denied');
+      }
+      const text: string = await SpeechInputService.start();
+      if (text.length > 0) {
+        await this.submit(text);
+      } else {
+        this.pushChat('assistant', '暂时没有听清，您也可以直接打字告诉我');
+      }
+    } catch (e) {
+      // 模拟器通常没有 CoreSpeechKit/麦克风服务，保留可重复的离线演示入口。
+      console.warn(`[Index] speech unavailable, use demo phrase: ${e}`);
+      await this.submit('我要去第一人民医院拿高血压药');
+    } finally {
       this.listening = false;
-      this.submit('我要去第一人民医院拿高血压药');
-    }, 1200);
+    }
   }
 
   // ==================== UI ====================

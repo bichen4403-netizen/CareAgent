@@ -12,12 +12,14 @@
 import { router } from '@kit.ArkUI';
 import { common } from '@kit.AbilityKit';
 import {
-  Appointment, TravelPlan, IndoorNavPlan, NavStep, ReminderItem, AgentResult, BookingStatus
+  Appointment, TravelPlan, IndoorNavPlan, NavStep, ReminderItem, AgentResult, BookingStatus,
+  MedicalPreparation, RecordSource
 } from '../core/AgentTypes';
 import { blackboard } from '../core/EventBus';
 import { DeviceSyncService } from '../services/DeviceSyncService';
 import { CardDataStore, CardSnapshot } from '../widget/CardDataStore';
 import { OfficialChannelRegistry, OfficialChannel, AppLinkService } from '../services/AppLinkService';
+import { ContextStore } from '../core/ContextStore';
 
 @Entry
 @Component
@@ -26,6 +28,7 @@ struct JourneyPage {
   @State travel: TravelPlan | null = null;
   @State nav: IndoorNavPlan | null = null;
   @State reminders: ReminderItem[] = [];
+  @State preparation: MedicalPreparation | null = null;
   @State confirmed: boolean = false;
 
   aboutToAppear(): void {
@@ -38,6 +41,10 @@ struct JourneyPage {
     if (medical !== undefined && medical.data.length > 0) {
       const d: Record<string, Object> = JSON.parse(medical.data) as Record<string, Object>;
       this.appt = d['appointment'] as Appointment;
+      // 兼容旧版本黑板结果：没有准备清单时仍可正常展示就诊安排。
+      if (d['preparation'] !== undefined && d['preparation'] !== null) {
+        this.preparation = d['preparation'] as MedicalPreparation;
+      }
     }
 
     const travelRes: AgentResult | undefined = blackboard.getResultByAgent('TravelAgent');
@@ -85,12 +92,28 @@ struct JourneyPage {
    * 只有这一步之后才真正注册出行提醒、同步桌面卡片 —— 避免用户还没挂上号，
    * 手表却已经在提醒"该出发了"这种前后矛盾的体验
    */
-  private onConfirmOfficialDone(): void {
+  private async onConfirmOfficialDone(): Promise<void> {
     if (this.appt === null) {
       return;
     }
     this.appt.bookingStatus = BookingStatus.CONFIRMED;
     this.confirmed = true;
+    // 用户明确确认后才沉淀为可信历史，供下一次复诊/取药补全医院和科室。
+    try {
+      await ContextStore.getInstance().addRecord({
+        recordId: `visit_${Date.now()}`,
+        hospital: this.appt.hospitalName,
+        department: this.appt.department,
+        doctorName: this.appt.doctorName,
+        visitDate: this.appt.visitDate,
+        followUpDays: 0,
+        prescription: '',
+        source: RecordSource.MANUAL_INPUT,
+        confirmed: true
+      });
+    } catch (e) {
+      console.error(`[JourneyPage] save confirmed visit failed: ${e}`);
+    }
     DeviceSyncService.scheduleReminders(this.reminders);
     DeviceSyncService.speak('好的，都记下了，到时间我会提醒您');
     this.syncToCard();
@@ -221,6 +244,55 @@ struct JourneyPage {
               this.InfoRow('诊室', `${this.appt.buildingName}${this.appt.floor}${this.appt.roomNo}`)
               this.InfoRow('费用', `${this.appt.registrationFee}元`)
               this.InfoRow('状态', this.bookingStatusLabel(this.appt.bookingStatus))
+            }
+            .cardStyle()
+          }
+
+          // 医疗 Agent 的材料与注意事项，统一从医疗服务结果读取
+          if (this.preparation !== null) {
+            Column() {
+              this.SectionCard('就诊准备', '医疗 Agent')
+              Text('到院前要做什么')
+                .fontSize(17)
+                .fontWeight(FontWeight.Medium)
+                .fontColor('#1B2A34')
+                .width('100%')
+                .margin({ bottom: 4 })
+              ForEach(this.preparation.visitItems, (item: string) => {
+                Text(`• ${item}`)
+                  .fontSize(17)
+                  .fontColor('#22303C')
+                  .width('100%')
+                  .padding({ top: 4, bottom: 4 })
+              }, (item: string) => `visit_${item}`)
+
+              Text('需要带的材料')
+                .fontSize(17)
+                .fontWeight(FontWeight.Medium)
+                .fontColor('#1B2A34')
+                .width('100%')
+                .margin({ top: 10, bottom: 4 })
+              ForEach(this.preparation.materials, (item: string) => {
+                Text(`• ${item}`)
+                  .fontSize(17)
+                  .fontColor('#22303C')
+                  .width('100%')
+                  .padding({ top: 4, bottom: 4 })
+              }, (item: string) => `material_${item}`)
+
+              Text('注意事项')
+                .fontSize(17)
+                .fontWeight(FontWeight.Medium)
+                .fontColor('#1B2A34')
+                .width('100%')
+                .margin({ top: 10, bottom: 4 })
+              ForEach(this.preparation.notices, (item: string) => {
+                Text(`• ${item}`)
+                  .fontSize(17)
+                  .fontColor('#7A5A3A')
+                  .width('100%')
+                  .padding({ top: 4, bottom: 4 })
+              }, (item: string) => `notice_${item}`)
             }
             .cardStyle()
           }

@@ -11,6 +11,8 @@ import { ContextStore } from '../core/ContextStore';
 import { DeviceSyncService } from '../services/DeviceSyncService';
 import { LLMService, HttpLLMProvider } from '../services/LLMService';
 import { CentralAgent } from '../agents/CentralAgent';
+import { OcrCaptureService, SystemOcrProvider } from '../services/OcrCaptureService';
+import { SpeechInputService } from '../services/SpeechInputService';
 
 /**
  * ⚠️ 配置项：接入真实大模型
@@ -44,6 +46,10 @@ export default class EntryAbility extends UIAbility {
       console.info('[EntryAbility] LLM provider: Mock (offline)');
     }
 
+    // 医疗 Agent 的图片入口使用系统通用文字识别；Core Vision Kit 在模拟器
+    // 中不可用，识别失败时由页面保留人工输入兜底，不影响文字流程演示。
+    OcrCaptureService.setProvider(new SystemOcrProvider());
+
     // 跨设备协同服务
     DeviceSyncService.start();
     // 初始化语音合成引擎（失败也不影响其它功能，只是没声音）
@@ -64,8 +70,11 @@ export default class EntryAbility extends UIAbility {
     if (this.proactiveTimer >= 0) {
       clearInterval(this.proactiveTimer);
     }
-    DeviceSyncService.clearReminders();
+    SpeechInputService.cancel();
     DeviceSyncService.releaseTts();
+    OcrCaptureService.release().catch((e: Error) => {
+      console.warn(`[EntryAbility] OCR release failed: ${e.message}`);
+    });
     console.info('[EntryAbility] onDestroy');
   }
 

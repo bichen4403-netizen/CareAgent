@@ -19,7 +19,7 @@
         "srcEntries": [
           "../../skills/medical-assist/scripts/MedicalAssistSkill.ets"
         ],
-        "version": "1.0.0"
+        "version": "1.0.3"
       },
       {
         "name": "travel-plan",

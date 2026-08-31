@@ -17,6 +17,7 @@ const KEY_RECORDS: string = 'service_records';
 export class ContextStore {
   private static instance: ContextStore | null = null;
   private store: preferences.Preferences | null = null;
+  private initPromise: Promise<void> | null = null;
   private profileCache: UserProfile | null = null;
   private recordsCache: ServiceRecord[] = [];
 
@@ -28,6 +29,24 @@ export class ContextStore {
   }
 
   async init(ctx: common.UIAbilityContext): Promise<void> {
+    // EntryAbility 和首页都会触发初始化。并发调用时复用同一个 Promise，
+    // 避免一次读取覆盖另一次写入，保证演示档案和历史记录稳定。
+    if (this.store !== null) {
+      return;
+    }
+    if (this.initPromise !== null) {
+      await this.initPromise;
+      return;
+    }
+    this.initPromise = this.loadStore(ctx);
+    try {
+      await this.initPromise;
+    } finally {
+      this.initPromise = null;
+    }
+  }
+
+  private async loadStore(ctx: common.UIAbilityContext): Promise<void> {
     this.store = await preferences.getPreferences(ctx, STORE_NAME);
     await this.loadAll();
   }

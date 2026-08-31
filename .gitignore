@@ -1,0 +1,16 @@
+# DevEco Studio / Hvigor generated files
+.hvigor/cache/
+.hvigor/outputs/
+.hvigor/report/
+entry/.preview/
+entry/build/
+
+# Local IDE and machine-specific files
+.idea/workspace.xml
+.idea/**/workspace.xml
+local.properties
+
+# Build artifacts
+*.hap
+*.apk
+*.log

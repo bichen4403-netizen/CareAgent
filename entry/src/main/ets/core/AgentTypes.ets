@@ -106,6 +106,13 @@ export interface Appointment {
   officialChannelName: string;   // 建议去哪个官方渠道确认，如"京医通""浙里办"
 }
 
+/** 医疗 Agent 生成的就诊准备清单（只做事务整理，不做诊断或处方建议） */
+export interface MedicalPreparation {
+  visitItems: string[];
+  materials: string[];
+  notices: string[];
+}
+
 /** 出行方案 */
 export interface TravelPlan {
   originAddress: string;

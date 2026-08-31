@@ -48,7 +48,7 @@ zhihu-tongxing/
 │           │   ├── Index.ets              # 主界面（语音发起 + 进度可视）
 │           │   └── JourneyPage.ets        # 陪诊安排详情与确认
 │           └── entryability/EntryAbility.ets
-└── skills/                        # 小艺开放平台 Skill 定义
+└── entry/skills/                  # 小艺开放平台 Skill 定义（模块级固定目录）
     ├── medical-assist/SKILL.md
     ├── travel-plan/SKILL.md
     ├── hospital-nav/SKILL.md
@@ -127,7 +127,7 @@ T1 医疗 ──────────┤
    `AppScope/resources/base/media/` 下需要 `app_icon.png` ——
    可从任意 DevEco 新建工程复制一份过来
 4. 直接运行 —— **默认使用离线 Mock 数据，无需任何配置和网络**
-5. 点击"按住说话"按钮，即可看到完整陪诊流程演示
+5. 点击"按住说话"按钮：真机有麦克风权限时使用系统离线语音识别；Preview/模拟器自动回退到演示语料，仍可看到完整陪诊流程
 
 ### 接入真实大模型
 
@@ -138,7 +138,7 @@ Demo 默认使用离线 Mock，答辩现场断网也能完整演示。真实模�
 
 ### 接入小艺开放平台
 
-`skills/` 下四个 SKILL.md 是按能力边界拆分好的技能定义，
+`entry/skills/` 下四个 SKILL.md 是按能力边界拆分好的技能定义，
 到小艺开放平台创建 Skill 时可直接作为技能描述与执行流程的依据。
 
 > ⚠️ 小艺开放平台的 Agent / Skill 具体 SDK 接口、参数格式请以
@@ -148,19 +148,24 @@ Demo 默认使用离线 Mock，答辩现场断网也能完整演示。真实模�
 
 ---
 
-## 五、待接入的真实能力
+## 五、增强能力状态与真实服务边界
 
-代码中标注 `TODO` 的位置，是需要替换为真实系统能力的点：
+文档中要求的端侧增强能力已在 Demo 中接通，并且都保留了离线兜底：
 
-| 位置 | 待接入能力 |
-|---|---|
-| `Index.ets` `onVoiceTap()` | 系统语音识别 |
-| `Index.ets` `buildRuntimeContext()` | 定位服务获取真实经纬度 |
-| `DeviceSyncService.speak()` | 系统语音合成（老年模式：语速放慢、音量提高） |
-| `DeviceSyncService.notifyWatch()` | 分布式流转，把提醒发送到手表侧 Ability |
-| `DeviceSyncService.scheduleReminders()` | 后台代理提醒，保证退到后台仍能触发 |
-| `MockDataSource` 全部方法 | 医院挂号接口 / 地图出行服务 / 院内定位 |
-| `widget/CareCardAbility.ets` | 卡片刷新已实现，需确认 FormKit API 版本适配 |
+| 能力 | 当前实现 | 真实设备/服务的前置条件 |
+|---|---|---|
+| 语音输入 | `SpeechInputService` 调用 CoreSpeechKit，模拟器不可用时回退演示语料 | HarmonyOS 真机、麦克风授权、系统语音能力 |
+| 位置感知 | `Index.ets` 动态申请位置权限并读取经纬度，失败时使用演示坐标 | HarmonyOS 真机、位置授权与定位开关 |
+| 语音播报 | `DeviceSyncService` 使用 CoreSpeechKit 离线 TTS，失败时记录日志 | 设备支持文本转语音 |
+| 后台提醒 | 优先使用 `reminderAgentManager`，发布失败时使用本地定时器 | 通知授权、`PUBLISH_AGENT_REMINDER` 权限 |
+| 手机/手表/耳机协同 | 按目标设备分派提醒；手表/耳机不可用时退回手机卡片或播报 | 已配对设备与对应的分布式 Ability；开启系统通知镜像后可触达穿戴设备 |
+| OCR 多模态输入 | 系统文字识别 + 用户确认后写入端侧病历 | 支持文字识别的真机；模拟器可用手工输入兜底 |
+
+以下项目不能在没有账号、密钥或医院接口的情况下“凭代码完成”，当前已隔离成可替换 Provider：
+
+- 高德实时路况/天气：`TravelService`、`WeatherService` 默认不保存 Key，使用 Mock；正式接入应由受控后端代理。
+- 医院真实挂号、号源、院内地图：`MockDataSource` 是离线演示数据源；挂号仍跳转官方渠道并要求用户二次确认。
+- 小艺开放平台的 Skill 审核与绑定：属于平台侧配置，不由 HAP 代码自动完成。
 
 ---
 

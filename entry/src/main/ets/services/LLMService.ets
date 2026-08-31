@@ -106,69 +106,98 @@ export class MockLLMProvider implements LLMProvider {
 
   /** 关键词规则兜底：无网络或模型超时时保证流程不中断 */
   private static ruleBasedIntent(text: string): string {
+    // IntentParser 会把“今天/用户背景/用户说”一起放入 user message。
+    // 兜底解析只能使用用户真正说的那一段，否则会把上下文中的常去医院
+    // 误当成这次请求的目标医院。
+    const requestText: string = MockLLMProvider.extractRequestText(text);
     let type: string = 'UNKNOWN';
-    if (text.indexOf('药') >= 0 || text.indexOf('续方') >= 0) {
+    if (requestText.indexOf('药') >= 0 || requestText.indexOf('续方') >= 0) {
       type = 'MEDICINE_REFILL';
-    } else if (text.indexOf('报告') >= 0 || text.indexOf('化验') >= 0) {
+    } else if (requestText.indexOf('报告') >= 0 || requestText.indexOf('化验') >= 0) {
       type = 'REPORT_QUERY';
-    } else if (text.indexOf('医院') >= 0 || text.indexOf('复查') >= 0 ||
-               text.indexOf('看病') >= 0 || text.indexOf('挂号') >= 0 ||
-               text.indexOf('就诊') >= 0 || text.indexOf('复诊') >= 0) {
+    } else if (requestText.indexOf('医院') >= 0 || requestText.indexOf('复查') >= 0 ||
+               requestText.indexOf('看病') >= 0 || requestText.indexOf('挂号') >= 0 ||
+               requestText.indexOf('就诊') >= 0 || requestText.indexOf('复诊') >= 0) {
       type = 'MEDICAL_VISIT';
     }
 
     let hospital: string = '';
-    const hIdx: number = text.indexOf('医院');
+    const hIdx: number = requestText.indexOf('医院');
     if (hIdx > 0) {
-      const start: number = Math.max(0, hIdx - 10);
-      hospital = text.substring(start, hIdx + 2);
+      const start: number = Math.max(0, hIdx - 12);
+      hospital = requestText.substring(start, hIdx + 2);
       const cut: number = hospital.search(/[去到在]/);
       if (cut >= 0) {
         hospital = hospital.substring(cut + 1);
       }
+      // “去医院/到医院”只是地点类别，不是具体医院名称，必须交给
+      // 端侧历史或用户澄清，不能套用 Mock 地址生成一个虚假的医院。
+      if (hospital === '医院') {
+        hospital = '';
+      }
     }
 
     let department: string = '';
-    if (text.indexOf('高血压') >= 0 || text.indexOf('血压') >= 0 || text.indexOf('心') >= 0) {
+    if (requestText.indexOf('高血压') >= 0 || requestText.indexOf('血压') >= 0 || requestText.indexOf('心') >= 0) {
       department = '心血管内科';
-    } else if (text.indexOf('糖尿病') >= 0 || text.indexOf('血糖') >= 0) {
+    } else if (requestText.indexOf('糖尿病') >= 0 || requestText.indexOf('血糖') >= 0) {
       department = '内分泌科';
-    } else if (text.indexOf('骨') >= 0 || text.indexOf('腿') >= 0 || text.indexOf('膝') >= 0) {
+    } else if (requestText.indexOf('骨') >= 0 || requestText.indexOf('腿') >= 0 || requestText.indexOf('膝') >= 0) {
       department = '骨科';
-    } else if (text.indexOf('眼') >= 0) {
+    } else if (requestText.indexOf('眼') >= 0) {
       department = '眼科';
     }
 
     let expectedDate: string = '';
-    if (text.indexOf('明天') >= 0) {
+    if (requestText.indexOf('明天') >= 0) {
       expectedDate = MockLLMProvider.dateAfter(1);
-    } else if (text.indexOf('后天') >= 0) {
+    } else if (requestText.indexOf('后天') >= 0) {
       expectedDate = MockLLMProvider.dateAfter(2);
-    } else if (text.indexOf('下周') >= 0) {
+    } else if (requestText.indexOf('下周') >= 0) {
       expectedDate = MockLLMProvider.dateAfter(7);
-    } else if (text.indexOf('今天') >= 0) {
+    } else if (requestText.indexOf('今天') >= 0) {
       expectedDate = MockLLMProvider.dateAfter(0);
     }
 
-    const isRevisit: boolean = text.indexOf('复查') >= 0 || text.indexOf('复诊') >= 0 ||
-                               text.indexOf('拿药') >= 0 || text.indexOf('取药') >= 0;
+    const isRevisit: boolean = requestText.indexOf('复查') >= 0 || requestText.indexOf('复诊') >= 0 ||
+                               requestText.indexOf('拿药') >= 0 || requestText.indexOf('取药') >= 0;
 
     const missing: string[] = [];
     if (hospital.length === 0) {
       missing.push('hospital');
+    }
+    if (department.length === 0) {
+      missing.push('department');
+    }
+    if ((type === 'MEDICAL_VISIT' || type === 'MEDICINE_REFILL') && expectedDate.length === 0) {
+      missing.push('expectedDate');
     }
 
     const result: Record<string, Object> = {
       'type': type,
       'hospital': hospital,
       'department': department,
-      'purpose': text,
+      'purpose': requestText,
       'expectedDate': expectedDate,
       'isRevisit': isRevisit,
       'confidence': type === 'UNKNOWN' ? 0.3 : 0.85,
       'missingSlots': missing
     };
     return JSON.stringify(result);
+  }
+
+  /** 从 IntentParser 的包装消息中提取用户原话。 */
+  private static extractRequestText(text: string): string {
+    const marker: string = '用户说："';
+    const start: number = text.lastIndexOf(marker);
+    if (start >= 0) {
+      const contentStart: number = start + marker.length;
+      const end: number = text.lastIndexOf('"');
+      if (end > contentStart) {
+        return text.substring(contentStart, end);
+      }
+    }
+    return text;
   }
 
   private static dateAfter(days: number): string {

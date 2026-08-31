@@ -5,6 +5,10 @@ description: 提供就诊事务辅助，包括需求整理、端侧历史信息�
 
 # 医疗辅助 Skill
 
+> 上传说明：`scripts/MedicalAssistSkill.ets` 是独立运行脚本，不依赖 App 内的
+> `src/main/ets` 文件。上传包只需保留本文件和 `scripts/MedicalAssistSkill.ets`，
+> 这样开放平台审核环境也能直接执行 `planVisit`。
+
 ## 触发场景
 
 当用户明确表达就诊事务需求时调用，例如：
@@ -37,7 +41,7 @@ description: 提供就诊事务辅助，包括需求整理、端侧历史信息�
 exec-cli(command: ohos-arkTSScript --skillName 'medical-assist' --scriptPath 'scripts/MedicalAssistSkill.ets' --functionName 'planVisit' --args '{
   "arg1": "市第一人民医院",
   "arg2": "心血管内科",
-  "arg3": "2026-08-27",
+  "arg3": "2026-09-01",
   "arg4": "拿高血压药",
   "arg5": "true"
 }')
@@ -46,20 +50,21 @@ exec-cli(command: ohos-arkTSScript --skillName 'medical-assist' --scriptPath 'sc
 {
   "args": {
     "type": "object",
-    "required": ["arg4"],
+    "required": ["arg3", "arg4"],
     "additionalProperties": false,
     "properties": {
       "arg1": {
         "type": "string",
-        "description": "医院名称；未明确时传空字符串，由端侧历史或常去医院补全"
+        "description": "医院名称；Skill 不保存端侧历史，未明确时由上层 Agent 先询问，不得默认填充"
       },
       "arg2": {
         "type": "string",
-        "description": "科室名称；未明确时传空字符串，由端侧历史或就诊目的补全"
+        "description": "科室名称；未明确时可根据就诊目的推断，无法推断时先向用户询问"
       },
       "arg3": {
         "type": "string",
-        "description": "期望日期，格式为 YYYY-MM-DD；未明确时传空字符串"
+        "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+        "description": "明确的就诊日期，格式为 YYYY-MM-DD；未明确时先向用户询问，不得默认填充"
       },
       "arg4": {
         "type": "string",
@@ -76,7 +81,10 @@ exec-cli(command: ohos-arkTSScript --skillName 'medical-assist' --scriptPath 'sc
 }
 ```
 
-参数按 `arg1` 至 `arg5` 的顺序传入 `planVisit`。不得把诊断结论、身份证号、医保卡号或完整处方作为参数传入。
+参数按 `arg1` 至 `arg5` 的顺序传入 `planVisit`。入口脚本同时兼容审核/调试面板将整个
+JSON 作为一个参数传入的情况（可使用 `hospital`、`department`、`expectedDate`、
+`purpose`、`isRevisit` 语义化字段，也兼容 `arg1` 至 `arg5`）。不得把诊断结论、
+身份证号、医保卡号或完整处方作为参数传入。
 
 ## 执行返回值
 
@@ -92,7 +100,7 @@ exec-cli(command: ohos-arkTSScript --skillName 'medical-assist' --scriptPath 'sc
       "hospitalAddress": "市第一人民医院（人民路128号）",
       "department": "心血管内科",
       "doctorName": "王建国 主任医师",
-      "visitDate": "2026-08-27",
+      "visitDate": "2026-09-01",
       "visitTime": "09:00",
       "registrationFee": 15,
       "queueNo": "A012",
@@ -105,7 +113,12 @@ exec-cli(command: ohos-arkTSScript --skillName 'medical-assist' --scriptPath 'sc
     "purpose": "拿高血压药",
     "speech": "为您找到一个就诊推荐方案，但还需要在医院官方渠道确认",
     "bookingCompleted": false,
-    "officialChannelName": "国家政务服务平台"
+    "officialChannelName": "国家政务服务平台",
+    "preparation": {
+      "visitItems": ["确认预约医院、科室和时间", "建议提前30分钟到院，预留取号和找路时间"],
+      "materials": ["身份证", "医保卡（如使用）", "既往检查报告或病历资料", "预约凭证或手机截图"],
+      "notices": ["只按原医嘱用药，不自行加减量或停药", "以医院官方通知和医生要求为准"]
+    }
   }
 }
 ```
@@ -159,7 +172,7 @@ exec-cli(command: ohos-arkTSScript --skillName 'medical-assist' --scriptPath 'sc
     "data": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["appointment", "purpose", "speech", "bookingCompleted", "officialChannelName"],
+      "required": ["appointment", "purpose", "speech", "bookingCompleted", "officialChannelName", "preparation"],
       "properties": {
         "appointment": {
           "type": "object",
@@ -188,7 +201,17 @@ exec-cli(command: ohos-arkTSScript --skillName 'medical-assist' --scriptPath 'sc
         "purpose": { "type": "string", "minLength": 1 },
         "speech": { "type": "string", "minLength": 1 },
         "bookingCompleted": { "type": "boolean", "const": false },
-        "officialChannelName": { "type": "string", "minLength": 1 }
+        "officialChannelName": { "type": "string", "minLength": 1 },
+        "preparation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["visitItems", "materials", "notices"],
+          "properties": {
+            "visitItems": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "materials": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "notices": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        }
       }
     },
     "errCode": {
