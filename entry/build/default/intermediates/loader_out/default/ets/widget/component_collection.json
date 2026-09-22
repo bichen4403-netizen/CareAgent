@@ -1,9 +1,0 @@
-{
-  "entry\\src\\main\\ets\\widget\\pages\\CareCard.ets": [
-    "Column",
-    "Row",
-    "Text",
-    "Blank",
-    "If"
-  ]
-}

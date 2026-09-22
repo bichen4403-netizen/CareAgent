@@ -1,1 +1,0 @@
-D:/Care/entry/build/default/cache/default/default@CompileArkTS/esmodule/debug_widget/entry/src/main/ets/widget/pages/CareCard.ts;com.whatpressure.zhihutongxing/entry/ets/widget/pages/CareCard;esm;entry|entry|1.0.0|src/main/ets/widget/pages/CareCard.ts;entry;false;ets
