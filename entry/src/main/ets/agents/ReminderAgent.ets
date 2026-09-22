@@ -9,7 +9,7 @@
 
 import {
   AgentResult, TaskNode, RuntimeContext, ParsedIntent, Appointment,
-  TravelPlan, IndoorNavPlan, ReminderItem, IntentType
+  TravelPlan, IndoorNavPlan, ReminderItem, IntentType, DataSourceType, VerificationStatus
 } from '../core/AgentTypes';
 import { BaseAgent } from './BaseAgent';
 import { blackboard } from '../core/EventBus';
@@ -40,7 +40,8 @@ export class ReminderAgent extends BaseAgent {
                            `到院排队和吃药我也会按时叫您`;
 
     const dataObj: Record<string, Object> = { 'reminders': items };
-    return this.ok(task.id, speech, JSON.stringify(dataObj), false);
+    return this.ok(task.id, speech, JSON.stringify(dataObj), false,
+      DataSourceType.LOCAL_COMPUTED, VerificationStatus.VERIFIED);
   }
 
   /**

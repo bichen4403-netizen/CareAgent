@@ -42,6 +42,24 @@ export enum TaskStatus {
   SKIPPED = 'SKIPPED'
 }
 
+/** 结果来源：所有展示给用户的业务数据都必须声明来源，避免把演示数据当成实时数据。 */
+export enum DataSourceType {
+  OFFICIAL = 'OFFICIAL',
+  REALTIME_API = 'REALTIME_API',
+  USER_CONFIRMED = 'USER_CONFIRMED',
+  LOCAL_COMPUTED = 'LOCAL_COMPUTED',
+  DEMO = 'DEMO',
+  FALLBACK = 'FALLBACK',
+  UNKNOWN = 'UNKNOWN'
+}
+
+/** 数据核验状态。SUGGESTED 只表示推荐，不能等同于已完成业务操作。 */
+export enum VerificationStatus {
+  VERIFIED = 'VERIFIED',
+  SUGGESTED = 'SUGGESTED',
+  UNVERIFIED = 'UNVERIFIED'
+}
+
 /** 单个任务节点 */
 export interface TaskNode {
   id: string;
@@ -77,6 +95,9 @@ export interface AgentResult {
   /** 是否需要用户确认后才能继续 */
   needConfirm: boolean;
   errorMsg: string;
+  dataSource: DataSourceType;
+  verificationStatus: VerificationStatus;
+  updatedAt: number;
 }
 
 // ==================== 业务领域模型 ====================
@@ -193,6 +214,7 @@ export interface RuntimeContext {
   currentAddress: string;
   nowTs: number;
   weather: string;
+  weatherSource: DataSourceType;
   trafficLevel: string;
 }
 

@@ -39,6 +39,9 @@ export class CentralAgent {
 
   private agents: Map<string, BaseAgent> = new Map();
   private running: boolean = false;
+  private pendingIntent: ParsedIntent | null = null;
+  private pendingExpiresAt: number = 0;
+  private handledAnomalies: Set<string> = new Set<string>();
 
   private constructor() {
     this.agents.set(TaskType.MEDICAL as string, new MedicalAgent());
@@ -58,6 +61,12 @@ export class CentralAgent {
       return '我正在为您安排上一件事，稍等一下';
     }
 
+    if (CentralAgent.isCancelRequest(userText)) {
+      this.pendingIntent = null;
+      this.pendingExpiresAt = 0;
+      return '好的，刚才的安排已经取消，您可以重新告诉我需要做什么';
+    }
+
     // 紧急症状优先于普通意图解析和任务编排，避免模型/网络异常时
     // 把需要立即就医的请求误判为普通陪诊需求。
     if (CentralAgent.isEmergencyRequest(userText)) {
@@ -65,7 +74,13 @@ export class CentralAgent {
     }
 
     // ---- 1. 意图理解 ----
-    const intent: ParsedIntent = await IntentParser.parse(userText, rt);
+    let intent: ParsedIntent;
+    if (this.pendingIntent !== null && Date.now() < this.pendingExpiresAt) {
+      intent = await IntentParser.parseFollowUp(userText, this.pendingIntent, rt);
+    } else {
+      this.pendingIntent = null;
+      intent = await IntentParser.parse(userText, rt);
+    }
 
     if (intent.type === IntentType.UNKNOWN || intent.confidence < 0.4) {
       return '我没太听清，您是想去医院看病、还是取药呢？';
@@ -79,12 +94,18 @@ export class CentralAgent {
 
     // ---- 2. 槽位澄清：一次只问一个问题 ----
     if (intent.missingSlots.length > 0) {
+      this.pendingIntent = intent;
+      this.pendingExpiresAt = Date.now() + 10 * 60 * 1000;
       return IntentParser.buildClarifyQuestion(intent);
     }
+
+    this.pendingIntent = null;
+    this.pendingExpiresAt = 0;
 
     // ---- 3. 任务规划 ----
     // 新请求从干净的共享黑板开始，避免出行/导航读取上一条就诊方案。
     blackboard.reset();
+    this.handledAnomalies.clear();
     const plan: TaskPlan = TaskPlanner.plan(intent);
     blackboard.setPlan(plan);
     eventBus.emit(BusEvent.PLAN_UPDATED, JSON.stringify(plan));
@@ -158,12 +179,15 @@ export class CentralAgent {
     if (rt.weather.indexOf('暴雨') >= 0 || rt.weather.indexOf('大雪') >= 0) {
       const travelDone = TaskPlanner.findNode(plan, 'T2');
       if (travelDone !== null && travelDone.status === TaskStatus.SUCCESS) {
-        return {
+        const detected: Anomaly = {
           type: AnomalyType.HEAVY_RAIN,
           description: `天气转为${rt.weather}，原出发时间可能来不及`,
           detectedAt: Date.now(),
           affectedTasks: ['T2']
         };
+        if (!this.handledAnomalies.has(this.anomalyKey(plan, detected))) {
+          return detected;
+        }
       }
     }
     return {
@@ -176,6 +200,7 @@ export class CentralAgent {
 
   /** 异常回流：重规划受影响任务及其下游，然后重新执行 */
   private async handleAnomaly(plan: TaskPlan, anomaly: Anomaly, rt: RuntimeContext): Promise<void> {
+    this.handledAnomalies.add(this.anomalyKey(plan, anomaly));
     eventBus.emit(BusEvent.ANOMALY_DETECTED, JSON.stringify(anomaly));
 
     // 先主动告知用户，再动手改，避免用户困惑
@@ -210,7 +235,16 @@ export class CentralAgent {
       return;
     }
 
-    const summary: string = `都安排好了。${lines.join('。')}。您到时候跟着提醒走就行。`;
+    let hasFailure: boolean = false;
+    for (let i = 0; i < plan.nodes.length; i++) {
+      if (plan.nodes[i].status === TaskStatus.FAILED || plan.nodes[i].status === TaskStatus.SKIPPED ||
+          plan.nodes[i].status === TaskStatus.PENDING) {
+        hasFailure = true;
+      }
+    }
+    const summary: string = hasFailure
+      ? `目前只完成了部分安排。${lines.join('。')}。未完成的步骤会明确标出，请不要按未核实的信息出发。`
+      : `都安排好了。${lines.join('。')}。您到时候跟着提醒走就行。`;
     this.speak(summary);
 
     // 同步一张总览卡片到手机
@@ -239,6 +273,14 @@ export class CentralAgent {
       }
     }
     return false;
+  }
+
+  private static isCancelRequest(text: string): boolean {
+    return text === '取消' || text.indexOf('重新来') >= 0 || text.indexOf('不用了') >= 0;
+  }
+
+  private anomalyKey(plan: TaskPlan, anomaly: Anomaly): string {
+    return `${plan.planId}:${anomaly.type}:${anomaly.description}`;
   }
 
   /**

@@ -7,7 +7,8 @@
  */
 
 import {
-  AgentResult, TaskNode, RuntimeContext, ParsedIntent, Appointment, IndoorNavPlan, IntentType, NavStep
+  AgentResult, TaskNode, RuntimeContext, ParsedIntent, Appointment, IndoorNavPlan, IntentType, NavStep,
+  DataSourceType, VerificationStatus
 } from '../core/AgentTypes';
 import { BaseAgent } from './BaseAgent';
 import { blackboard } from '../core/EventBus';
@@ -44,7 +45,8 @@ export class NavigationAgent extends BaseAgent {
       'targetRoom': navPlan.targetRoom
     };
 
-    return this.ok(task.id, speech, JSON.stringify(dataObj), false);
+    return this.ok(task.id, speech, JSON.stringify(dataObj), false,
+      DataSourceType.DEMO, VerificationStatus.UNVERIFIED);
   }
 
   /**

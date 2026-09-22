@@ -6,7 +6,9 @@
  * 当前号源仍来自 MockDataSource；替换真实医院接口时只需修改本服务依赖的数据源。
  */
 
-import { Appointment, BookingStatus, ServiceRecord, MedicalPreparation } from '../core/AgentTypes';
+import {
+  Appointment, BookingStatus, ServiceRecord, MedicalPreparation, DataSourceType
+} from '../core/AgentTypes';
 import { ContextStore } from '../core/ContextStore';
 import { MockDataSource } from './MockDataSource';
 import { OfficialChannel, OfficialChannelRegistry } from './AppLinkService';
@@ -30,6 +32,7 @@ export interface MedicalAssistResponse {
   isRevisit: boolean;
   replanned: boolean;
   preparation: MedicalPreparation;
+  dataSource: DataSourceType;
 }
 
 export class MedicalAssistService {
@@ -130,7 +133,8 @@ export class MedicalAssistService {
       lastPrescription: last === null ? '' : last.prescription,
       isRevisit: isRevisit,
       replanned: replanned,
-      preparation: MedicalAssistService.buildPreparation(purpose, isRevisit)
+      preparation: MedicalAssistService.buildPreparation(purpose, isRevisit),
+      dataSource: DataSourceType.DEMO
     };
   }
 
@@ -146,7 +150,8 @@ export class MedicalAssistService {
       lastPrescription: last === null ? '' : last.prescription,
       isRevisit: isRevisit,
       replanned: false,
-      preparation: { visitItems: [], materials: [], notices: [] }
+      preparation: { visitItems: [], materials: [], notices: [] },
+      dataSource: DataSourceType.UNKNOWN
     };
   }
 

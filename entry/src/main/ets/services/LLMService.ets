@@ -44,10 +44,10 @@ export class HttpLLMProvider implements LLMProvider {
         'temperature': 0.2,
         'stream': false
       };
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.token}`
-      };
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (this.token.length > 0) {
+        headers['Authorization'] = `Bearer ${this.token}`;
+      }
       const resp: http.HttpResponse = await req.request(this.endpoint, {
         method: http.RequestMethod.POST,
         header: headers,
@@ -188,8 +188,12 @@ export class MockLLMProvider implements LLMProvider {
 
   /** 从 IntentParser 的包装消息中提取用户原话。 */
   private static extractRequestText(text: string): string {
-    const marker: string = '用户说："';
-    const start: number = text.lastIndexOf(marker);
+    let marker: string = '用户说："';
+    let start: number = text.lastIndexOf(marker);
+    if (start < 0) {
+      marker = '用户本轮补充："';
+      start = text.lastIndexOf(marker);
+    }
     if (start >= 0) {
       const contentStart: number = start + marker.length;
       const end: number = text.lastIndexOf('"');

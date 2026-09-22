@@ -8,7 +8,10 @@
  *  - 通过事件总线上报状态
  */
 
-import { AgentResult, TaskNode, RuntimeContext, BusEvent, TaskStatus } from '../core/AgentTypes';
+import {
+  AgentResult, TaskNode, RuntimeContext, BusEvent, TaskStatus,
+  DataSourceType, VerificationStatus
+} from '../core/AgentTypes';
 import { eventBus, blackboard } from '../core/EventBus';
 
 export abstract class BaseAgent {
@@ -76,7 +79,10 @@ export abstract class BaseAgent {
           speech: `${node.title}这一步等太久了，我们稍后再试一次`,
           data: '',
           needConfirm: false,
-          errorMsg: 'ERR_TIMEOUT'
+          errorMsg: 'ERR_TIMEOUT',
+          dataSource: DataSourceType.UNKNOWN,
+          verificationStatus: VerificationStatus.UNVERIFIED,
+          updatedAt: Date.now()
         };
         resolve(timeoutResult);
       }, ms);
@@ -102,14 +108,19 @@ export abstract class BaseAgent {
           speech: `${node.title}这一步暂时没能完成，我稍后再试一次`,
           data: '',
           needConfirm: false,
-          errorMsg: `${e}`
+          errorMsg: `${e}`,
+          dataSource: DataSourceType.UNKNOWN,
+          verificationStatus: VerificationStatus.UNVERIFIED,
+          updatedAt: Date.now()
         };
         resolve(errorResult);
       });
     });
   }
 
-  protected ok(taskId: string, speech: string, data: string, needConfirm: boolean): AgentResult {
+  protected ok(taskId: string, speech: string, data: string, needConfirm: boolean,
+               dataSource: DataSourceType = DataSourceType.LOCAL_COMPUTED,
+               verificationStatus: VerificationStatus = VerificationStatus.UNVERIFIED): AgentResult {
     return {
       taskId: taskId,
       agentName: this.name,
@@ -117,7 +128,10 @@ export abstract class BaseAgent {
       speech: speech,
       data: data,
       needConfirm: needConfirm,
-      errorMsg: ''
+      errorMsg: '',
+      dataSource: dataSource,
+      verificationStatus: verificationStatus,
+      updatedAt: Date.now()
     };
   }
 
@@ -129,7 +143,10 @@ export abstract class BaseAgent {
       speech: speech,
       data: '',
       needConfirm: false,
-      errorMsg: err
+      errorMsg: err,
+      dataSource: DataSourceType.UNKNOWN,
+      verificationStatus: VerificationStatus.UNVERIFIED,
+      updatedAt: Date.now()
     };
   }
 }

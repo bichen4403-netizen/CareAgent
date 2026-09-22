@@ -30,6 +30,9 @@ struct JourneyPage {
   @State reminders: ReminderItem[] = [];
   @State preparation: MedicalPreparation | null = null;
   @State confirmed: boolean = false;
+  @State medicalSource: string = '';
+  @State travelSource: string = '';
+  @State navigationSource: string = '';
 
   aboutToAppear(): void {
     this.loadFromBlackboard();
@@ -39,6 +42,7 @@ struct JourneyPage {
   private loadFromBlackboard(): void {
     const medical: AgentResult | undefined = blackboard.getResultByAgent('MedicalAgent');
     if (medical !== undefined && medical.data.length > 0) {
+      this.medicalSource = this.sourceLabel(medical.dataSource as string);
       const d: Record<string, Object> = JSON.parse(medical.data) as Record<string, Object>;
       this.appt = d['appointment'] as Appointment;
       // 兼容旧版本黑板结果：没有准备清单时仍可正常展示就诊安排。
@@ -49,12 +53,14 @@ struct JourneyPage {
 
     const travelRes: AgentResult | undefined = blackboard.getResultByAgent('TravelAgent');
     if (travelRes !== undefined && travelRes.data.length > 0) {
+      this.travelSource = this.sourceLabel(travelRes.dataSource as string);
       const d: Record<string, Object> = JSON.parse(travelRes.data) as Record<string, Object>;
       this.travel = d['travelPlan'] as TravelPlan;
     }
 
     const navRes: AgentResult | undefined = blackboard.getResultByAgent('NavigationAgent');
     if (navRes !== undefined && navRes.data.length > 0) {
+      this.navigationSource = this.sourceLabel(navRes.dataSource as string);
       const d: Record<string, Object> = JSON.parse(navRes.data) as Record<string, Object>;
       this.nav = d['navPlan'] as IndoorNavPlan;
     }
@@ -167,6 +173,22 @@ struct JourneyPage {
     return '手机';
   }
 
+  private sourceLabel(source: string): string {
+    if (source === 'OFFICIAL') {
+      return '官方数据';
+    }
+    if (source === 'REALTIME_API') {
+      return '实时接口';
+    }
+    if (source === 'DEMO') {
+      return '演示数据，请勿作为真实号源使用';
+    }
+    if (source === 'FALLBACK') {
+      return '接口降级数据';
+    }
+    return '本地计算';
+  }
+
   private formatTime(ts: number): string {
     const d: Date = new Date(ts);
     const h: string = `${d.getHours()}`.padStart(2, '0');
@@ -244,6 +266,7 @@ struct JourneyPage {
               this.InfoRow('诊室', `${this.appt.buildingName}${this.appt.floor}${this.appt.roomNo}`)
               this.InfoRow('费用', `${this.appt.registrationFee}元`)
               this.InfoRow('状态', this.bookingStatusLabel(this.appt.bookingStatus))
+              this.InfoRow('数据来源', this.medicalSource)
             }
             .cardStyle()
           }
@@ -305,6 +328,7 @@ struct JourneyPage {
               this.InfoRow('车程', `约${this.travel.durationMin}分钟 · ${this.travel.distanceKm}公里`)
               this.InfoRow('路况', `${this.travel.trafficLevel} · ${this.travel.weather}`)
               this.InfoRow('说明', this.travel.suggestion)
+              this.InfoRow('数据来源', this.travelSource)
             }
             .cardStyle()
           }
@@ -315,6 +339,7 @@ struct JourneyPage {
               this.SectionCard('院内路线', '导航 Agent')
               this.InfoRow('入口', this.nav.entrance)
               this.InfoRow('目的地', this.nav.targetRoom)
+              this.InfoRow('数据来源', this.navigationSource)
               ForEach(this.nav.steps, (s: NavStep) => {
                 Row() {
                   Text(`${s.order}`)

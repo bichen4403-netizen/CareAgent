@@ -47,6 +47,50 @@ export class IntentParser {
     return intent;
   }
 
+  /**
+   * 继续上一轮澄清。模型只负责理解“本轮补充”，最终合并由确定性代码完成，
+   * 避免用户回答“下周三”时丢失上一轮已经确认的医院和科室。
+   */
+  static async parseFollowUp(userText: string, pending: ParsedIntent,
+                             rt: RuntimeContext): Promise<ParsedIntent> {
+    const today: string = IntentParser.formatDate(new Date(rt.nowTs));
+    const messages: LLMMessage[] = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: `今天是${today}。上一轮已知信息：${JSON.stringify(pending)}。\n` +
+        `用户本轮补充："${userText}"。请结合上一轮信息输出完整 JSON。` }
+    ];
+    const raw: string = await LLMService.chat(messages);
+    const parsed: ParsedIntent = IntentParser.safeParse(raw, pending.purpose);
+    const merged: ParsedIntent = IntentParser.mergeIntent(pending, parsed, userText);
+    return IntentParser.ensureRequiredSlots(merged);
+  }
+
+  private static mergeIntent(base: ParsedIntent, next: ParsedIntent,
+                             followUpText: string): ParsedIntent {
+    const merged: ParsedIntent = {
+      type: next.type === IntentType.UNKNOWN ? base.type : next.type,
+      hospital: next.hospital.length > 0 ? next.hospital : base.hospital,
+      department: next.department.length > 0 ? next.department : base.department,
+      purpose: base.purpose,
+      expectedDate: next.expectedDate.length > 0 ? next.expectedDate : base.expectedDate,
+      isRevisit: base.isRevisit || next.isRevisit,
+      confidence: Math.max(base.confidence, next.confidence),
+      missingSlots: []
+    };
+    if (merged.hospital.length === 0) {
+      merged.missingSlots.push('hospital');
+    }
+    if (merged.department.length === 0) {
+      merged.missingSlots.push('department');
+    }
+    if ((merged.type === IntentType.MEDICAL_VISIT || merged.type === IntentType.MEDICINE_REFILL) &&
+        merged.expectedDate.length === 0) {
+      merged.missingSlots.push('expectedDate');
+    }
+    console.info(`[IntentParser] follow-up merged: ${followUpText}`);
+    return merged;
+  }
+
   /** 日期是生成出行和提醒时间的必要条件，不能用“明天”等默认值代替。 */
   private static ensureRequiredSlots(intent: ParsedIntent): ParsedIntent {
     if ((intent.type === IntentType.MEDICAL_VISIT || intent.type === IntentType.MEDICINE_REFILL) &&

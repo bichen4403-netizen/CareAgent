@@ -8,7 +8,8 @@
  */
 
 import {
-  AgentResult, TaskNode, RuntimeContext, ParsedIntent, Appointment, TravelPlan
+  AgentResult, TaskNode, RuntimeContext, ParsedIntent, Appointment, TravelPlan,
+  DataSourceType, VerificationStatus
 } from '../core/AgentTypes';
 import { BaseAgent } from './BaseAgent';
 import { blackboard } from '../core/EventBus';
@@ -51,7 +52,14 @@ export class TravelAgent extends BaseAgent {
     };
 
     // 叫车会产生实际费用，需用户确认
-    return this.ok(task.id, speech, JSON.stringify(dataObj), true);
+    let resultSource: DataSourceType = driving.dataSource;
+    if (rt.weatherSource === DataSourceType.DEMO || rt.weatherSource === DataSourceType.FALLBACK) {
+      resultSource = DataSourceType.FALLBACK;
+    }
+    const verification: VerificationStatus = resultSource === DataSourceType.REALTIME_API
+      ? VerificationStatus.VERIFIED : VerificationStatus.UNVERIFIED;
+    return this.ok(task.id, speech, JSON.stringify(dataObj), true,
+      resultSource, verification);
   }
 
   /**

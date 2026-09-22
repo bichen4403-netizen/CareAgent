@@ -7,7 +7,7 @@
  */
 
 import {
-  AgentResult, TaskNode, RuntimeContext, ParsedIntent, Appointment
+  AgentResult, TaskNode, RuntimeContext, ParsedIntent, Appointment, VerificationStatus
 } from '../core/AgentTypes';
 import { BaseAgent } from './BaseAgent';
 import {
@@ -47,6 +47,7 @@ export class MedicalAgent extends BaseAgent {
     };
 
     // 这里的"确认"指用户确认这份推荐方案本身，不代表挂号已经完成
-    return this.ok(task.id, response.speech, JSON.stringify(dataObj), true);
+    return this.ok(task.id, response.speech, JSON.stringify(dataObj), true,
+      response.dataSource, VerificationStatus.SUGGESTED);
   }
 }

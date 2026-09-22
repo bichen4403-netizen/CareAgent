@@ -10,6 +10,7 @@
  */
 
 import { http } from '@kit.NetworkKit';
+import { DataSourceType } from '../core/AgentTypes';
 
 // 客户端不保存 Web 服务密钥。留空时使用 Mock；真实服务应由受控后端代理。
 const AMAP_KEY: string = '';
@@ -18,10 +19,60 @@ export interface DrivingResult {
   durationMin: number;
   distanceKm: number;
   trafficLevel: string;   // 畅通 / 缓行 / 拥堵
+  dataSource: DataSourceType;
+  provider: string;
+  updatedAt: number;
 }
 
 export interface TravelProvider {
   getDriving(originLng: number, originLat: number, destLng: number, destLat: number): Promise<DrivingResult>;
+}
+
+/** FastAPI 网关适配器：地理编码和路线查询都在服务端完成。 */
+export class BackendTravelProvider implements TravelProvider {
+  private baseUrl: string;
+
+  constructor(baseUrl: string) {
+    this.baseUrl = baseUrl.replace(/\/$/, '');
+  }
+
+  async getDriving(originLng: number, originLat: number,
+                   destLng: number, destLat: number): Promise<DrivingResult> {
+    throw new Error('backend provider requires destination address');
+  }
+
+  async getDrivingByAddress(originLng: number, originLat: number,
+                            destAddress: string): Promise<DrivingResult> {
+    const req: http.HttpRequest = http.createHttp();
+    try {
+      const body: Record<string, Object> = {
+        'origin_lng': originLng,
+        'origin_lat': originLat,
+        'destination_address': destAddress
+      };
+      const resp: http.HttpResponse = await req.request(`${this.baseUrl}/v1/travel/route`, {
+        method: http.RequestMethod.POST,
+        header: { 'Content-Type': 'application/json' },
+        extraData: JSON.stringify(body),
+        connectTimeout: 8000,
+        readTimeout: 10000
+      });
+      if (resp.responseCode !== 200) {
+        throw new Error(`gateway travel HTTP ${resp.responseCode}`);
+      }
+      const obj: Record<string, Object> = JSON.parse(resp.result as string) as Record<string, Object>;
+      return {
+        durationMin: obj['duration_min'] as number,
+        distanceKm: obj['distance_km'] as number,
+        trafficLevel: obj['traffic_level'] as string,
+        dataSource: obj['data_source'] as DataSourceType,
+        provider: obj['provider'] as string,
+        updatedAt: obj['updated_at'] as number
+      };
+    } finally {
+      req.destroy();
+    }
+  }
 }
 
 /**
@@ -103,7 +154,10 @@ export class AmapTravelProvider implements TravelProvider {
       return {
         durationMin: Math.round(durationSec / 60),
         distanceKm: Math.round(distanceMeter / 100) / 10,
-        trafficLevel: AmapTravelProvider.estimateTrafficLevel(durationSec, distanceMeter)
+        trafficLevel: AmapTravelProvider.estimateTrafficLevel(durationSec, distanceMeter),
+        dataSource: DataSourceType.REALTIME_API,
+        provider: 'amap',
+        updatedAt: Date.now()
       };
     } finally {
       req.destroy();
@@ -133,7 +187,10 @@ export class MockTravelProvider implements TravelProvider {
     return {
       durationMin: 28,
       distanceKm: 8.6,
-      trafficLevel: '缓行'
+      trafficLevel: '缓行',
+      dataSource: DataSourceType.DEMO,
+      provider: 'offline-demo',
+      updatedAt: Date.now()
     };
   }
 }
@@ -141,6 +198,13 @@ export class MockTravelProvider implements TravelProvider {
 export class TravelService {
   private static provider: TravelProvider =
     AMAP_KEY.length > 0 ? new AmapTravelProvider() : new MockTravelProvider();
+  private static backendProvider: BackendTravelProvider | null = null;
+
+  static useBackend(baseUrl: string): void {
+    if (baseUrl.length > 0) {
+      TravelService.backendProvider = new BackendTravelProvider(baseUrl);
+    }
+  }
 
   static async getDriving(originLng: number, originLat: number,
                           destLng: number, destLat: number): Promise<DrivingResult> {
@@ -160,6 +224,15 @@ export class TravelService {
    */
   static async getDrivingByAddress(originLng: number, originLat: number,
                                    destAddress: string): Promise<DrivingResult> {
+    if (TravelService.backendProvider !== null) {
+      try {
+        return await TravelService.backendProvider.getDrivingByAddress(
+          originLng, originLat, destAddress
+        );
+      } catch (e) {
+        console.error(`[TravelService] gateway failed, fallback to demo: ${e}`);
+      }
+    }
     if (AMAP_KEY.length === 0) {
       const fallback: MockTravelProvider = new MockTravelProvider();
       return await fallback.getDriving(originLng, originLat, 0, 0);

@@ -14,6 +14,9 @@ import { LLMService, HttpLLMProvider } from '../services/LLMService';
 import { CentralAgent } from '../agents/CentralAgent';
 import { OcrCaptureService, SystemOcrProvider } from '../services/OcrCaptureService';
 import { SpeechInputService } from '../services/SpeechInputService';
+import { WeatherService } from '../services/WeatherService';
+import { TravelService } from '../services/TravelService';
+import { BackendConfig } from '../config/BackendConfig';
 
 /**
  * module.json5 里声明的这几个是 user_grant 级权限，光声明不会自动生效，
@@ -34,7 +37,7 @@ const RUNTIME_PERMISSIONS: Permissions[] = [
  * 后续如需接入真实模型，应通过受控后端代理请求，并在后端保存和轮换密钥。
  * 小艺开放平台通过系统 Agent / Skill 机制接入，不需要在这里配置平台密钥。
  */
-const LLM_ENDPOINT: string = '';
+const LLM_ENDPOINT: string = BackendConfig.enabled() ? `${BackendConfig.BASE_URL}/v1/llm/chat` : '';
 const LLM_TOKEN: string = '';
 const LLM_MODEL: string = '';
 
@@ -62,6 +65,14 @@ export default class EntryAbility extends UIAbility {
       console.info('[EntryAbility] LLM provider: HTTP');
     } else {
       console.info('[EntryAbility] LLM provider: Mock (offline)');
+    }
+
+    if (BackendConfig.enabled()) {
+      // 网关本身负责选择模型；客户端不需要模型密钥，也不保存地图密钥。
+      LLMService.setProvider(new HttpLLMProvider(LLM_ENDPOINT, '', ''));
+      WeatherService.useBackend(BackendConfig.BASE_URL);
+      TravelService.useBackend(BackendConfig.BASE_URL);
+      console.info('[EntryAbility] backend gateway enabled');
     }
 
     // 医疗 Agent 的图片入口使用系统通用文字识别；Core Vision Kit 在模拟器

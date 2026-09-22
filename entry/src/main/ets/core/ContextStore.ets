@@ -187,20 +187,15 @@ export class ContextStore {
   buildContextSummary(rt: RuntimeContext): string {
     const p: UserProfile = this.getProfile();
     const parts: string[] = [];
-    if (p.name.length > 0) {
-      parts.push(`用户${p.name}，${p.age}岁`);
+    if (p.age > 0) {
+      const ageBand: number = Math.floor(p.age / 10) * 10;
+      parts.push(`用户年龄段：${ageBand}岁以上`);
     }
     if (p.chronicTags.length > 0) {
       parts.push(`慢病：${p.chronicTags.join('、')}`);
     }
-    if (p.homeAddress.length > 0) {
-      parts.push(`住址：${p.homeAddress}`);
-    }
     if (p.preferredHospitals.length > 0) {
       parts.push(`常去医院：${p.preferredHospitals.join('、')}`);
-    }
-    if (rt.currentAddress.length > 0) {
-      parts.push(`当前位置：${rt.currentAddress}`);
     }
     parts.push(`天气：${rt.weather}，路况：${rt.trafficLevel}`);
 
@@ -209,7 +204,7 @@ export class ContextStore {
       const list: string[] = [];
       for (let i = 0; i < recent.length; i++) {
         const r: ServiceRecord = recent[i];
-        list.push(`${r.visitDate} ${r.hospital}${r.department}(${r.doctorName})`);
+        list.push(`${r.visitDate} ${r.hospital}${r.department}`);
       }
       parts.push(`近期就诊：${list.join('；')}`);
     }

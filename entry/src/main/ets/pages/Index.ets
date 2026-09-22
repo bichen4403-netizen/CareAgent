@@ -22,7 +22,7 @@ import { eventBus } from '../core/EventBus';
 import { CentralAgent } from '../agents/CentralAgent';
 import { ContextStore } from '../core/ContextStore';
 import { DeviceSyncService } from '../services/DeviceSyncService';
-import { WeatherService } from '../services/WeatherService';
+import { WeatherService, WeatherResult } from '../services/WeatherService';
 import { OcrCaptureService } from '../services/OcrCaptureService';
 import { SpeechInputService } from '../services/SpeechInputService';
 
@@ -42,6 +42,8 @@ class ProgressItem {
   taskId: string = '';
   title: string = '';
   status: string = 'PENDING';
+  dataSource: string = '';
+  verificationStatus: string = '';
 
   constructor(taskId: string, title: string, status: string) {
     this.taskId = taskId;
@@ -186,7 +188,8 @@ struct Index {
     this.on(BusEvent.TASK_FINISHED, (msg: BusMessage) => {
       console.info(`[Index] recv TASK_FINISHED: ${msg.payload}`);
       const r: AgentResult = JSON.parse(msg.payload) as AgentResult;
-      this.updateProgress(r.taskId, r.success ? 'SUCCESS' : 'FAILED');
+      this.updateProgress(r.taskId, r.success ? 'SUCCESS' : 'FAILED',
+        r.dataSource as string, r.verificationStatus as string);
     });
 
     this.on(BusEvent.SPEAK, (msg: BusMessage) => {
@@ -199,7 +202,8 @@ struct Index {
     });
   }
 
-  private updateProgress(taskId: string, status: string): void {
+  private updateProgress(taskId: string, status: string,
+                         dataSource: string = '', verificationStatus: string = ''): void {
     console.info(`[Index] updateProgress taskId=${taskId} status=${status}, ` +
       `current progress ids=[${this.progress.map((p: ProgressItem) => `${p.taskId}:${p.status}`).join(',')}]`);
     const list: ProgressItem[] = [];
@@ -208,7 +212,10 @@ struct Index {
       const p: ProgressItem = this.progress[i];
       if (p.taskId === taskId) {
         matched = true;
-        list.push(new ProgressItem(p.taskId, p.title, status));
+        const updated: ProgressItem = new ProgressItem(p.taskId, p.title, status);
+        updated.dataSource = dataSource;
+        updated.verificationStatus = verificationStatus;
+        list.push(updated);
       } else {
         list.push(p);
       }
@@ -345,13 +352,14 @@ struct Index {
       console.warn(`[Index] current location unavailable, use demo coordinates: ${e}`);
     }
     // 天气改为真实接口（未配置 Key 时自动降级为 Mock，见 WeatherService.ets）
-    const weather: string = await WeatherService.getWeather();
+    const weatherResult: WeatherResult = await WeatherService.getWeather();
     return {
       currentLat: lat,
       currentLng: lng,
       currentAddress: profile.homeAddress,
       nowTs: Date.now(),
-      weather: weather,
+      weather: weatherResult.weather,
+      weatherSource: weatherResult.dataSource,
       trafficLevel: '缓行'
     };
   }
@@ -445,6 +453,12 @@ struct Index {
       Text(this.statusLabel(item.status))
         .fontSize(16)
         .fontColor('#8A9AA6')
+      if (item.dataSource.length > 0) {
+        Text(this.sourceLabel(item.dataSource, item.verificationStatus))
+          .fontSize(12)
+          .fontColor(item.dataSource === 'DEMO' || item.dataSource === 'FALLBACK' ? '#A65A2E' : '#3B7A57')
+          .margin({ left: 8 })
+      }
     }
     .width('100%')
     .padding({ top: 10, bottom: 10 })
@@ -474,6 +488,22 @@ struct Index {
       return '未成功';
     }
     return '等待中';
+  }
+
+  private sourceLabel(source: string, verification: string): string {
+    if (source === 'REALTIME_API' || source === 'OFFICIAL') {
+      return verification === 'VERIFIED' ? '实时已核验' : '实时数据';
+    }
+    if (source === 'DEMO') {
+      return '演示数据';
+    }
+    if (source === 'FALLBACK') {
+      return '降级数据';
+    }
+    if (source === 'USER_CONFIRMED') {
+      return '用户已确认';
+    }
+    return '本地计算';
   }
 
   build() {
