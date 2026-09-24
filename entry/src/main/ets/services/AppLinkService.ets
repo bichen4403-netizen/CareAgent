@@ -1,111 +1,106 @@
 /**
- * 智护同行 - 官方挂号渠道跳转
+ * 智护同行 - 官方渠道跳转
  *
- * 核心原则：智护同行不越权代替医院完成挂号，只做到"方案准备好、
- * 一键跳转官方渠道"，最后一步确认权始终在官方系统和用户手里。
- * 这是所有正规互联网医疗产品（微医/京医通类）实际采用的合规模式。
+ * 由于医院核心业务（挂号、缴费）需在官方渠道完成，本服务负责：
+ *   1. 根据医院名称、地址、所在城市选择合适的官方渠道
+ *   2. 优先尝试 App 深链，失败再打开官方网页
+ *   3. 用户回到本 App 后，由页面询问“挂上了吗？”再开启提醒
  *
- * ⚠️ 需要你手动维护的部分：
- * OFFICIAL_CHANNELS 这张表按医院名称关键词匹配对应的官方渠道，
- * 目前只填了几个示例（京医通/浙里办），你需要根据 demo 要用的
- * 目标医院，把它对应的官方挂号渠道（医院自己的小程序，或当地
- * 政务健康平台）补充进去。查不到具体 scheme 的话，先用该医院
- * 官网/官方小程序的 H5 链接作为兜底，同样能跳转，只是体验上
- * 不如原生 App 唤起顺滑。
- *
- * ⚠️ 跳转 API 说明：
- * HarmonyOS 的 AppLinking / 唤起第三方应用能力，不同 SDK 版本
- * 接口可能有差异，本文件把跳转逻辑收敛在 openLink() 一处，
- * 请对照本地 DevEco 版本的 @kit.AbilityKit 文档核实具体调用方式。
+ * deepLink 为示例 scheme，正式接入需以各渠道官方文档为准；官方网页地址可直接使用。
  */
 
 import { common } from '@kit.AbilityKit';
 
-/** 一个官方挂号渠道的接入信息 */
 export interface OfficialChannel {
-  name: string;           // 渠道名称，展示给用户看，如"京医通"
-  deepLink: string;       // 优先尝试的 App 深链接（scheme），能直接唤起原生 App 到对应页面最好
-  fallbackUrl: string;    // 深链接失败时的兜底方案，通常是 H5 页面或小程序链接
-  hint: string;           // 提示用户在官方渠道里大概要做什么，降低老人的操作焦虑
+  name: string;
+  deepLink: string;   // 为空表示只走网页
+  webUrl: string;
+  hint: string;       // 给老人看的一句话说明
 }
 
-/**
- * 医院名称关键词 → 官方渠道映射
- * 匹配规则：医院名称包含 key 就命中，请按你实际演示的医院补充
- */
-const OFFICIAL_CHANNELS: Record<string, OfficialChannel> = {
-  '北京': {
-    name: '京医通',
-    deepLink: 'jingyitong://appointment',   // 示例 scheme，需以京医通官方文档为准
-    fallbackUrl: 'https://www.bjjyt.com.cn',
-    hint: '打开京医通后，搜索医院和科室，选择我们刚才商量好的这个时间段'
-  },
-  '浙江': {
-    name: '浙里办',
-    deepLink: 'zlb://healthcare/appointment',
-    fallbackUrl: 'https://www.zjzwfw.gov.cn',
-    hint: '打开浙里办后，找到"预约挂号"服务，选择这家医院和科室'
-  },
-  '上海': {
-    name: '随申办',
-    deepLink: 'suishenban://healthcare/appointment',
-    fallbackUrl: 'https://www.shanghai.gov.cn',
-    hint: '打开随申办，进入健康云板块选择医院预约'
-  }
-};
+interface RegionChannel {
+  keywords: string[];
+  channel: OfficialChannel;
+}
 
-/** 没匹配到具体城市渠道时的通用兜底 —— 国家政务服务平台 */
-const DEFAULT_CHANNEL: OfficialChannel = {
+const NATIONAL: OfficialChannel = {
   name: '国家政务服务平台',
   deepLink: '',
-  fallbackUrl: 'https://www.gjzwfw.gov.cn',
-  hint: '在里面搜索"预约挂号"服务，选择对应医院完成最后确认'
+  webUrl: 'https://www.gjzwfw.gov.cn',
+  hint: '在“国家政务服务平台”里找到该医院的预约挂号入口'
 };
 
+const REGION_CHANNELS: RegionChannel[] = [
+  {
+    keywords: ['北京'],
+    channel: { name: '京医通', deepLink: 'jingyitong://', webUrl: 'https://www.jingyitong.cn', hint: '在“京医通”里确认挂号' }
+  },
+  {
+    keywords: ['浙江', '杭州', '宁波', '温州', '绍兴', '嘉兴', '湖州', '金华', '台州', '丽水', '衢州', '舟山', '浙一', '浙二'],
+    channel: { name: '浙里办', deepLink: 'zlb://', webUrl: 'https://www.zjzwfw.gov.cn', hint: '在“浙里办”搜索“挂号”确认' }
+  },
+  {
+    keywords: ['上海'],
+    channel: { name: '随申办', deepLink: 'suishenban://', webUrl: 'https://zwdt.sh.gov.cn', hint: '在“随申办”找到“医疗付费一件事”确认' }
+  },
+  {
+    keywords: ['广东', '广州', '深圳', '佛山', '东莞', '珠海'],
+    channel: { name: '粤省事', deepLink: '', webUrl: 'https://www.gdzwfw.gov.cn', hint: '在“粤省事”搜索“预约挂号”确认' }
+  },
+  {
+    keywords: ['江苏', '南京', '苏州', '无锡', '常州'],
+    channel: { name: '苏服办', deepLink: '', webUrl: 'https://www.jszwfw.gov.cn', hint: '在“苏服办”搜索“预约挂号”确认' }
+  }
+];
+
 export class OfficialChannelRegistry {
-  /** 按医院名称/地址关键词查找对应的官方渠道 */
-  static resolve(hospitalNameOrAddress: string): OfficialChannel {
-    const keys: string[] = Object.keys(OFFICIAL_CHANNELS);
-    for (let i = 0; i < keys.length; i++) {
-      if (hospitalNameOrAddress.indexOf(keys[i]) >= 0) {
-        return OFFICIAL_CHANNELS[keys[i]];
+  /** hintText 可以是医院名 + 地址 + 城市的拼接，命中任一关键词即选用对应地区渠道 */
+  static resolve(hintText: string): OfficialChannel {
+    for (let i = 0; i < REGION_CHANNELS.length; i++) {
+      const kws: string[] = REGION_CHANNELS[i].keywords;
+      for (let j = 0; j < kws.length; j++) {
+        if (hintText.indexOf(kws[j]) >= 0) {
+          return REGION_CHANNELS[i].channel;
+        }
       }
     }
-    return DEFAULT_CHANNEL;
+    return NATIONAL;
+  }
+
+  /** 按渠道名称找回渠道（行程里只保存了名称） */
+  static byName(name: string, fallbackHint: string): OfficialChannel {
+    if (name === NATIONAL.name) {
+      return NATIONAL;
+    }
+    for (let i = 0; i < REGION_CHANNELS.length; i++) {
+      if (REGION_CHANNELS[i].channel.name === name) {
+        return REGION_CHANNELS[i].channel;
+      }
+    }
+    return OfficialChannelRegistry.resolve(fallbackHint);
   }
 }
 
 export class AppLinkService {
   /**
-   * 跳转到官方渠道完成最后确认
-   * 优先尝试 deepLink 唤起原生 App，失败（未安装/scheme 无效）则降级用 fallbackUrl 打开网页
-   * @returns true 表示跳转动作已发出（不代表用户一定完成了挂号，那一步只能用户自己确认）
+   * 打开官方渠道：先试深链，失败再开网页。
+   * 返回 'app' / 'web' / 'none'，调用方据此提示用户。
    */
-  static async openOfficialChannel(context: common.UIAbilityContext, channel: OfficialChannel): Promise<boolean> {
+  static async openChannel(ctx: common.UIAbilityContext, channel: OfficialChannel): Promise<string> {
     if (channel.deepLink.length > 0) {
-      const ok: boolean = await AppLinkService.tryOpenLink(context, channel.deepLink);
-      if (ok) {
-        return true;
+      try {
+        await ctx.openLink(channel.deepLink, { appLinkingOnly: false });
+        return 'app';
+      } catch (e) {
+        console.warn(`[AppLink] deep link failed, fallback to web: ${e}`);
       }
-      console.warn(`[AppLinkService] deepLink 打开失败，降级到 fallbackUrl: ${channel.fallbackUrl}`);
-    }
-    return await AppLinkService.tryOpenLink(context, channel.fallbackUrl);
-  }
-
-  private static async tryOpenLink(context: common.UIAbilityContext, link: string): Promise<boolean> {
-    if (link.length === 0) {
-      return false;
     }
     try {
-      // context.openLink() 是 HarmonyOS 提供的 App Linking / 唤起第三方应用能力
-      // 若本地 SDK 版本没有这个方法，这里会直接报"属性不存在"的编译错误，
-      // 那种报错反而更清楚——说明需要换成你 SDK 里实际提供的唤起 API，对照
-      // @kit.AbilityKit 文档替换掉这一行调用即可，其余逻辑不用动
-      await context.openLink(link, { appLinkingOnly: false });
-      return true;
+      await ctx.openLink(channel.webUrl, { appLinkingOnly: false });
+      return 'web';
     } catch (e) {
-      console.error(`[AppLinkService] openLink failed for ${link}: ${e}`);
-      return false;
+      console.error(`[AppLink] web open failed: ${e}`);
+      return 'none';
     }
   }
 }

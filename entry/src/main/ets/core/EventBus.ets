@@ -1,7 +1,7 @@
 /**
  * 智护同行 - Agent 间通信总线 + 共享任务状态黑板（Blackboard）
  *
- * 架构图中"共享上下文汇总 / 状态同步 / 冲突消解"的落地实现。
+ * 架构图中“共享上下文汇总 / 状态同步 / 冲突消解”的落地实现。
  * 各执行 Agent 不直接互相调用，一律通过总线发消息、通过黑板读写共享状态，
  * 这样新增一个 Agent 不需要改动其它 Agent 的代码。
  */
@@ -11,7 +11,7 @@ import { BusEvent, BusMessage, AgentResult, TaskPlan } from './AgentTypes';
 type BusHandler = (msg: BusMessage) => void;
 
 class EventBusImpl {
-  private handlers: Map<string, BusHandler[]> = new Map();
+  private handlers: Map<string, BusHandler[]> = new Map<string, BusHandler[]>();
 
   on(event: BusEvent, handler: BusHandler): void {
     const key: string = event as string;
@@ -20,7 +20,9 @@ class EventBusImpl {
       list = [];
       this.handlers.set(key, list);
     }
-    list.push(handler);
+    if (list.indexOf(handler) < 0) {
+      list.push(handler);
+    }
   }
 
   off(event: BusEvent, handler: BusHandler): void {
@@ -40,26 +42,25 @@ class EventBusImpl {
     if (list === undefined) {
       return;
     }
-    for (let i = 0; i < list.length; i++) {
+    // 复制一份再遍历：处理函数里解绑自己时不会跳过后面的订阅者
+    const snapshot: BusHandler[] = list.slice();
+    for (let i = 0; i < snapshot.length; i++) {
       try {
-        list[i](msg);
+        snapshot[i](msg);
       } catch (e) {
         console.error(`[EventBus] handler error on ${event}: ${e}`);
       }
     }
   }
-
-  clear(): void {
-    this.handlers.clear();
-  }
 }
 
 /**
  * 共享黑板：所有 Agent 的产出集中在此。
- * 后续 Agent 可读取前序 Agent 的结果（例如出行 Agent 需要读挂号时间来倒推出发时间）
+ * 后续 Agent 可读取前序 Agent 的结果（例如出行 Agent 需要读挂号时间来倒推出发时间）。
+ * 黑板只保存“本次规划”的中间结果；最终方案由 JourneyStore 持久化到端侧。
  */
 class BlackboardImpl {
-  private results: Map<string, AgentResult> = new Map();
+  private results: Map<string, AgentResult> = new Map<string, AgentResult>();
   private currentPlan: TaskPlan | null = null;
 
   putResult(taskId: string, result: AgentResult): void {
@@ -70,7 +71,7 @@ class BlackboardImpl {
     return this.results.get(taskId);
   }
 
-  /** 按 Agent 名称查结果，便于跨任务读取 */
+  /** 按 Agent 名称查成功的结果，便于跨任务读取 */
   getResultByAgent(agentName: string): AgentResult | undefined {
     let found: AgentResult | undefined = undefined;
     this.results.forEach((v: AgentResult) => {

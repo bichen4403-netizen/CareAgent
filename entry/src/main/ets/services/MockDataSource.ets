@@ -1,155 +1,183 @@
 /**
  * 智护同行 - 演示数据源
  *
- * 真实接入时替换为：医院挂号开放接口 / 地图出行服务 / 院内定位服务。
- * 保留这一层的意义：答辩现场断网也能完整演示，且接口签名与真实服务一致，
- * 换成真实实现时上层 Agent 代码不需要改。
+ * 医院号源、诊室楼层等没有公开接口的数据，在初赛阶段用演示数据代替，
+ * 所有结果都标注 dataSource = DEMO，页面上会显示“演示数据”标签。
+ * 演示数据尽量贴近真实：不同科室对应不同医生/楼层；上午/下午偏好生效；
+ * 当天门诊时间已过会如实返回“今天约不上”。
  */
 
-import { Appointment, TravelPlan, IndoorNavPlan, NavStep, BookingStatus } from '../core/AgentTypes';
+import { Appointment, IndoorNavPlan, NavStep, BookingStatus } from '../core/AgentTypes';
+import { DateUtil } from '../core/DateUtil';
+
+interface DeptDemo {
+  dept: string;
+  doctor: string;
+  title: string;
+  building: string;
+  floor: string;
+  room: string;
+}
+
+const DEPT_DEMO: DeptDemo[] = [
+  { dept: '心血管内科', doctor: '王建国', title: '主任医师', building: '门诊楼', floor: '3楼', room: '316诊室' },
+  { dept: '内分泌科', doctor: '刘敏', title: '副主任医师', building: '门诊楼', floor: '4楼', room: '408诊室' },
+  { dept: '消化内科', doctor: '孙立', title: '主任医师', building: '门诊楼', floor: '3楼', room: '305诊室' },
+  { dept: '呼吸内科', doctor: '周红', title: '副主任医师', building: '门诊楼', floor: '2楼', room: '221诊室' },
+  { dept: '神经内科', doctor: '吴涛', title: '主任医师', building: '门诊楼', floor: '5楼', room: '502诊室' },
+  { dept: '骨科', doctor: '赵刚', title: '副主任医师', building: '外科楼', floor: '1楼', room: '108诊室' },
+  { dept: '眼科', doctor: '陈静', title: '主治医师', building: '门诊楼', floor: '2楼', room: '212诊室' },
+  { dept: '耳鼻喉科', doctor: '郑华', title: '主治医师', building: '门诊楼', floor: '2楼', room: '208诊室' },
+  { dept: '口腔科', doctor: '何平', title: '主治医师', building: '门诊楼', floor: '1楼', room: '112诊室' },
+  { dept: '体检中心', doctor: '体检医生', title: '', building: '体检中心', floor: '1楼', room: '体检大厅' }
+];
+
+const DEFAULT_DEMO: DeptDemo = {
+  dept: '', doctor: '张华', title: '主治医师', building: '门诊楼', floor: '2楼', room: '201诊室'
+};
+
+/** 可预约时段：上午两个、下午两个 */
+const MORNING_SLOTS: string[] = ['09:00', '10:30'];
+const AFTERNOON_SLOTS: string[] = ['14:30', '15:30'];
+
+/** 当天挂号至少提前 90 分钟，留出路上时间 */
+const SAME_DAY_LEAD_MIN: number = 90;
 
 export class MockDataSource {
 
-  /** 查询号源与排班 */
-  static async queryAppointment(hospital: string, department: string,
-                                expectedDate: string, isRevisit: boolean): Promise<Appointment> {
-    await MockDataSource.delay(500);
-
-    const hospitalName: string = hospital.length > 0 ? hospital : '市第一人民医院';
-    const dept: string = department.length > 0 ? department : '心血管内科';
-    let date: string = expectedDate;
-    if (date.length === 0) {
-      const d: Date = new Date(Date.now() + 24 * 3600 * 1000);
-      const m: string = `${d.getMonth() + 1}`.padStart(2, '0');
-      const day: string = `${d.getDate()}`.padStart(2, '0');
-      date = `${d.getFullYear()}-${m}-${day}`;
+  private static findDept(department: string): DeptDemo {
+    for (let i = 0; i < DEPT_DEMO.length; i++) {
+      if (department.indexOf(DEPT_DEMO[i].dept) >= 0 || DEPT_DEMO[i].dept.indexOf(department) >= 0) {
+        if (department.length > 0) {
+          return DEPT_DEMO[i];
+        }
+      }
     }
+    return DEFAULT_DEMO;
+  }
 
-    // 复诊优先安排上午早时段，减少老人等待
-    const visitTime: string = isRevisit ? '09:00' : '10:30';
+  private static feeOf(title: string): number {
+    if (title === '主任医师') {
+      return 50;
+    }
+    if (title === '副主任医师') {
+      return 35;
+    }
+    return title.length > 0 ? 20 : 0;
+  }
 
-    return {
-      hospitalName: hospitalName,
-      hospitalAddress: `${hospitalName}（人民路128号）`,
+  /** 按日期和科室生成稳定的排队号，同一天同科室多次规划结果一致 */
+  private static queueNoOf(date: string, dept: string, time: string): string {
+    let hash: number = 0;
+    const key: string = `${date}${dept}${time}`;
+    for (let i = 0; i < key.length; i++) {
+      hash = (hash * 31 + key.charCodeAt(i)) % 997;
+    }
+    const n: number = 5 + hash % 40;
+    return `A${n < 10 ? '00' : '0'}${n}`;
+  }
+
+  /** 按偏好挑选时段；当天则跳过已经来不及的时段，全部来不及返回空串 */
+  private static pickTime(date: string, preference: string, isRevisit: boolean, nowTs: number,
+    avoidTime: string): string {
+    let candidates: string[] = [];
+    if (preference === '下午') {
+      candidates = AFTERNOON_SLOTS.concat(MORNING_SLOTS);
+    } else if (preference === '上午') {
+      candidates = MORNING_SLOTS.concat(AFTERNOON_SLOTS);
+    } else {
+      candidates = isRevisit ? ['09:00', '10:30', '14:30', '15:30'] : ['10:30', '09:00', '14:30', '15:30'];
+    }
+    const isToday: boolean = date === DateUtil.todayStr(nowTs);
+    for (let i = 0; i < candidates.length; i++) {
+      const t: string = candidates[i];
+      if (t === avoidTime) {
+        continue;
+      }
+      if (isToday) {
+        const ts: number = DateUtil.toTimestamp(date, t);
+        if (isNaN(ts) || ts - nowTs < SAME_DAY_LEAD_MIN * 60 * 1000) {
+          continue;
+        }
+      }
+      return t;
+    }
+    return '';
+  }
+
+  /**
+   * 查询挂号方案。返回 null 表示该日期已约不上（当天门诊时间已过）。
+   * avoidDoctor 用于“医生停诊”重规划：换同科室另一位医生、换一个时段。
+   */
+  static queryAppointment(hospital: string, department: string, date: string, isRevisit: boolean,
+    timePreference: string, nowTs: number, avoidDoctor: string): Appointment | null {
+    const demo: DeptDemo = MockDataSource.findDept(department);
+    let doctor: string = demo.doctor;
+    let title: string = demo.title;
+    let avoidTime: string = '';
+    if (avoidDoctor.length > 0 && avoidDoctor.indexOf(demo.doctor) >= 0) {
+      doctor = '李明';
+      title = '副主任医师';
+      avoidTime = MockDataSource.pickTime(date, timePreference, isRevisit, nowTs, '');
+    }
+    const time: string = MockDataSource.pickTime(date, timePreference, isRevisit, nowTs, avoidTime);
+    if (time.length === 0) {
+      return null;
+    }
+    const dept: string = department.length > 0 ? department : '普通内科';
+    const appt: Appointment = {
+      hospitalName: hospital,
+      hospitalAddress: `${hospital}（演示地址：人民路128号）`,
+      hospitalLng: 0,
+      hospitalLat: 0,
       department: dept,
-      doctorName: '王建国 主任医师',
+      doctorName: title.length > 0 ? `${doctor} ${title}` : doctor,
       visitDate: date,
-      visitTime: visitTime,
-      registrationFee: isRevisit ? 15 : 30,
-      queueNo: 'A012',
-      buildingName: '门诊楼',
-      floor: '3楼',
-      roomNo: '316诊室',
-      bookingStatus: BookingStatus.RECOMMENDED,   // 具体值由 MedicalAgent 统一覆盖
-      officialChannelName: ''                      // 具体值由 MedicalAgent 统一覆盖
+      visitTime: time,
+      registrationFee: MockDataSource.feeOf(title),
+      queueNo: MockDataSource.queueNoOf(date, dept, time),
+      buildingName: demo.building,
+      floor: demo.floor,
+      roomNo: demo.room,
+      bookingStatus: BookingStatus.RECOMMENDED,
+      officialChannelName: ''
     };
+    return appt;
   }
 
-  /** 查询出行方案（含路况与天气影响） */
-  static async queryTravel(origin: string, dest: string,
-                           arriveBy: string, weather: string): Promise<TravelPlan> {
-    await MockDataSource.delay(400);
-
-    const baseDuration: number = 28;
-    let traffic: string = '缓行';
-    let buffer: number = 10;
-
-    if (weather.indexOf('雨') >= 0 || weather.indexOf('雪') >= 0) {
-      traffic = '拥堵';
-      buffer = 25;
+  /** 院内导航：楼层不同步骤不同（1 楼不需要坐电梯） */
+  static queryIndoorNav(buildingName: string, floor: string, roomNo: string): IndoorNavPlan {
+    const steps: NavStep[] = [];
+    steps.push({ order: 1, instruction: `从医院正门进入${buildingName}，先到一楼大厅`, landmark: '门口有导诊台，可以找工作人员帮忙' });
+    steps.push({ order: 2, instruction: '在自助机上刷医保卡或身份证取号，取号后拿好小票', landmark: '大厅左手边的自助机' });
+    if (floor !== '1楼' && floor.length > 0) {
+      steps.push({ order: 3, instruction: `坐电梯上${floor}，出电梯后看墙上的科室指示牌`, landmark: '电梯在大厅正中间，腿脚不便别走楼梯' });
+    } else {
+      steps.push({ order: 3, instruction: '就在一楼，顺着地上的指示线往里走', landmark: '跟着地面彩色导引线走' });
     }
-
-    const totalMin: number = baseDuration + buffer;
-    // 额外再留 15 分钟用于取号排队
-    const departTime: string = MockDataSource.minusMinutes(arriveBy, totalMin + 15);
-
-    let suggestion: string = '路况正常，按时出发即可';
-    if (buffer >= 25) {
-      suggestion = '今天有雨，建议提前出发，已为您多留出时间';
-    } else if (traffic === '缓行') {
-      suggestion = '路上略有缓行，已预留缓冲时间';
-    }
-
-    return {
-      originAddress: origin.length > 0 ? origin : '当前位置',
-      destAddress: dest,
-      departTime: departTime,
-      durationMin: baseDuration,
-      distanceKm: 8.6,
-      trafficLevel: traffic,
-      weather: weather,
-      bufferMin: buffer,
-      suggestion: suggestion
-    };
-  }
-
-  /** 查询院内路线 */
-  static async queryIndoorNav(hospital: string, building: string,
-                              floor: string, room: string): Promise<IndoorNavPlan> {
-    await MockDataSource.delay(300);
-
-    const steps: NavStep[] = [
-      { order: 1, instruction: '从门诊楼正门进入，前方10米右手边是自助机', landmark: '门诊大厅' },
-      { order: 2, instruction: '在自助机取号，或直接到人工窗口报手机号取号', landmark: '取号区' },
-      { order: 3, instruction: `乘坐正对面的2号电梯上到${floor}`, landmark: '2号电梯' },
-      { order: 4, instruction: `出电梯后向左走，第三个房间即为${room}`, landmark: room }
-    ];
-
-    return {
-      entrance: `${building}正门`,
-      targetRoom: `${floor}${room}`,
+    steps.push({ order: steps.length + 1, instruction: `找到${roomNo}门口，在候诊区坐下等叫号`, landmark: '门口屏幕会显示排队号' });
+    const plan: IndoorNavPlan = {
+      entrance: '医院正门',
+      targetRoom: `${buildingName}${floor}${roomNo}`,
       steps: steps,
-      estimatedWalkMin: 6
+      estimatedWalkMin: floor === '1楼' ? 5 : 8
     };
+    return plan;
   }
 
-  /** 取药路线（取药场景替代诊室导航） */
-  static async queryPharmacyNav(hospital: string): Promise<IndoorNavPlan> {
-    await MockDataSource.delay(300);
+  /** 取药导航（续方场景） */
+  static queryPharmacyNav(): IndoorNavPlan {
     const steps: NavStep[] = [
-      { order: 1, instruction: '从门诊楼正门进入，向右前方走约20米', landmark: '门诊大厅' },
-      { order: 2, instruction: '在缴费窗口完成缴费，或用手机扫码支付', landmark: '缴费窗口' },
-      { order: 3, instruction: '缴费窗口旁边就是药房，凭单据取药', landmark: '门诊药房' }
+      { order: 1, instruction: '看完医生后，先到一楼缴费窗口或自助机缴费', landmark: '门诊大厅右手边' },
+      { order: 2, instruction: '缴费后到一楼西药房取药，把缴费单交给窗口', landmark: '药房门口有叫号屏' },
+      { order: 3, instruction: '拿到药先在窗口前核对药名和数量，再离开', landmark: '有疑问直接问药房工作人员' }
     ];
-    return {
-      entrance: '门诊楼正门',
-      targetRoom: '1楼门诊药房',
+    const plan: IndoorNavPlan = {
+      entrance: '门诊大厅',
+      targetRoom: '一楼西药房',
       steps: steps,
-      estimatedWalkMin: 4
+      estimatedWalkMin: 5
     };
-  }
-
-  /** 天气查询 */
-  static async queryWeather(lat: number, lng: number): Promise<string> {
-    await MockDataSource.delay(200);
-    return '小雨';
-  }
-
-  // ==================== 工具方法 ====================
-
-  private static delay(ms: number): Promise<void> {
-    return new Promise<void>((resolve: () => void) => {
-      setTimeout(resolve, ms);
-    });
-  }
-
-  /** HH:mm 减去若干分钟 */
-  static minusMinutes(hhmm: string, minutes: number): string {
-    const parts: string[] = hhmm.split(':');
-    if (parts.length !== 2) {
-      return hhmm;
-    }
-    let total: number = parseInt(parts[0]) * 60 + parseInt(parts[1]) - minutes;
-    if (total < 0) {
-      total += 24 * 60;
-    }
-    const h: string = `${Math.floor(total / 60)}`.padStart(2, '0');
-    const m: string = `${total % 60}`.padStart(2, '0');
-    return `${h}:${m}`;
-  }
-
-  /** YYYY-MM-DD + HH:mm 转时间戳 */
-  static toTimestamp(date: string, time: string): number {
-    return new Date(`${date}T${time}:00`).getTime();
+    return plan;
   }
 }

@@ -1,77 +1,180 @@
 /**
- * 智护同行 - 卡片数据存储
+ * 智护同行 - 桌面卡片数据
  *
- * 卡片进程与主应用进程是分开的，不能直接读主应用的内存状态，
- * 所以用 Preferences 做进程间的数据桥：
- *   主应用确认方案 / 提醒触发时 → writeSnapshot()
- *   卡片刷新时 → readSync()
- *
- * 同时维护已添加的卡片 formId 列表，用于主动推送刷新
- * （这是"主动服务"的关键：不等系统定时刷新，事件一发生就更新卡片）
+ * 卡片进程与主应用进程分开，用 Preferences 作进程间数据桥：
+ *   主应用：确认 / 取消安排时 writeSnapshot()，保存完整时间线并立即推送刷新
+ *   卡片：  每次刷新时 readSnapshotSync()，按“当前时间”算出下一步该做什么
+ * 这样卡片不需要主应用在后台存活，也能随时间推进自动显示“出发 → 到院 → 候诊”。
  */
 
 import { preferences } from '@kit.ArkData';
 import { common } from '@kit.AbilityKit';
 import { formProvider, formBindingData } from '@kit.FormKit';
+import { JourneyRecord, ReminderItem, ReminderKind } from '../core/AgentTypes';
+import { DateUtil } from '../core/DateUtil';
 
 const CARD_STORE: string = 'zht_card';
 const KEY_SNAPSHOT: string = 'snapshot';
 const KEY_FORM_IDS: string = 'form_ids';
 
-/** 卡片展示的数据快照 —— 只放卡片真正要显示的字段，保持轻量 */
+/** 就诊结束 12 小时后卡片回到空态 */
+const FINISHED_AFTER_MS: number = 12 * 3600 * 1000;
+
+export interface CardStep {
+  ts: number;
+  label: string;
+}
+
+/** 卡片快照：只存卡片需要的字段 */
 export interface CardSnapshot {
-  /** 是否有进行中的陪诊安排 */
   hasPlan: boolean;
-  /** 主标题，如 "明天 09:00 心血管内科" */
-  title: string;
-  /** 下一步动作，如 "07:52 出发" */
-  nextAction: string;
-  /** 补充说明，如 "今天有雨，已多留25分钟" */
-  detail: string;
-  /** 医院名 */
   hospital: string;
-  /** 当前处于第几步 / 共几步 */
-  stepIndex: number;
-  stepTotal: number;
+  department: string;
+  visitDate: string;
+  visitTime: string;
+  room: string;
+  steps: CardStep[];
   updatedAt: number;
 }
 
 export class CardDataStore {
 
-  private static emptySnapshot(): CardSnapshot {
-    return {
+  static emptySnapshot(): CardSnapshot {
+    const s: CardSnapshot = {
       hasPlan: false,
-      title: '还没有陪诊安排',
-      nextAction: '点一下，说句话就能安排',
-      detail: '',
       hospital: '',
-      stepIndex: 0,
-      stepTotal: 0,
+      department: '',
+      visitDate: '',
+      visitTime: '',
+      room: '',
+      steps: [],
       updatedAt: Date.now()
     };
+    return s;
   }
 
-  // ==================== 写入（主应用侧调用） ====================
+  private static labelOf(kind: string): string {
+    if (kind === ReminderKind.PREPARE) {
+      return '备好证件';
+    }
+    if (kind === ReminderKind.DEPART_SOON) {
+      return '准备出门';
+    }
+    if (kind === ReminderKind.DEPART) {
+      return '出发去医院';
+    }
+    if (kind === ReminderKind.ARRIVE) {
+      return '到院引导';
+    }
+    if (kind === ReminderKind.QUEUE) {
+      return '候诊叫号';
+    }
+    if (kind === ReminderKind.MEDICATION) {
+      return '按新处方吃药';
+    }
+    if (kind === ReminderKind.POST_VISIT) {
+      return '记录复诊时间';
+    }
+    return '提醒';
+  }
 
-  /**
-   * 方案确认或状态变化时写入快照，并立即推送刷新所有已添加的卡片
-   */
+  /** 已确认的行程 → 卡片快照（null 表示没有进行中的安排） */
+  static fromJourney(j: JourneyRecord | null): CardSnapshot {
+    if (j === null) {
+      return CardDataStore.emptySnapshot();
+    }
+    const a = j.appointment;
+    const steps: CardStep[] = [];
+    for (let i = 0; i < j.reminders.length; i++) {
+      const r: ReminderItem = j.reminders[i];
+      steps.push({ ts: r.triggerAt, label: CardDataStore.labelOf(r.kind) });
+    }
+    const visitTs: number = DateUtil.toTimestamp(a.visitDate, a.visitTime);
+    if (!isNaN(visitTs)) {
+      steps.push({ ts: visitTs, label: `看医生（${a.roomNo}）` });
+    }
+    steps.sort((x: CardStep, y: CardStep) => x.ts - y.ts);
+    const s: CardSnapshot = {
+      hasPlan: true,
+      hospital: a.hospitalName,
+      department: a.department,
+      visitDate: a.visitDate,
+      visitTime: a.visitTime,
+      room: `${a.floor}${a.roomNo}`,
+      steps: steps,
+      updatedAt: Date.now()
+    };
+    return s;
+  }
+
+  /** 按当前时间计算卡片要显示的内容；字段名与 CareCard.ets 的 @LocalStorageProp 一一对应 */
+  static computeView(s: CardSnapshot, nowTs: number): Record<string, Object> {
+    const view: Record<string, Object> = {
+      'hasPlan': false,
+      'title': '还没有陪诊安排',
+      'nextAction': '点一下，说句话就能安排',
+      'later': '',
+      'hospital': '',
+      'stepIndex': 0,
+      'stepTotal': 0
+    };
+    if (!s.hasPlan) {
+      return view;
+    }
+    const visitTs: number = DateUtil.toTimestamp(s.visitDate, s.visitTime);
+    if (isNaN(visitTs) || nowTs > visitTs + FINISHED_AFTER_MS) {
+      view['title'] = '这次陪诊已经结束';
+      view['nextAction'] = '点一下，记下医生说的复诊时间';
+      return view;
+    }
+    let idx: number = -1;
+    for (let i = 0; i < s.steps.length; i++) {
+      if (s.steps[i].ts >= nowTs - 10 * 60 * 1000) {
+        idx = i;
+        break;
+      }
+    }
+    view['hasPlan'] = true;
+    view['title'] = `${DateUtil.friendlyDate(s.visitDate, nowTs)} ${s.visitTime} ${s.department}`;
+    view['hospital'] = `${s.hospital} ${s.room}`;
+    view['stepTotal'] = s.steps.length;
+    if (idx < 0) {
+      view['nextAction'] = '今天的陪诊快结束了';
+      view['stepIndex'] = s.steps.length;
+      return view;
+    }
+    const cur: CardStep = s.steps[idx];
+    view['nextAction'] = `${DateUtil.friendlyTime(cur.ts, nowTs)} ${cur.label}`;
+    view['stepIndex'] = idx + 1;
+    const later: string[] = [];
+    for (let i = idx + 1; i < s.steps.length && later.length < 2; i++) {
+      later.push(`${DateUtil.formatHm(s.steps[i].ts)} ${s.steps[i].label}`);
+    }
+    view['later'] = later.length > 0 ? `接下来：${later.join(' · ')}` : '';
+    return view;
+  }
+
+  // ==================== 写入（主应用侧） ====================
+
   static async writeSnapshot(ctx: common.Context, snapshot: CardSnapshot): Promise<void> {
-    const store: preferences.Preferences = await preferences.getPreferences(ctx, CARD_STORE);
-    await store.put(KEY_SNAPSHOT, JSON.stringify(snapshot));
-    await store.flush();
+    try {
+      const store: preferences.Preferences = await preferences.getPreferences(ctx, CARD_STORE);
+      await store.put(KEY_SNAPSHOT, JSON.stringify(snapshot));
+      await store.flush();
+    } catch (e) {
+      console.error(`[CardDataStore] write failed: ${e}`);
+      return;
+    }
     await CardDataStore.pushRefresh(ctx, snapshot);
   }
 
-  /** 主动刷新桌面上所有该应用的卡片 */
   private static async pushRefresh(ctx: common.Context, snapshot: CardSnapshot): Promise<void> {
-    const ids: string[] = await CardDataStore.readFormIds(ctx);
+    const ids: string[] = CardDataStore.readFormIds(ctx);
     if (ids.length === 0) {
       return;
     }
     const data: formBindingData.FormBindingData =
-      formBindingData.createFormBindingData(CardDataStore.toBindingObject(snapshot));
-
+      formBindingData.createFormBindingData(CardDataStore.computeView(snapshot, Date.now()));
     for (let i = 0; i < ids.length; i++) {
       try {
         await formProvider.updateForm(ids[i], data);
@@ -79,37 +182,30 @@ export class CardDataStore {
         console.error(`[CardDataStore] refresh ${ids[i]} failed: ${e}`);
       }
     }
-    console.info(`[CardDataStore] pushed refresh to ${ids.length} cards`);
   }
 
-  // ==================== 读取（卡片侧调用） ====================
+  // ==================== 读取（卡片侧） ====================
 
-  /** 卡片刷新回调里同步读取，读不到则返回空态 */
-  static readSync(ctx: common.Context): CardSnapshot {
+  /**
+   * 卡片进程读取快照。先移除进程内缓存，确保读到主应用刚写入的最新数据。
+   */
+  static readSnapshotSync(ctx: common.Context): CardSnapshot {
     try {
+      preferences.removePreferencesFromCacheSync(ctx, CARD_STORE);
       const store: preferences.Preferences = preferences.getPreferencesSync(ctx, { name: CARD_STORE });
-      const raw: string = store.getSync(KEY_SNAPSHOT, '') as string;
-      if (raw.length === 0) {
+      const raw: preferences.ValueType = store.getSync(KEY_SNAPSHOT, '');
+      if (typeof raw !== 'string' || raw.length === 0) {
         return CardDataStore.emptySnapshot();
       }
-      return JSON.parse(raw) as CardSnapshot;
+      const s: CardSnapshot = JSON.parse(raw) as CardSnapshot;
+      if (!Array.isArray(s.steps)) {
+        s.steps = [];
+      }
+      return s;
     } catch (e) {
       console.error(`[CardDataStore] readSync failed: ${e}`);
       return CardDataStore.emptySnapshot();
     }
-  }
-
-  /** 转成卡片绑定数据 —— 字段名要与 CareCard.ets 中的 @LocalStorageProp 对应 */
-  static toBindingObject(s: CardSnapshot): Record<string, Object> {
-    return {
-      'hasPlan': s.hasPlan,
-      'title': s.title,
-      'nextAction': s.nextAction,
-      'detail': s.detail,
-      'hospital': s.hospital,
-      'stepIndex': s.stepIndex,
-      'stepTotal': s.stepTotal
-    };
   }
 
   // ==================== formId 管理 ====================
@@ -118,45 +214,46 @@ export class CardDataStore {
     if (formId.length === 0) {
       return;
     }
-    try {
-      const store: preferences.Preferences = preferences.getPreferencesSync(ctx, { name: CARD_STORE });
-      const raw: string = store.getSync(KEY_FORM_IDS, '[]') as string;
-      const ids: string[] = JSON.parse(raw) as string[];
-      if (ids.indexOf(formId) < 0) {
-        ids.push(formId);
-        store.putSync(KEY_FORM_IDS, JSON.stringify(ids));
-        store.flush();
-      }
-    } catch (e) {
-      console.error(`[CardDataStore] rememberFormId failed: ${e}`);
+    const ids: string[] = CardDataStore.readFormIds(ctx);
+    if (ids.indexOf(formId) < 0) {
+      ids.push(formId);
+      CardDataStore.writeFormIds(ctx, ids);
     }
   }
 
   static forgetFormId(ctx: common.Context, formId: string): void {
-    try {
-      const store: preferences.Preferences = preferences.getPreferencesSync(ctx, { name: CARD_STORE });
-      const raw: string = store.getSync(KEY_FORM_IDS, '[]') as string;
-      const ids: string[] = JSON.parse(raw) as string[];
-      const out: string[] = [];
-      for (let i = 0; i < ids.length; i++) {
-        if (ids[i] !== formId) {
-          out.push(ids[i]);
-        }
+    const ids: string[] = CardDataStore.readFormIds(ctx);
+    const out: string[] = [];
+    for (let i = 0; i < ids.length; i++) {
+      if (ids[i] !== formId) {
+        out.push(ids[i]);
       }
-      store.putSync(KEY_FORM_IDS, JSON.stringify(out));
-      store.flush();
+    }
+    CardDataStore.writeFormIds(ctx, out);
+  }
+
+  private static readFormIds(ctx: common.Context): string[] {
+    try {
+      preferences.removePreferencesFromCacheSync(ctx, CARD_STORE);
+      const store: preferences.Preferences = preferences.getPreferencesSync(ctx, { name: CARD_STORE });
+      const raw: preferences.ValueType = store.getSync(KEY_FORM_IDS, '[]');
+      const v: Object = JSON.parse(typeof raw === 'string' ? raw : '[]') as Object;
+      return Array.isArray(v) ? v as string[] : [];
     } catch (e) {
-      console.error(`[CardDataStore] forgetFormId failed: ${e}`);
+      console.error(`[CardDataStore] read form ids failed: ${e}`);
+      return [];
     }
   }
 
-  private static async readFormIds(ctx: common.Context): Promise<string[]> {
+  private static writeFormIds(ctx: common.Context, ids: string[]): void {
     try {
-      const store: preferences.Preferences = await preferences.getPreferences(ctx, CARD_STORE);
-      const raw: string = await store.get(KEY_FORM_IDS, '[]') as string;
-      return JSON.parse(raw) as string[];
+      const store: preferences.Preferences = preferences.getPreferencesSync(ctx, { name: CARD_STORE });
+      store.putSync(KEY_FORM_IDS, JSON.stringify(ids));
+      store.flush().catch((err: Error) => {
+        console.error(`[CardDataStore] flush form ids failed: ${err.message}`);
+      });
     } catch (e) {
-      return [];
+      console.error(`[CardDataStore] write form ids failed: ${e}`);
     }
   }
 }

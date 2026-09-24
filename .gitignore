@@ -1,16 +1,28 @@
 # DevEco Studio / Hvigor generated files
-.hvigor/cache/
-.hvigor/outputs/
-.hvigor/report/
+.hvigor/
 entry/.preview/
 entry/build/
+build/
+oh_modules/
 
 # Local IDE and machine-specific files
 .idea/workspace.xml
 .idea/**/workspace.xml
+.idea/shelf/
+.idea/previewer/
+.idea/.deveco/
 local.properties
 
 # Build artifacts
 *.hap
+*.app
 *.apk
 *.log
+
+# Backend secrets and Python caches — never commit API keys
+backend/.env
+backend/.venv/
+backend/venv/
+__pycache__/
+*.pyc
+.pytest_cache/

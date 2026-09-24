@@ -3,32 +3,25 @@
  *
  * 所有专业 Agent 继承此类，统一：
  *  - 执行入口 execute()
- *  - 失败兜底（不让单个 Agent 失败拖垮整条陪诊链路）
- *  - 结果写入共享黑板
- *  - 通过事件总线上报状态
+ *  - 超时与异常兜底（单个 Agent 失败不拖垮整条陪诊链路，进度卡片不会永远转圈）
+ *  - 结果写入共享黑板、通过事件总线上报状态
  */
 
 import {
-  AgentResult, TaskNode, RuntimeContext, BusEvent, TaskStatus,
-  DataSourceType, VerificationStatus
+  AgentResult, TaskNode, RuntimeContext, BusEvent, TaskStatus, DataSourceType, VerificationStatus
 } from '../core/AgentTypes';
 import { eventBus, blackboard } from '../core/EventBus';
 
 export abstract class BaseAgent {
   abstract readonly name: string;
 
-  /**
-   * 单个任务的最长等待时间。
-   * 之前 run() 一旦因为任何原因(网络卡住、真机 API 行为异常等)没能 resolve/reject，
-   * 进度卡片就会永远停在"处理中"，用户完全看不出系统是卡住了还是真的在算。
-   * 加上超时后，最坏情况也会在这个时间点强制判定失败，把"无限转圈"变成"明确的失败反馈"。
-   */
-  private static readonly TASK_TIMEOUT_MS: number = 15000;
+  /** 单个任务最长等待时间：网关天气 + 路线并发请求各 8 秒，留足余量 */
+  private static readonly TASK_TIMEOUT_MS: number = 20000;
 
   /** 子类实现具体业务逻辑 */
   protected abstract run(task: TaskNode, rt: RuntimeContext): Promise<AgentResult>;
 
-  /** 统一执行入口，带异常兜底、超时兜底与状态上报 */
+  /** 统一执行入口 */
   async execute(task: TaskNode, rt: RuntimeContext): Promise<AgentResult> {
     task.status = TaskStatus.RUNNING;
     const startPayload: Record<string, Object> = {
@@ -39,54 +32,36 @@ export abstract class BaseAgent {
     eventBus.emit(BusEvent.TASK_STARTED, JSON.stringify(startPayload));
     console.info(`[${this.name}] task ${task.id} (${task.title}) started`);
 
-    const result: AgentResult = await BaseAgent.withTimeout(
-      this.run(task, rt), BaseAgent.TASK_TIMEOUT_MS, task, this.name
-    );
+    const result: AgentResult = await BaseAgent.withTimeout(this.run(task, rt), BaseAgent.TASK_TIMEOUT_MS,
+      task, this.name);
 
     task.status = result.success ? TaskStatus.SUCCESS : TaskStatus.FAILED;
     task.result = result.data;
     task.errorMsg = result.errorMsg;
-
     console.info(`[${this.name}] task ${task.id} finished: success=${result.success}` +
       (result.errorMsg.length > 0 ? `, err=${result.errorMsg}` : ''));
-
     blackboard.putResult(task.id, result);
     eventBus.emit(BusEvent.TASK_FINISHED, JSON.stringify(result));
     return result;
   }
 
   /**
-   * 给 run() 套一层超时和异常兜底，保证不管发生什么，execute() 一定能在有限时间内拿到结果。
-   * run() 本身若最终还是完成了（超时之后才 resolve），结果会被忽略，不会二次上报状态，
-   * 避免出现"先判超时失败、后面又悄悄改成成功"的状态错乱。
+   * 给 run() 套一层超时和异常兜底，保证 execute() 一定在有限时间内拿到结果。
+   * 超时后 run() 若再完成，结果会被忽略，避免“先判失败、后又改成功”的状态错乱。
    */
-  private static withTimeout(
-    task: Promise<AgentResult>, ms: number, node: TaskNode, agentName: string
-  ): Promise<AgentResult> {
+  private static withTimeout(task: Promise<AgentResult>, ms: number, node: TaskNode,
+    agentName: string): Promise<AgentResult> {
     return new Promise<AgentResult>((resolve: (r: AgentResult) => void) => {
       let settled: boolean = false;
-
       const timer: number = setTimeout(() => {
         if (settled) {
           return;
         }
         settled = true;
         console.error(`[${agentName}] task ${node.id} timeout after ${ms}ms`);
-        const timeoutResult: AgentResult = {
-          taskId: node.id,
-          agentName: agentName,
-          success: false,
-          speech: `${node.title}这一步等太久了，我们稍后再试一次`,
-          data: '',
-          needConfirm: false,
-          errorMsg: 'ERR_TIMEOUT',
-          dataSource: DataSourceType.UNKNOWN,
-          verificationStatus: VerificationStatus.UNVERIFIED,
-          updatedAt: Date.now()
-        };
-        resolve(timeoutResult);
+        resolve(BaseAgent.failure(node.id, agentName, `${node.title}这一步等太久了，您可以稍后再说一次`,
+          'ERR_TIMEOUT'));
       }, ms);
-
       task.then((r: AgentResult) => {
         if (settled) {
           return;
@@ -101,27 +76,30 @@ export abstract class BaseAgent {
         settled = true;
         clearTimeout(timer);
         console.error(`[${agentName}] task ${node.id} execute error: ${e}`);
-        const errorResult: AgentResult = {
-          taskId: node.id,
-          agentName: agentName,
-          success: false,
-          speech: `${node.title}这一步暂时没能完成，我稍后再试一次`,
-          data: '',
-          needConfirm: false,
-          errorMsg: `${e}`,
-          dataSource: DataSourceType.UNKNOWN,
-          verificationStatus: VerificationStatus.UNVERIFIED,
-          updatedAt: Date.now()
-        };
-        resolve(errorResult);
+        resolve(BaseAgent.failure(node.id, agentName, `${node.title}这一步暂时没能完成`, `${e}`));
       });
     });
   }
 
+  private static failure(taskId: string, agentName: string, speech: string, err: string): AgentResult {
+    const r: AgentResult = {
+      taskId: taskId,
+      agentName: agentName,
+      success: false,
+      speech: speech,
+      data: '',
+      needConfirm: false,
+      errorMsg: err,
+      dataSource: DataSourceType.UNKNOWN,
+      verificationStatus: VerificationStatus.UNVERIFIED,
+      updatedAt: Date.now()
+    };
+    return r;
+  }
+
   protected ok(taskId: string, speech: string, data: string, needConfirm: boolean,
-               dataSource: DataSourceType = DataSourceType.LOCAL_COMPUTED,
-               verificationStatus: VerificationStatus = VerificationStatus.UNVERIFIED): AgentResult {
-    return {
+    dataSource: DataSourceType, verificationStatus: VerificationStatus): AgentResult {
+    const r: AgentResult = {
       taskId: taskId,
       agentName: this.name,
       success: true,
@@ -133,20 +111,54 @@ export abstract class BaseAgent {
       verificationStatus: verificationStatus,
       updatedAt: Date.now()
     };
+    return r;
   }
 
   protected fail(taskId: string, speech: string, err: string): AgentResult {
-    return {
-      taskId: taskId,
-      agentName: this.name,
-      success: false,
-      speech: speech,
-      data: '',
-      needConfirm: false,
-      errorMsg: err,
-      dataSource: DataSourceType.UNKNOWN,
-      verificationStatus: VerificationStatus.UNVERIFIED,
-      updatedAt: Date.now()
-    };
+    return BaseAgent.failure(taskId, this.name, speech, err);
+  }
+
+  // ==================== 解析工具 ====================
+
+  /** 任务输入（意图 JSON）→ Record；解析失败返回空对象 */
+  protected static payloadOf(task: TaskNode): Record<string, Object> {
+    return BaseAgent.parseRecord(task.payload);
+  }
+
+  protected static parseRecord(raw: string): Record<string, Object> {
+    try {
+      const v: Object = JSON.parse(raw) as Object;
+      if (v !== null && typeof v === 'object' && !Array.isArray(v)) {
+        return v as Record<string, Object>;
+      }
+    } catch (e) {
+      console.warn(`[BaseAgent] json parse failed: ${e}`);
+    }
+    const empty: Record<string, Object> = {};
+    return empty;
+  }
+
+  /** 重规划时注入的异常信息，没有则返回 null */
+  protected static anomalyOf(payload: Record<string, Object>): Record<string, Object> | null {
+    const a: Object | undefined = payload['anomaly'];
+    if (a !== undefined && a !== null && typeof a === 'object') {
+      return a as Record<string, Object>;
+    }
+    return null;
+  }
+
+  protected static strOf(obj: Record<string, Object>, key: string): string {
+    const v: Object | undefined = obj[key];
+    return typeof v === 'string' ? v : '';
+  }
+
+  protected static boolOf(obj: Record<string, Object>, key: string): boolean {
+    const v: Object | undefined = obj[key];
+    return v === true;
+  }
+
+  protected static numOf(obj: Record<string, Object>, key: string, def: number): number {
+    const v: Object | undefined = obj[key];
+    return typeof v === 'number' && isFinite(v) ? v : def;
   }
 }
