@@ -5,6 +5,12 @@ description: 出行协同技能。当需要规划前往医院的行程、计算�
 
 # 出行协同 Skill
 
+> 上传说明：`scripts/TravelPlanSkill.ets` 是独立运行脚本，不依赖 App 内的
+> `src/main/ets` 文件。上传包只需保留本文件和 `scripts/TravelPlanSkill.ets`。
+> 脚本顶部的 `GATEWAY_BASE_URL` 配置为自建网关地址时，车程来自高德实时路线；
+> 网关设置了 `APP_ACCESS_TOKEN` 时，把同一个值填入脚本的 `GATEWAY_APP_TOKEN`；
+> 未配置时返回演示估算，并在 `suggestion` 与播报中明确标注“估算”，不冒充实时路况。
+
 ## 触发场景
 
 当就诊时间与目的地已经确定，需要计算出发时间或行程方案时调用，例如：

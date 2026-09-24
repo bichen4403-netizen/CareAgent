@@ -1,13 +1,15 @@
 /**
- * 导航引导智能体
- * 职责：院内导航｜科室指引｜路径规划｜楼层定位
+ * 智护同行 - 院内导航 Agent
  *
- * 老年用户在医院最容易迷路的是"进门之后"这一段，
- * 所以本 Agent 专注院内引导，且输出为可直接语音播报的口语化步骤。
+ * 职责：根据挂号方案（楼栋/楼层/诊室）生成从医院正门到诊室的分步指引；
+ * 续方取药场景额外追加“缴费 → 药房取药”路线。
+ * 到院后由“院内引导”页逐步语音播报（buildStepSpeech），戴耳机即可边走边听。
+ * 院内地图没有公开接口，初赛使用演示数据，结果标注 DEMO。
  */
 
 import {
-  AgentResult, TaskNode, RuntimeContext, ParsedIntent, Appointment, IndoorNavPlan, IntentType, NavStep
+  AgentResult, TaskNode, RuntimeContext, Appointment, IndoorNavPlan, NavStep, DataSourceType,
+  VerificationStatus
 } from '../core/AgentTypes';
 import { BaseAgent } from './BaseAgent';
 import { blackboard } from '../core/EventBus';
@@ -17,45 +19,44 @@ export class NavigationAgent extends BaseAgent {
   readonly name: string = 'NavigationAgent';
 
   protected async run(task: TaskNode, rt: RuntimeContext): Promise<AgentResult> {
-    const intent: ParsedIntent = JSON.parse(task.payload) as ParsedIntent;
+    const medical: AgentResult | undefined = blackboard.getResult('T1');
+    if (medical === undefined || !medical.success) {
+      return this.fail(task.id, '还没有确定去哪个诊室，暂时没法规划院内路线', 'NO_APPOINTMENT');
+    }
+    const md: Record<string, Object> = BaseAgent.parseRecord(medical.data);
+    const apptObj: Object | undefined = md['appointment'];
+    if (apptObj === undefined || apptObj === null) {
+      return this.fail(task.id, '挂号信息不完整，暂时没法规划院内路线', 'BAD_APPOINTMENT');
+    }
+    const appt: Appointment = apptObj as Appointment;
 
-    const medicalResult = blackboard.getResultByAgent('MedicalAgent');
-    if (medicalResult === undefined) {
-      return this.fail(task.id, '还没拿到诊室信息，到院后我再为您带路', 'medical result missing');
+    const nav: IndoorNavPlan = MockDataSource.queryIndoorNav(appt.buildingName, appt.floor, appt.roomNo);
+    if (BaseAgent.strOf(md, 'intentType') === 'MEDICINE_REFILL') {
+      const pharmacy: IndoorNavPlan = MockDataSource.queryPharmacyNav();
+      for (let i = 0; i < pharmacy.steps.length; i++) {
+        const step: NavStep = {
+          order: nav.steps.length + 1,
+          instruction: pharmacy.steps[i].instruction,
+          landmark: pharmacy.steps[i].landmark
+        };
+        nav.steps.push(step);
+      }
+      nav.estimatedWalkMin += pharmacy.estimatedWalkMin;
     }
 
-    const medicalData: Record<string, Object> = JSON.parse(medicalResult.data) as Record<string, Object>;
-    const appt: Appointment = medicalData['appointment'] as Appointment;
-
-    let navPlan: IndoorNavPlan;
-    if (intent.type === IntentType.MEDICINE_REFILL) {
-      navPlan = await MockDataSource.queryPharmacyNav(appt.hospitalName);
-    } else {
-      navPlan = await MockDataSource.queryIndoorNav(
-        appt.hospitalName, appt.buildingName, appt.floor, appt.roomNo
-      );
-    }
-
-    const speech: string = `到院后从${navPlan.entrance}进，我会一步步语音告诉您怎么走到${navPlan.targetRoom}，` +
-                           `走路大约${navPlan.estimatedWalkMin}分钟`;
-
-    const dataObj: Record<string, Object> = {
-      'navPlan': navPlan,
-      'targetRoom': navPlan.targetRoom
-    };
-
-    return this.ok(task.id, speech, JSON.stringify(dataObj), false);
+    const speech: string = `到了医院从${nav.entrance}进，诊室在${appt.buildingName}${appt.floor}${appt.roomNo}，` +
+      `走过去大约${nav.estimatedWalkMin}分钟。到医院后打开“院内引导”，我一步一步带您走。`;
+    const data: Record<string, Object> = { 'navPlan': nav };
+    return this.ok(task.id, speech, JSON.stringify(data), false, DataSourceType.DEMO, VerificationStatus.SUGGESTED);
   }
 
-  /**
-   * 到院后逐步播报：由页面在用户实际到达时逐条调用
-   * 耳机播报优先，避免老人边走边看手机
-   */
-  static buildStepSpeech(navPlan: IndoorNavPlan, stepIndex: number): string {
-    if (stepIndex < 0 || stepIndex >= navPlan.steps.length) {
-      return '您已经到了，我在这儿等您看完诊';
+  /** 到院后逐步播报的话术（院内引导页使用） */
+  static buildStepSpeech(nav: IndoorNavPlan, stepIndex: number): string {
+    if (stepIndex < 0 || stepIndex >= nav.steps.length) {
+      return `已经到了，您要去的是${nav.targetRoom}。`;
     }
-    const step: NavStep = navPlan.steps[stepIndex];
-    return `第${step.order}步，${step.instruction}`;
+    const s: NavStep = nav.steps[stepIndex];
+    const tail: string = stepIndex === nav.steps.length - 1 ? '这是最后一步。' : '做完了点“下一步”。';
+    return `第${stepIndex + 1}步，共${nav.steps.length}步。${s.instruction}。${s.landmark}。${tail}`;
   }
 }

@@ -1,17 +1,24 @@
 /**
- * 智护同行 - 大模型能力封装（小艺平台适配层）
+ * 智护同行 - 大模型能力封装（平台适配层）
  *
- * ⚠️ 平台适配说明：
- * 小艺开放平台的 Agent / Skill 调用接口以官方最新文档为准。
- * 本文件把"调模型"收敛成一个接口 LLMProvider，
- * 接平台时只需新增一个 Provider 实现，业务代码零改动。
+ * 把“调模型”收敛成 LLMProvider 接口，接小艺开放平台或别的模型时只需新增一个实现：
+ *   - HttpLLMProvider ：经 backend/ 网关调用 DeepSeek 等 OpenAI 兼容模型
+ *   - MockLLMProvider ：离线规则模型，无网络也能完整演示（意图理解 + 处方单字段抽取）
  *
- * 已提供两个实现：
- *   - HttpLLMProvider ：通用 HTTP 调用（对接小艺云侧接口或自建网关）
- *   - MockLLMProvider ：本地规则模拟，无网络也能演示，答辩兜底用
+ * 任何网络异常都会自动退回离线规则，页面上会标注“离线规则理解”，不冒充大模型结果。
  */
 
 import { http } from '@kit.NetworkKit';
+import { BackendConfig } from '../config/BackendConfig';
+import { NluRules } from '../core/NluRules';
+import { DateUtil, DateHint } from '../core/DateUtil';
+import { IntentType } from '../core/AgentTypes';
+
+/** 调用目的：离线规则模型据此选择对应的规则 */
+export enum LLMTask {
+  INTENT = 'INTENT',
+  RECORD_EXTRACT = 'RECORD_EXTRACT'
+}
 
 export interface LLMMessage {
   role: string;      // system / user / assistant
@@ -19,43 +26,64 @@ export interface LLMMessage {
 }
 
 export interface LLMProvider {
-  chat(messages: LLMMessage[]): Promise<string>;
+  readonly name: string;
+  chat(messages: LLMMessage[], task: LLMTask): Promise<string>;
 }
+
+/** 用户原话在提示词中的包裹标记：离线规则只解析这一段，避免把“常去医院”等背景当成本次需求 */
+export const USER_TEXT_BEGIN: string = '【用户原话】';
+export const USER_TEXT_END: string = '【原话结束】';
 
 // ==================== HTTP 实现 ====================
 
 export class HttpLLMProvider implements LLMProvider {
+  readonly name: string;
   private endpoint: string;
   private token: string;
   private model: string;
+  private viaGateway: boolean;
 
-  constructor(endpoint: string, token: string, model: string) {
+  /**
+   * @param viaGateway true 表示请求自建网关（由网关注入密钥与 JSON 模式）；
+   *                   false 表示直连 OpenAI 兼容接口（仅用于本地调试，不要把密钥写进客户端）
+   */
+  constructor(endpoint: string, token: string, model: string, viaGateway: boolean, name: string) {
     this.endpoint = endpoint;
     this.token = token;
     this.model = model;
+    this.viaGateway = viaGateway;
+    this.name = name;
   }
 
-  async chat(messages: LLMMessage[]): Promise<string> {
+  async chat(messages: LLMMessage[], task: LLMTask): Promise<string> {
     const req: http.HttpRequest = http.createHttp();
     try {
       const bodyObj: Record<string, Object> = {
-        'model': this.model,
         'messages': messages,
-        'temperature': 0.2,
+        'temperature': 0.1,
         'stream': false
       };
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.token}`
-      };
+      if (this.model.length > 0) {
+        bodyObj['model'] = this.model;
+      }
+      if (this.viaGateway) {
+        bodyObj['json_mode'] = true;
+      } else {
+        const format: Record<string, Object> = { 'type': 'json_object' };
+        bodyObj['response_format'] = format;
+      }
+      const headers: Record<string, string> = this.viaGateway
+        ? BackendConfig.headers() : { 'Content-Type': 'application/json' };
+      if (this.token.length > 0) {
+        headers['Authorization'] = `Bearer ${this.token}`;
+      }
       const resp: http.HttpResponse = await req.request(this.endpoint, {
         method: http.RequestMethod.POST,
         header: headers,
         extraData: JSON.stringify(bodyObj),
-        connectTimeout: 10000,
-        readTimeout: 30000
+        connectTimeout: 5000,
+        readTimeout: 15000
       });
-
       if (resp.responseCode !== 200) {
         throw new Error(`LLM HTTP ${resp.responseCode}`);
       }
@@ -69,11 +97,18 @@ export class HttpLLMProvider implements LLMProvider {
   private static extractContent(raw: string): string {
     try {
       const obj: Record<string, Object> = JSON.parse(raw) as Record<string, Object>;
-      const choices = obj['choices'] as Array<Record<string, Object>>;
-      if (choices !== undefined && choices.length > 0) {
-        const msg = choices[0]['message'] as Record<string, string>;
-        if (msg !== undefined && msg['content'] !== undefined) {
-          return msg['content'];
+      const choices: Object | undefined = obj['choices'];
+      if (Array.isArray(choices)) {
+        const list: Object[] = choices as Object[];
+        if (list.length > 0) {
+          const first: Record<string, Object> = list[0] as Record<string, Object>;
+          const msg: Object | undefined = first['message'];
+          if (msg !== undefined && msg !== null && typeof msg === 'object') {
+            const content: Object | undefined = (msg as Record<string, Object>)['content'];
+            if (typeof content === 'string') {
+              return content;
+            }
+          }
         }
       }
     } catch (e) {
@@ -83,10 +118,12 @@ export class HttpLLMProvider implements LLMProvider {
   }
 }
 
-// ==================== Mock 实现（离线演示兜底） ====================
+// ==================== 离线规则实现（答辩兜底） ====================
 
 export class MockLLMProvider implements LLMProvider {
-  async chat(messages: LLMMessage[]): Promise<string> {
+  readonly name: string = 'offline-rules';
+
+  async chat(messages: LLMMessage[], task: LLMTask): Promise<string> {
     let userText: string = '';
     for (let i = messages.length - 1; i >= 0; i--) {
       if (messages[i].role === 'user') {
@@ -94,8 +131,11 @@ export class MockLLMProvider implements LLMProvider {
         break;
       }
     }
-    await MockLLMProvider.delay(300);
-    return MockLLMProvider.ruleBasedIntent(userText);
+    await MockLLMProvider.delay(250);
+    if (task === LLMTask.RECORD_EXTRACT) {
+      return NluRules.extractRecordJson(userText);
+    }
+    return MockLLMProvider.ruleBasedIntent(MockLLMProvider.extractRequestText(userText));
   }
 
   private static delay(ms: number): Promise<void> {
@@ -104,64 +144,25 @@ export class MockLLMProvider implements LLMProvider {
     });
   }
 
-  /** 关键词规则兜底：无网络或模型超时时保证流程不中断 */
+  /** 从 IntentParser 的包装消息中提取用户原话 */
+  static extractRequestText(text: string): string {
+    const start: number = text.lastIndexOf(USER_TEXT_BEGIN);
+    if (start >= 0) {
+      const contentStart: number = start + USER_TEXT_BEGIN.length;
+      const end: number = text.indexOf(USER_TEXT_END, contentStart);
+      if (end > contentStart) {
+        return text.substring(contentStart, end);
+      }
+      return text.substring(contentStart);
+    }
+    return text;
+  }
+
   private static ruleBasedIntent(text: string): string {
-    // IntentParser 会把“今天/用户背景/用户说”一起放入 user message。
-    // 兜底解析只能使用用户真正说的那一段，否则会把上下文中的常去医院
-    // 误当成这次请求的目标医院。
-    const requestText: string = MockLLMProvider.extractRequestText(text);
-    let type: string = 'UNKNOWN';
-    if (requestText.indexOf('药') >= 0 || requestText.indexOf('续方') >= 0) {
-      type = 'MEDICINE_REFILL';
-    } else if (requestText.indexOf('报告') >= 0 || requestText.indexOf('化验') >= 0) {
-      type = 'REPORT_QUERY';
-    } else if (requestText.indexOf('医院') >= 0 || requestText.indexOf('复查') >= 0 ||
-               requestText.indexOf('看病') >= 0 || requestText.indexOf('挂号') >= 0 ||
-               requestText.indexOf('就诊') >= 0 || requestText.indexOf('复诊') >= 0) {
-      type = 'MEDICAL_VISIT';
-    }
-
-    let hospital: string = '';
-    const hIdx: number = requestText.indexOf('医院');
-    if (hIdx > 0) {
-      const start: number = Math.max(0, hIdx - 12);
-      hospital = requestText.substring(start, hIdx + 2);
-      const cut: number = hospital.search(/[去到在]/);
-      if (cut >= 0) {
-        hospital = hospital.substring(cut + 1);
-      }
-      // “去医院/到医院”只是地点类别，不是具体医院名称，必须交给
-      // 端侧历史或用户澄清，不能套用 Mock 地址生成一个虚假的医院。
-      if (hospital === '医院') {
-        hospital = '';
-      }
-    }
-
-    let department: string = '';
-    if (requestText.indexOf('高血压') >= 0 || requestText.indexOf('血压') >= 0 || requestText.indexOf('心') >= 0) {
-      department = '心血管内科';
-    } else if (requestText.indexOf('糖尿病') >= 0 || requestText.indexOf('血糖') >= 0) {
-      department = '内分泌科';
-    } else if (requestText.indexOf('骨') >= 0 || requestText.indexOf('腿') >= 0 || requestText.indexOf('膝') >= 0) {
-      department = '骨科';
-    } else if (requestText.indexOf('眼') >= 0) {
-      department = '眼科';
-    }
-
-    let expectedDate: string = '';
-    if (requestText.indexOf('明天') >= 0) {
-      expectedDate = MockLLMProvider.dateAfter(1);
-    } else if (requestText.indexOf('后天') >= 0) {
-      expectedDate = MockLLMProvider.dateAfter(2);
-    } else if (requestText.indexOf('下周') >= 0) {
-      expectedDate = MockLLMProvider.dateAfter(7);
-    } else if (requestText.indexOf('今天') >= 0) {
-      expectedDate = MockLLMProvider.dateAfter(0);
-    }
-
-    const isRevisit: boolean = requestText.indexOf('复查') >= 0 || requestText.indexOf('复诊') >= 0 ||
-                               requestText.indexOf('拿药') >= 0 || requestText.indexOf('取药') >= 0;
-
+    const type: IntentType = NluRules.guessIntentType(text);
+    const hospital: string = NluRules.extractHospital(text);
+    const department: string = NluRules.resolveDepartment(text);
+    const hint: DateHint = DateUtil.parseChineseDate(text, Date.now());
     const missing: string[] = [];
     if (hospital.length === 0) {
       missing.push('hospital');
@@ -169,42 +170,21 @@ export class MockLLMProvider implements LLMProvider {
     if (department.length === 0) {
       missing.push('department');
     }
-    if ((type === 'MEDICAL_VISIT' || type === 'MEDICINE_REFILL') && expectedDate.length === 0) {
+    if ((type === IntentType.MEDICAL_VISIT || type === IntentType.MEDICINE_REFILL) && hint.date.length === 0) {
       missing.push('expectedDate');
     }
-
     const result: Record<string, Object> = {
-      'type': type,
+      'type': type as string,
       'hospital': hospital,
       'department': department,
-      'purpose': requestText,
-      'expectedDate': expectedDate,
-      'isRevisit': isRevisit,
-      'confidence': type === 'UNKNOWN' ? 0.3 : 0.85,
+      'purpose': text,
+      'expectedDate': hint.date,
+      'timePreference': DateUtil.parseTimePreference(text),
+      'isRevisit': NluRules.isFollowUpPurpose(text),
+      'confidence': type === IntentType.UNKNOWN ? 0.3 : 0.85,
       'missingSlots': missing
     };
     return JSON.stringify(result);
-  }
-
-  /** 从 IntentParser 的包装消息中提取用户原话。 */
-  private static extractRequestText(text: string): string {
-    const marker: string = '用户说："';
-    const start: number = text.lastIndexOf(marker);
-    if (start >= 0) {
-      const contentStart: number = start + marker.length;
-      const end: number = text.lastIndexOf('"');
-      if (end > contentStart) {
-        return text.substring(contentStart, end);
-      }
-    }
-    return text;
-  }
-
-  private static dateAfter(days: number): string {
-    const d: Date = new Date(Date.now() + days * 24 * 3600 * 1000);
-    const m: string = `${d.getMonth() + 1}`.padStart(2, '0');
-    const day: string = `${d.getDate()}`.padStart(2, '0');
-    return `${d.getFullYear()}-${m}-${day}`;
   }
 }
 
@@ -212,19 +192,32 @@ export class MockLLMProvider implements LLMProvider {
 
 export class LLMService {
   private static provider: LLMProvider = new MockLLMProvider();
+  private static lastProvider: string = 'offline-rules';
 
   /** App 启动时按配置注入真实 Provider */
   static setProvider(p: LLMProvider): void {
     LLMService.provider = p;
   }
 
-  static async chat(messages: LLMMessage[]): Promise<string> {
+  static isRemote(): boolean {
+    return LLMService.provider.name !== 'offline-rules';
+  }
+
+  /** 最近一次实际给出结果的是谁：大模型网关还是离线规则 */
+  static lastProviderName(): string {
+    return LLMService.lastProvider;
+  }
+
+  static async chat(messages: LLMMessage[], task: LLMTask = LLMTask.INTENT): Promise<string> {
     try {
-      return await LLMService.provider.chat(messages);
+      const result: string = await LLMService.provider.chat(messages, task);
+      LLMService.lastProvider = LLMService.provider.name;
+      return result;
     } catch (e) {
-      console.error(`[LLMService] failed, fallback to mock: ${e}`);
+      console.error(`[LLMService] ${LLMService.provider.name} failed, fallback to offline rules: ${e}`);
       const fallback: MockLLMProvider = new MockLLMProvider();
-      return await fallback.chat(messages);
+      LLMService.lastProvider = fallback.name;
+      return await fallback.chat(messages, task);
     }
   }
 }

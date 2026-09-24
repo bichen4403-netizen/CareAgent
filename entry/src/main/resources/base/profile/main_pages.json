@@ -1,6 +1,8 @@
 {
   "src": [
     "pages/Index",
-    "pages/JourneyPage"
+    "pages/JourneyPage",
+    "pages/NavGuidePage",
+    "pages/ProfilePage"
   ]
 }

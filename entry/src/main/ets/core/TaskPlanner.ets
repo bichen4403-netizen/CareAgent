@@ -1,135 +1,50 @@
 /**
- * 智护同行 - 任务规划引擎
+ * 智护同行 - 任务规划器（中枢层第二步）
+ * 把意图拆解为有依赖关系的子任务 DAG，实现“串并行任务编排”。
  *
- * 把一个用户目标拆解成带依赖关系的任务 DAG，交给中枢 Agent 调度执行。
- * 依赖关系是"连续陪诊"的关键：
- *   医疗(定就诊时间) → 出行(按就诊时间倒推出发) → 导航(按诊室定路线)
- *                    ↘ 提醒(依赖前三者的时间点设置节点提醒)
+ * 典型拆解（看病）：
+ *   T1 医疗-挂号推荐 ──┬──> T2 出行-路线规划 ──┐
+ *                    ├──> T3 导航-院内路线    ├──> T4 提醒-全流程
+ *                    └────────────────────────┘
+ * T2、T3 只依赖 T1，可并行执行；T4 依赖 T1/T2/T3 全部完成。
  */
 
 import {
-  TaskPlan, TaskNode, TaskType, TaskStatus, ParsedIntent, IntentType, Anomaly
+  ParsedIntent, TaskPlan, TaskNode, TaskType, TaskStatus, IntentType, Anomaly, AnomalyType
 } from './AgentTypes';
 
 export class TaskPlanner {
 
-  /** 首次规划：根据意图生成完整任务 DAG */
   static plan(intent: ParsedIntent): TaskPlan {
+    const payload: string = JSON.stringify(intent);
     const nodes: TaskNode[] = [];
 
-    // T1 医疗：查号源排班、确定就诊时间与诊室
-    nodes.push(TaskPlanner.newNode('T1', TaskType.MEDICAL, '确认就诊安排', [], intent));
-    // T2 出行：依赖 T1 的就诊时间，倒推出发时间
-    nodes.push(TaskPlanner.newNode('T2', TaskType.TRAVEL, '规划出行方案', ['T1'], intent));
-    // T3 导航：依赖 T1 的诊室楼层信息
-    nodes.push(TaskPlanner.newNode('T3', TaskType.NAVIGATION, '生成院内路线', ['T1'], intent));
-    // T4 提醒：依赖 T1/T2/T3 的全部时间节点
-    nodes.push(TaskPlanner.newNode('T4', TaskType.REMINDER, '设置全流程提醒', ['T1', 'T2', 'T3'], intent));
-
-    // 取药场景导航目标是药房而非诊室
-    if (intent.type === IntentType.MEDICINE_REFILL) {
-      nodes[2].title = '生成取药路线';
+    if (intent.type === IntentType.MEDICAL_VISIT || intent.type === IntentType.MEDICINE_REFILL) {
+      const firstTitle: string = intent.type === IntentType.MEDICINE_REFILL ? '续方取药推荐' : '挂号方案推荐';
+      nodes.push(TaskPlanner.newNode('T1', TaskType.MEDICAL, firstTitle, [], payload));
+      nodes.push(TaskPlanner.newNode('T2', TaskType.TRAVEL, '出行路线规划', ['T1'], payload));
+      nodes.push(TaskPlanner.newNode('T3', TaskType.NAVIGATION, '院内路线指引', ['T1'], payload));
+      nodes.push(TaskPlanner.newNode('T4', TaskType.REMINDER, '全流程提醒', ['T1', 'T2', 'T3'], payload));
     }
 
-    return {
+    const plan: TaskPlan = {
       planId: `plan_${Date.now()}`,
       intent: intent,
       nodes: nodes,
       createdAt: Date.now(),
       version: 1
     };
+    return plan;
   }
 
-  private static newNode(id: string, type: TaskType, title: string,
-                         deps: string[], intent: ParsedIntent): TaskNode {
-    return {
-      id: id,
-      type: type,
-      title: title,
-      dependsOn: deps,
-      status: TaskStatus.PENDING,
-      payload: JSON.stringify(intent),
-      result: '',
-      errorMsg: ''
-    };
-  }
-
-  /**
-   * 重规划：异常发生时只重置受影响的任务及其下游，已完成的无关任务不重跑
-   * 对应流程图中的「异常回流 → 触发重规划」
-   */
-  static replan(oldPlan: TaskPlan, anomaly: Anomaly): TaskPlan {
-    const affected: Set<string> = new Set<string>();
-    for (let i = 0; i < anomaly.affectedTasks.length; i++) {
-      affected.add(anomaly.affectedTasks[i]);
-    }
-
-    // 沿依赖关系向下游传播
-    let changed: boolean = true;
-    while (changed) {
-      changed = false;
-      for (let i = 0; i < oldPlan.nodes.length; i++) {
-        const n: TaskNode = oldPlan.nodes[i];
-        if (affected.has(n.id)) {
-          continue;
-        }
-        for (let j = 0; j < n.dependsOn.length; j++) {
-          if (affected.has(n.dependsOn[j])) {
-            affected.add(n.id);
-            changed = true;
-            break;
-          }
-        }
-      }
-    }
-
-    const newNodes: TaskNode[] = [];
-    for (let i = 0; i < oldPlan.nodes.length; i++) {
-      const n: TaskNode = oldPlan.nodes[i];
-      if (affected.has(n.id)) {
-        newNodes.push({
-          id: n.id,
-          type: n.type,
-          title: n.title,
-          dependsOn: n.dependsOn,
-          status: TaskStatus.PENDING,
-          payload: TaskPlanner.injectAnomaly(n.payload, anomaly),
-          result: '',
-          errorMsg: ''
-        });
-      } else {
-        newNodes.push(n);
-      }
-    }
-
-    return {
-      planId: oldPlan.planId,
-      intent: oldPlan.intent,
-      nodes: newNodes,
-      createdAt: oldPlan.createdAt,
-      version: oldPlan.version + 1
-    };
-  }
-
-  /** 把异常信息塞进任务输入，让 Agent 知道按什么新约束重新算 */
-  private static injectAnomaly(payload: string, anomaly: Anomaly): string {
-    try {
-      const obj: Record<string, Object> = JSON.parse(payload) as Record<string, Object>;
-      obj['anomalyType'] = anomaly.type as string;
-      obj['anomalyDesc'] = anomaly.description;
-      return JSON.stringify(obj);
-    } catch (e) {
-      return payload;
-    }
-  }
-
-  /** 取出当前所有依赖已满足、可立即执行的任务（支持并行） */
+  /** 找出当前所有依赖已满足、可立即执行的任务（这一批并行执行） */
   static getRunnableTasks(plan: TaskPlan): TaskNode[] {
-    const statusMap: Map<string, TaskStatus> = new Map();
+    const doneIds: Set<string> = new Set<string>();
     for (let i = 0; i < plan.nodes.length; i++) {
-      statusMap.set(plan.nodes[i].id, plan.nodes[i].status);
+      if (plan.nodes[i].status === TaskStatus.SUCCESS) {
+        doneIds.add(plan.nodes[i].id);
+      }
     }
-
     const runnable: TaskNode[] = [];
     for (let i = 0; i < plan.nodes.length; i++) {
       const n: TaskNode = plan.nodes[i];
@@ -138,7 +53,7 @@ export class TaskPlanner {
       }
       let ready: boolean = true;
       for (let j = 0; j < n.dependsOn.length; j++) {
-        if (statusMap.get(n.dependsOn[j]) !== TaskStatus.SUCCESS) {
+        if (!doneIds.has(n.dependsOn[j])) {
           ready = false;
           break;
         }
@@ -167,5 +82,81 @@ export class TaskPlanner {
       }
     }
     return null;
+  }
+
+  /** 受影响任务 + 所有下游任务（传递闭包），重规划时这些任务都要重跑 */
+  static affectedClosure(plan: TaskPlan, ids: string[]): string[] {
+    const affected: Set<string> = new Set<string>(ids);
+    let changed: boolean = true;
+    while (changed) {
+      changed = false;
+      for (let i = 0; i < plan.nodes.length; i++) {
+        const n: TaskNode = plan.nodes[i];
+        if (affected.has(n.id)) {
+          continue;
+        }
+        for (let j = 0; j < n.dependsOn.length; j++) {
+          if (affected.has(n.dependsOn[j])) {
+            affected.add(n.id);
+            changed = true;
+            break;
+          }
+        }
+      }
+    }
+    const out: string[] = [];
+    affected.forEach((id: string) => {
+      out.push(id);
+    });
+    return out;
+  }
+
+  /**
+   * 异常回流后的局部重规划：只重置受影响任务及其下游，已完成且不受影响的任务保留结果。
+   * 例如医生停诊只影响 T1，但 T2/T3/T4 依赖 T1，所以一并重跑；
+   * 暴雨只影响 T2，则 T1、T3 保留，T2、T4 重跑。
+   */
+  static replan(plan: TaskPlan, anomaly: Anomaly): TaskPlan {
+    const affected: string[] = TaskPlanner.affectedClosure(plan, anomaly.affectedTasks);
+    const anomalyPayload: Record<string, Object> = {
+      'anomalyType': anomaly.type as string,
+      'description': anomaly.description,
+      'detail': anomaly.detail
+    };
+    for (let i = 0; i < plan.nodes.length; i++) {
+      const n: TaskNode = plan.nodes[i];
+      if (affected.indexOf(n.id) < 0) {
+        continue;
+      }
+      n.status = TaskStatus.PENDING;
+      n.result = '';
+      n.errorMsg = '';
+      // 把异常信息附加到直接受影响任务的输入中，让 Agent 感知“为什么重做”
+      if (anomaly.affectedTasks.indexOf(n.id) >= 0 && anomaly.type !== AnomalyType.NONE) {
+        try {
+          const orig: Record<string, Object> = JSON.parse(n.payload) as Record<string, Object>;
+          orig['anomaly'] = anomalyPayload;
+          n.payload = JSON.stringify(orig);
+        } catch (e) {
+          console.warn(`[TaskPlanner] payload not json, skip anomaly injection: ${e}`);
+        }
+      }
+    }
+    plan.version += 1;
+    return plan;
+  }
+
+  private static newNode(id: string, type: TaskType, title: string, deps: string[], payload: string): TaskNode {
+    const node: TaskNode = {
+      id: id,
+      type: type,
+      title: title,
+      dependsOn: deps,
+      status: TaskStatus.PENDING,
+      payload: payload,
+      result: '',
+      errorMsg: ''
+    };
+    return node;
   }
 }

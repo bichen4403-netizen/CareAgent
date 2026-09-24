@@ -1,175 +1,83 @@
 /**
- * 智护同行 - 出行路况服务
+ * 智护同行 - 出行路线服务
  *
- * ⚠️ 配置说明：调用高德"驾车路径规划"接口时应由受控后端代理，
- * 不要把 Web 服务 Key 写入客户端源码。当前 Key 留空，自动使用 Mock 数据，
- * 保证 Demo 离线也能演示。
- *
- * 经纬度格式要求："经度,纬度"，注意高德是经度在前、纬度在后，
- * 和很多其他地图服务的顺序相反，容易填反。
+ * 经网关调用高德驾车路线：已知医院坐标时直接算路，否则由网关先做地理编码。
+ * 未接入网关或调用失败时，按直线距离估算（已知坐标）或给出演示车程，并标注来源。
+ * 第三方地图密钥只放在网关，客户端不保存任何密钥。
  */
 
-import { http } from '@kit.NetworkKit';
-
-// 客户端不保存 Web 服务密钥。留空时使用 Mock；真实服务应由受控后端代理。
-const AMAP_KEY: string = '';
+import { DataSourceType } from '../core/AgentTypes';
+import { BackendClient } from './BackendClient';
 
 export interface DrivingResult {
   durationMin: number;
   distanceKm: number;
-  trafficLevel: string;   // 畅通 / 缓行 / 拥堵
-}
-
-export interface TravelProvider {
-  getDriving(originLng: number, originLat: number, destLng: number, destLat: number): Promise<DrivingResult>;
-}
-
-/**
- * 地址转经纬度（高德地理编码 API）
- * TravelAgent 手里只有"医院地址"这种文字，需要先转成经纬度才能查路况
- */
-export class GeoCoder {
-  static async geocode(address: string): Promise<[number, number] | null> {
-    if (AMAP_KEY.length === 0 || address.length === 0) {
-      return null;
-    }
-    const req: http.HttpRequest = http.createHttp();
-    try {
-      const url: string =
-        `https://restapi.amap.com/v3/geocode/geo?address=${encodeURIComponent(address)}&key=${AMAP_KEY}`;
-      const resp: http.HttpResponse = await req.request(url, {
-        method: http.RequestMethod.GET,
-        connectTimeout: 8000,
-        readTimeout: 8000
-      });
-      if (resp.responseCode !== 200) {
-        return null;
-      }
-      const obj: Record<string, Object> = JSON.parse(resp.result as string) as Record<string, Object>;
-      const geocodes = obj['geocodes'] as Array<Record<string, string>>;
-      if (geocodes === undefined || geocodes.length === 0) {
-        return null;
-      }
-      const location: string = geocodes[0]['location'];   // "经度,纬度"
-      const parts: string[] = location.split(',');
-      if (parts.length !== 2) {
-        return null;
-      }
-      return [parseFloat(parts[0]), parseFloat(parts[1])];
-    } catch (e) {
-      console.error(`[GeoCoder] failed: ${e}`);
-      return null;
-    } finally {
-      req.destroy();
-    }
-  }
-}
-
-/** 真实路况：调用高德驾车路径规划 API */
-export class AmapTravelProvider implements TravelProvider {
-  async getDriving(originLng: number, originLat: number,
-                   destLng: number, destLat: number): Promise<DrivingResult> {
-    const req: http.HttpRequest = http.createHttp();
-    try {
-      const origin: string = `${originLng},${originLat}`;
-      const dest: string = `${destLng},${destLat}`;
-      // strategy=10：躲避拥堵，更贴近真实建议路线
-      const url: string =
-        `https://restapi.amap.com/v3/direction/driving?origin=${origin}&destination=${dest}` +
-        `&extensions=base&strategy=10&key=${AMAP_KEY}`;
-
-      const resp: http.HttpResponse = await req.request(url, {
-        method: http.RequestMethod.GET,
-        connectTimeout: 8000,
-        readTimeout: 8000
-      });
-
-      if (resp.responseCode !== 200) {
-        throw new Error(`driving HTTP ${resp.responseCode}`);
-      }
-
-      const raw: string = resp.result as string;
-      const obj: Record<string, Object> = JSON.parse(raw) as Record<string, Object>;
-      const route = obj['route'] as Record<string, Object>;
-      const paths = route['paths'] as Array<Record<string, string>>;
-      if (paths === undefined || paths.length === 0) {
-        throw new Error('driving empty result');
-      }
-
-      const path: Record<string, string> = paths[0];
-      const durationSec: number = parseInt(path['duration']);
-      const distanceMeter: number = parseInt(path['distance']);
-
-      return {
-        durationMin: Math.round(durationSec / 60),
-        distanceKm: Math.round(distanceMeter / 100) / 10,
-        trafficLevel: AmapTravelProvider.estimateTrafficLevel(durationSec, distanceMeter)
-      };
-    } finally {
-      req.destroy();
-    }
-  }
-
-  /** 高德 base 版接口不直接返回拥堵等级，用平均时速粗略估算 */
-  private static estimateTrafficLevel(durationSec: number, distanceMeter: number): string {
-    if (durationSec <= 0) {
-      return '畅通';
-    }
-    const speedKmh: number = (distanceMeter / 1000) / (durationSec / 3600);
-    if (speedKmh >= 30) {
-      return '畅通';
-    }
-    if (speedKmh >= 15) {
-      return '缓行';
-    }
-    return '拥堵';
-  }
-}
-
-/** 离线兜底 */
-export class MockTravelProvider implements TravelProvider {
-  async getDriving(originLng: number, originLat: number,
-                   destLng: number, destLat: number): Promise<DrivingResult> {
-    return {
-      durationMin: 28,
-      distanceKm: 8.6,
-      trafficLevel: '缓行'
-    };
-  }
+  trafficLevel: string;
+  dataSource: DataSourceType;
+  provider: string;
 }
 
 export class TravelService {
-  private static provider: TravelProvider =
-    AMAP_KEY.length > 0 ? new AmapTravelProvider() : new MockTravelProvider();
 
-  static async getDriving(originLng: number, originLat: number,
-                          destLng: number, destLat: number): Promise<DrivingResult> {
-    try {
-      return await TravelService.provider.getDriving(originLng, originLat, destLng, destLat);
-    } catch (e) {
-      console.error(`[TravelService] failed, fallback to mock: ${e}`);
-      const fallback: MockTravelProvider = new MockTravelProvider();
-      return await fallback.getDriving(originLng, originLat, destLng, destLat);
+  static async getDriving(originLng: number, originLat: number, destAddress: string,
+    destLng: number, destLat: number): Promise<DrivingResult> {
+    const body: Record<string, Object> = {
+      'origin_lng': originLng,
+      'origin_lat': originLat,
+      'dest_address': destAddress,
+      'mode': 'driving'
+    };
+    if (destLng !== 0 && destLat !== 0) {
+      body['dest_lng'] = destLng;
+      body['dest_lat'] = destLat;
     }
+    const obj: Record<string, Object> | null = await BackendClient.postJson('/v1/travel/route', body);
+    if (obj !== null) {
+      const duration: number = BackendClient.num(obj, 'duration_min', 0);
+      if (duration > 0) {
+        const source: string = BackendClient.str(obj, 'data_source');
+        const result: DrivingResult = {
+          durationMin: Math.round(duration),
+          distanceKm: BackendClient.num(obj, 'distance_km', 0),
+          trafficLevel: BackendClient.str(obj, 'traffic_level').length > 0 ? BackendClient.str(obj, 'traffic_level') : '未知',
+          dataSource: source === 'REALTIME_API' ? DataSourceType.REALTIME_API : DataSourceType.FALLBACK,
+          provider: BackendClient.str(obj, 'provider')
+        };
+        return result;
+      }
+    }
+    return TravelService.estimate(originLng, originLat, destLng, destLat);
   }
 
-  /**
-   * 按地址查询（TravelAgent 用这个即可，内部自动做地理编码）
-   * @param originLng/originLat 起点经纬度（Index.ets 采集到的当前位置，已知不需要再编码）
-   * @param destAddress 终点地址文字，如"市第一人民医院（人民路128号）"
-   */
-  static async getDrivingByAddress(originLng: number, originLat: number,
-                                   destAddress: string): Promise<DrivingResult> {
-    if (AMAP_KEY.length === 0) {
-      const fallback: MockTravelProvider = new MockTravelProvider();
-      return await fallback.getDriving(originLng, originLat, 0, 0);
+  /** 离线估算：已知两端坐标时按直线距离 ×1.4 绕行系数、城市平均 25km/h 估算；否则给演示值 */
+  static estimate(originLng: number, originLat: number, destLng: number, destLat: number): DrivingResult {
+    if (destLng !== 0 && destLat !== 0 && originLng !== 0 && originLat !== 0) {
+      const km: number = TravelService.haversineKm(originLat, originLng, destLat, destLng) * 1.4;
+      const result: DrivingResult = {
+        durationMin: Math.max(8, Math.round(km / 25 * 60) + 5),
+        distanceKm: Math.round(km * 10) / 10,
+        trafficLevel: '未知',
+        dataSource: DataSourceType.LOCAL_COMPUTED,
+        provider: 'estimate'
+      };
+      return result;
     }
-    const destCoord: [number, number] | null = await GeoCoder.geocode(destAddress);
-    if (destCoord === null) {
-      console.warn(`[TravelService] geocode failed for "${destAddress}", fallback to mock`);
-      const fallback: MockTravelProvider = new MockTravelProvider();
-      return await fallback.getDriving(originLng, originLat, 0, 0);
-    }
-    return TravelService.getDriving(originLng, originLat, destCoord[0], destCoord[1]);
+    const demo: DrivingResult = {
+      durationMin: 28,
+      distanceKm: 9.6,
+      trafficLevel: '缓行',
+      dataSource: DataSourceType.DEMO,
+      provider: 'demo'
+    };
+    return demo;
+  }
+
+  private static haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+    const toRad: number = Math.PI / 180;
+    const dLat: number = (lat2 - lat1) * toRad;
+    const dLng: number = (lng2 - lng1) * toRad;
+    const a: number = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * toRad) * Math.cos(lat2 * toRad) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 }

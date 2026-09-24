@@ -5,6 +5,10 @@ description: 院内导航技能。当用户到达医院后需要找科室、找�
 
 # 院内导航 Skill
 
+> 上传说明：`scripts/HospitalNavSkill.ets` 是独立运行脚本，不依赖 App 内的
+> `src/main/ets` 文件。上传包只需保留本文件和 `scripts/HospitalNavSkill.ets`。
+> 院内地图暂无公开接口，路线为演示数据，返回值中 `dataSource` 固定为 `demo`。
+
 ## 触发场景
 
 当用户明确表达需要院内路线指引时调用，例如：
