@@ -1,6 +1,6 @@
 # 智护同行 · FastAPI 网关
 
-鸿蒙 App 和小艺技能脚本只访问这个网关；DeepSeek 与高德的密钥只保存在服务端 `.env`，客户端不保存任何第三方密钥。
+鸿蒙 App 只访问这个网关；DeepSeek 与高德的密钥只保存在服务端 `.env`，客户端不保存任何第三方密钥。
 
 ## 本地启动
 
@@ -21,7 +21,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 然后修改鸿蒙端 `entry/src/main/ets/config/BackendConfig.ets`：
 
-- `BASE_URL`：DevEco 模拟器通常填 `http://10.0.2.2:8000`；真机填电脑的局域网地址，如 `http://192.168.1.8:8000`（手机和电脑连同一个 Wi-Fi，电脑防火墙放行 8000 端口）；正式环境必须用 HTTPS 域名。
+- `BASE_URL`：模拟器和真机都优先填电脑当前局域网地址，如 `http://192.168.1.8:8000`（目标设备先访问 `BASE_URL/health` 验证；手机和电脑连同一个 Wi-Fi，电脑防火墙放行 8000 端口）。网络切换后地址可能变化；正式环境必须用 HTTPS 域名。
 - `APP_TOKEN`：与 `.env` 里的 `APP_ACCESS_TOKEN` 相同；网关没设就留空。
 
 ## 接口
@@ -81,5 +81,5 @@ docker run -d --name careagent-gateway --env-file .env -p 8000:8000 careagent-ga
 
 - **App 一直显示“离线规则理解”**：先看 `/health` 的 `llm_configured`；再看网关日志里有没有 `llm upstream error`。填了已停用的旧模型名 `deepseek-chat` 会看到上游 HTTP 400（模型名不受支持），改成 `deepseek-flash`。
 - **真机连不上网关**：确认 `BASE_URL` 用的是电脑局域网 IP 而不是 `127.0.0.1`，手机与电脑在同一网络，电脑防火墙放行端口。
-- **返回 401**：App 的 `BackendConfig.APP_TOKEN`（或技能脚本的 `GATEWAY_APP_TOKEN`）与 `.env` 的 `APP_ACCESS_TOKEN` 不一致。
+- **返回 401**：App 的 `BackendConfig.APP_TOKEN` 与 `.env` 的 `APP_ACCESS_TOKEN` 不一致。
 - **天气总是“小雨”**：`data_source` 为 `FALLBACK` 表示高德没配好或调用失败，`note` 字段里有原因（如 `INVALID_USER_KEY` 表示 Key 类型或值不对）。

@@ -9,7 +9,7 @@
 
 import { common } from '@kit.AbilityKit';
 import { window } from '@kit.ArkUI';
-import { IndoorNavPlan, JourneyRecord, NavStep } from '../core/AgentTypes';
+import { IndoorNavPlan, JourneyRecord, NavStep, DataSourceType } from '../core/AgentTypes';
 import { JourneyStore } from '../core/JourneyStore';
 import { NavigationAgent } from '../agents/NavigationAgent';
 import { DeviceSyncService } from '../services/DeviceSyncService';
@@ -21,6 +21,7 @@ struct NavGuidePage {
   @State stepIndex: number = 0;
   @State arrived: boolean = false;
   @State visitInfo: string = '';
+  @State isDemoTemplate: boolean = false;
 
   aboutToAppear(): void {
     const store: JourneyStore = JourneyStore.getInstance();
@@ -28,11 +29,14 @@ struct NavGuidePage {
     const j: JourneyRecord | null = active !== null ? active : store.getDraft();
     if (j !== null && j.nav !== null) {
       this.nav = j.nav;
+      this.isDemoTemplate = j.navSource === DataSourceType.DEMO;
       const a = j.appointment;
       const queue: string = a.queueNo.length > 0 ? ` · 排队号 ${a.queueNo}（以医院为准）` : '';
       this.visitInfo = `${a.hospitalName} · ${a.visitTime} 看${a.department}${queue}`;
       this.keepScreenOn(true);
-      const intro: string = `我来带您去${j.nav.targetRoom}，一共${j.nav.steps.length}步。` +
+      const intro: string = (this.isDemoTemplate
+        ? '以下是演示路线模板，请优先按医院现场导视和导诊台信息确认。'
+        : '') + `我来带您去${j.nav.targetRoom}，一共${j.nav.steps.length}步。` +
         NavigationAgent.buildStepSpeech(j.nav, 0);
       DeviceSyncService.speak(intro, true);
     }
@@ -68,7 +72,10 @@ struct NavGuidePage {
     }
     if (this.stepIndex >= this.nav.steps.length - 1) {
       this.arrived = true;
-      DeviceSyncService.speak(`到了，这里就是${this.nav.targetRoom}。在候诊区坐下，留意叫号，快轮到您时我会提醒。`, true);
+      const text: string = this.isDemoTemplate
+        ? `演示引导已走完，请按现场导视或询问导诊台，确认是否到达${this.nav.targetRoom}。`
+        : `到了，这里就是${this.nav.targetRoom}。在候诊区坐下，留意叫号，快轮到您时我会提醒。`;
+      DeviceSyncService.speak(text, true);
       return;
     }
     this.stepIndex += 1;
@@ -168,6 +175,14 @@ struct NavGuidePage {
               .width('100%')
               .margin({ top: 4 })
           }
+          if (this.isDemoTemplate) {
+            Text('演示路线模板：不是医院实时地图，请以现场导视和导诊台信息为准。')
+              .fontSize(15)
+              .fontColor('#A65A2E')
+              .lineHeight(22)
+              .width('100%')
+              .margin({ top: 8 })
+          }
           Row({ space: 8 }) {
             ForEach(this.nav.steps, (s: NavStep, i: number) => {
               Column()
@@ -191,12 +206,14 @@ struct NavGuidePage {
                 Text('✓')
                   .fontSize(56)
                   .fontColor('#3B7A57')
-                Text('到了！')
+                Text(this.isDemoTemplate ? '已完成引导' : '到了！')
                   .fontSize(30)
                   .fontWeight(FontWeight.Bold)
                   .fontColor('#1B2A34')
                   .margin({ top: 6 })
-                Text('在候诊区坐下，留意门口屏幕叫号。快轮到您时手机和手表会提醒。')
+                Text(this.isDemoTemplate
+                  ? '请按现场导视或询问导诊台，确认实际诊室和候诊位置。'
+                  : '在候诊区坐下，留意门口屏幕叫号。快轮到您时手机和手表会提醒。')
                   .fontSize(20)
                   .fontColor('#4A5A66')
                   .lineHeight(30)

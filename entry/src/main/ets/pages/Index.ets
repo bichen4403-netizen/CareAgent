@@ -14,7 +14,8 @@ import { router } from '@kit.ArkUI';
 import { call } from '@kit.TelephonyKit';
 import {
   BusEvent, BusMessage, TaskPlan, AgentResult, ServiceRecord, RecordSource, AgentReply, ReplyKind,
-  FollowUpPrompt, JourneyRecord, ReminderItem, RuntimeContext, SlotName, UserProfile
+  FollowUpPrompt, JourneyRecord, ReminderItem, RuntimeContext, SlotName, UserProfile, JourneyStage,
+  DataSourceType
 } from '../core/AgentTypes';
 import { eventBus } from '../core/EventBus';
 import { CentralAgent } from '../agents/CentralAgent';
@@ -108,6 +109,15 @@ struct Index {
   @State journeyStrip: string = '';
   @State journeyStripAction: string = '';
   @State modeLabel: string = '';
+  // 首屏“今日陪诊”状态卡：把原本分散在安排页的关键信息前置给老人看。
+  @State careTitle: string = '今天还没有陪诊安排';
+  @State careDetail: string = '说一句“明天去医院复查”，我会帮您把准备、出发和提醒排好。';
+  @State careCountdown: string = '';
+  @State careTodoCount: number = 0;
+  @State careStage: string = '等待安排';
+  @State careHasJourney: boolean = false;
+  @State careConfirmed: boolean = false;
+  @State careSource: string = '';
   @StorageLink('pendingRoute') @Watch('onRouteChanged') pendingRoute: string = '';
 
   private scroller: Scroller = new Scroller();
@@ -138,7 +148,9 @@ struct Index {
 
     AppBootstrap.ready().then(() => {
       this.ready = true;
-      this.modeLabel = BackendConfig.enabled() ? '已连接大模型 · 说一句话我来安排' : '离线演示模式 · 说一句话我来安排';
+      this.modeLabel = BackendConfig.enabled()
+        ? '已连接自建网关 · 数据来源以页面为准'
+        : '离线演示模式 · 说一句话我来安排';
       this.refreshAll();
       this.greetOnce();
       this.consumeRoute();
@@ -257,6 +269,33 @@ struct Index {
       this.journeyStripAction = '';
     }
 
+    // 让首页不再只是聊天记录：有安排时直接呈现“什么时候去、还要做什么、数据来自哪里”。
+    const shown: JourneyRecord | null = draft !== null ? draft : active;
+    if (shown === null) {
+      this.careHasJourney = false;
+      this.careConfirmed = false;
+      this.careTitle = '今天还没有陪诊安排';
+      this.careDetail = '说一句“明天去医院复查”，我会帮您把准备、出发和提醒排好。';
+      this.careCountdown = '';
+      this.careTodoCount = 0;
+      this.careStage = '等待安排';
+      this.careSource = '';
+    } else {
+      const a = shown.appointment;
+      const visitTs: number = DateUtil.toTimestamp(a.visitDate, a.visitTime);
+      const next: ReminderItem | null = Index.nextReminder(shown, now);
+      this.careHasJourney = true;
+      this.careConfirmed = shown.stage === JourneyStage.CONFIRMED;
+      this.careTitle = `${DateUtil.friendlyDate(a.visitDate, now)} ${a.visitTime} · ${a.department}`;
+      this.careDetail = `${a.hospitalName}${next !== null ? ` · 下一步：${next.title}` : ' · 请先确认挂号'}`;
+      this.careCountdown = Index.countdownText(visitTs, now);
+      this.careTodoCount = shown.preparation.materials.length;
+      this.careStage = UiLabels.stage(shown.stage);
+      this.careSource = shown.travelSource === DataSourceType.REALTIME_API
+        ? '高德实时'
+        : (UiLabels.source(shown.travelSource) || UiLabels.source(shown.medicalSource));
+    }
+
     const post: JourneyRecord | null = store.needsPostVisitCheck(now);
     if (post !== null) {
       const a = post.appointment;
@@ -276,6 +315,24 @@ struct Index {
       }
     }
     return found;
+  }
+
+  /** 面向老人使用的短倒计时，避免暴露难懂的时间戳。 */
+  private static countdownText(target: number, now: number): string {
+    if (isNaN(target)) {
+      return '';
+    }
+    const diff: number = target - now;
+    if (diff <= 0) {
+      return '现在就该出发或确认就诊状态';
+    }
+    const mins: number = Math.ceil(diff / 60000);
+    if (mins < 60) {
+      return `${mins} 分钟后就诊`;
+    }
+    const hours: number = Math.floor(mins / 60);
+    const rest: number = mins % 60;
+    return rest === 0 ? `${hours} 小时后就诊` : `${hours} 小时 ${rest} 分钟后就诊`;
   }
 
   private refreshFollowUp(): void {
@@ -450,6 +507,18 @@ struct Index {
     }
   }
 
+  /** 常驻急救入口只给出显眼、可确认的操作，不自动拨号。 */
+  private openEmergencyHelp(): void {
+    const contact: string = ContextStore.getInstance().getProfile().emergencyContact;
+    const text: string = contact.length > 0
+      ? '如果您胸痛、呼吸困难、意识不清或突然加重，请立即拨打 120。也可以先联系家人。'
+      : '如果您胸痛、呼吸困难、意识不清或突然加重，请立即拨打 120。';
+    this.pushAssistantWithActions(text, ChatAction.CALL_120, '拨打 120',
+      contact.length > 0 ? ChatAction.CALL_FAMILY : ChatAction.NONE,
+      contact.length > 0 ? '联系家人' : '');
+    DeviceSyncService.speak(text, true);
+  }
+
   // ==================== 语音输入 ====================
 
   private async onMicTap(): Promise<void> {
@@ -499,7 +568,7 @@ struct Index {
 
   // ==================== 拍照录入病历 ====================
 
-  private async onCapturePhoto(): Promise<void> {
+  private async onCapturePhoto(kind: string = '医疗资料'): Promise<void> {
     if (this.busy) {
       return;
     }
@@ -515,12 +584,12 @@ struct Index {
       return;
     }
     this.busy = true;
-    this.busyText = '正在识别病历…';
+    this.busyText = `正在识别${kind}…`;
     try {
       const outcome: OcrOutcome = await OcrCaptureService.captureFromUri(uri);
       if (outcome.record !== null) {
         this.pendingRecord = outcome.record;
-        this.pushAssistant('识别出来了，麻烦您在上面核对一下，没问题就点“确认无误”。');
+        this.pushAssistant(`识别出${kind}中的信息了，麻烦您在上面核对一下，没问题就点“确认无误”。`);
         DeviceSyncService.speak('识别出来了，麻烦您核对一下。', true);
         this.scroller.scrollEdge(Edge.Top);
       } else if (outcome.reason === 'OCR_UNAVAILABLE') {
@@ -854,6 +923,248 @@ struct Index {
       })
   }
 
+  /** 首页首屏状态：让“主动陪诊”成为打开 App 时第一眼能看见的能力。 */
+  @Builder
+  CareStatusCard() {
+    Column() {
+      Row() {
+        Column() {
+          Text(this.careHasJourney ? '今日陪诊' : '智护同行')
+            .fontSize(15)
+            .fontColor('#CFEAF2')
+          Text(this.careTitle)
+            .fontSize(22)
+            .fontWeight(FontWeight.Bold)
+            .fontColor('#FFFFFF')
+            .maxLines(2)
+            .textOverflow({ overflow: TextOverflow.Ellipsis })
+            .margin({ top: 4 })
+        }
+        .layoutWeight(1)
+        .alignItems(HorizontalAlign.Start)
+        Text(this.careHasJourney ? this.careStage : '语音优先')
+          .fontSize(13)
+          .fontColor('#0B6077')
+          .padding({ left: 9, right: 9, top: 5, bottom: 5 })
+          .backgroundColor('#DFF3F7')
+          .borderRadius(12)
+      }
+      .width('100%')
+      Text(this.careDetail)
+        .fontSize(16)
+        .fontColor('#E8F7FA')
+        .lineHeight(23)
+        .width('100%')
+        .maxLines(2)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
+        .margin({ top: 10 })
+      if (this.careHasJourney) {
+        Row() {
+          Text(this.careCountdown)
+            .fontSize(18)
+            .fontWeight(FontWeight.Medium)
+            .fontColor('#FFFFFF')
+            .layoutWeight(1)
+          Text(this.careTodoCount > 0 ? `${this.careTodoCount} 项材料待准备` : '准备清单已生成')
+            .fontSize(14)
+            .fontColor('#DFF3F7')
+        }
+        .width('100%')
+        .margin({ top: 12 })
+        if (this.careSource.length > 0) {
+          Text(`● ${this.careSource} · 数据以安排页为准`)
+            .fontSize(12)
+            .fontColor('#BDE3ED')
+            .margin({ top: 6 })
+            .width('100%')
+        }
+      }
+      if (this.careHasJourney) {
+        Text('手机安排 · 手表震动提醒 · 耳机语音引导')
+          .fontSize(13)
+          .fontColor('#BDE3ED')
+          .width('100%')
+          .margin({ top: 10 })
+        Row({ space: 8 }) {
+          Button(this.careConfirmed ? '开始导航' : '查看安排', { type: ButtonType.Capsule })
+            .layoutWeight(1)
+            .height(46)
+            .fontSize(17)
+            .fontWeight(FontWeight.Medium)
+            .fontColor('#0B6077')
+            .backgroundColor('#FFFFFF')
+            .onClick(() => {
+              this.openPage(this.careConfirmed ? 'pages/NavGuidePage' : 'pages/JourneyPage', null);
+            })
+          Button('再听一遍', { type: ButtonType.Capsule })
+            .height(46)
+            .fontSize(15)
+            .fontColor('#FFFFFF')
+            .backgroundColor('#167F98')
+            .onClick(() => {
+              DeviceSyncService.speak(`${this.careTitle}。${this.careDetail}`, true);
+            })
+          Button('联系家人', { type: ButtonType.Capsule })
+            .height(46)
+            .fontSize(15)
+            .fontColor('#FFFFFF')
+            .backgroundColor('#167F98')
+            .onClick(() => {
+              const contact: string = ContextStore.getInstance().getProfile().emergencyContact;
+              if (contact.length > 0) {
+                this.makeCall(contact);
+              } else {
+                this.openPage('pages/ProfilePage', null);
+              }
+            })
+        }
+        .width('100%')
+        .margin({ top: 12 })
+      } else {
+        Button('开始安排陪诊', { type: ButtonType.Capsule })
+          .width('100%')
+          .height(48)
+          .fontSize(18)
+          .fontWeight(FontWeight.Medium)
+          .fontColor('#0B6077')
+          .backgroundColor('#FFFFFF')
+          .margin({ top: 14 })
+          .onClick(() => {
+            this.inputText = '明天去医院复查，需要准备什么？';
+          })
+      }
+    }
+    .width('100%')
+    .padding(18)
+    .backgroundColor('#0B7C97')
+    .borderRadius(22)
+    .margin({ bottom: 12 })
+    .alignItems(HorizontalAlign.Start)
+  }
+
+  /** 三类常见材料明确分开，降低老人“不知道该拍什么”的门槛。 */
+  @Builder
+  CaptureEntry(label: string, hint: string) {
+    Column() {
+      Text(label)
+        .fontSize(17)
+        .fontWeight(FontWeight.Medium)
+        .fontColor('#14566A')
+      Text(hint)
+        .fontSize(13)
+        .fontColor('#5F8491')
+        .margin({ top: 3 })
+    }
+    .width('31%')
+    .padding(10)
+    .backgroundColor('#F2FAFC')
+    .border({ width: 1, color: '#CBE7EE' })
+    .borderRadius(14)
+    .alignItems(HorizontalAlign.Start)
+    .onClick(() => {
+      this.onCapturePhoto(label);
+    })
+  }
+
+  @Builder
+  QuickCaptureCard() {
+    Column() {
+      Text('拍资料，我来帮您整理')
+        .fontSize(18)
+        .fontWeight(FontWeight.Medium)
+        .fontColor('#1B2A34')
+        .width('100%')
+      Text('拍完后请您确认识别结果，再保存到本机。')
+        .fontSize(14)
+        .fontColor('#6B7F89')
+        .margin({ top: 4, bottom: 10 })
+        .width('100%')
+      Row({ space: 8 }) {
+        this.CaptureEntry('检查单', '整理项目')
+        this.CaptureEntry('处方/药盒', '记录用药')
+        this.CaptureEntry('预约单', '提取时间')
+      }
+      .width('100%')
+    }
+    .width('100%')
+    .padding(14)
+    .backgroundColor('#FFFFFF')
+    .borderRadius(18)
+    .margin({ bottom: 12 })
+    .alignItems(HorizontalAlign.Start)
+  }
+
+  private agentName(taskId: string): string {
+    if (taskId === 'T1') {
+      return '医疗整理';
+    }
+    if (taskId === 'T2') {
+      return '出行规划';
+    }
+    if (taskId === 'T3') {
+      return '院内引导';
+    }
+    return '提醒协同';
+  }
+
+  private agentIcon(taskId: string): string {
+    if (taskId === 'T1') {
+      return '医';
+    }
+    if (taskId === 'T2') {
+      return '行';
+    }
+    if (taskId === 'T3') {
+      return '导';
+    }
+    return '醒';
+  }
+
+  /** 以四张节点卡呈现 DAG：医疗完成后，出行与引导并行，最后汇总提醒。 */
+  @Builder
+  AgentNode(item: ProgressItem) {
+    Column() {
+      Row() {
+        Text(this.agentIcon(item.taskId))
+          .fontSize(15)
+          .fontWeight(FontWeight.Bold)
+          .fontColor('#FFFFFF')
+          .width(28)
+          .height(28)
+          .textAlign(TextAlign.Center)
+          .backgroundColor(item.status === 'FAILED' ? '#C8553D' :
+            (item.status === 'SUCCESS' ? '#3B7A57' : '#2E6F8E'))
+          .borderRadius(14)
+        Text(this.agentName(item.taskId))
+          .fontSize(16)
+          .fontWeight(FontWeight.Medium)
+          .fontColor('#22303C')
+          .margin({ left: 7 })
+          .layoutWeight(1)
+      }
+      .width('100%')
+      Text(UiLabels.taskStatus(item.status))
+        .fontSize(14)
+        .fontColor(item.status === 'SUCCESS' ? '#3B7A57' : '#6A7E87')
+        .margin({ top: 8 })
+        .width('100%')
+      if (item.dataSource.length > 0 && UiLabels.source(item.dataSource).length > 0) {
+        Text(UiLabels.source(item.dataSource))
+          .fontSize(12)
+          .fontColor(UiLabels.sourceColor(item.dataSource))
+          .margin({ top: 4 })
+          .width('100%')
+      }
+    }
+    .width('48%')
+    .padding(12)
+    .backgroundColor(item.status === 'SUCCESS' ? '#EFF8F2' : '#F6F9FA')
+    .border({ width: 1, color: item.status === 'RUNNING' ? '#72B8CA' : '#E0EAEE' })
+    .borderRadius(14)
+    .margin({ bottom: 8 })
+    .alignItems(HorizontalAlign.Start)
+  }
+
   build() {
     Column() {
       // 顶部
@@ -877,20 +1188,29 @@ struct Index {
         .alignItems(HorizontalAlign.Start)
         .layoutWeight(1)
         .margin({ left: 10 })
-        Button('拍病历', { type: ButtonType.Capsule })
-          .fontSize(16)
+        Button('拍资料', { type: ButtonType.Capsule })
+          .fontSize(15)
           .height(40)
           .fontColor('#2E6F8E')
           .backgroundColor('#E3EEF4')
           .onClick(() => {
-            this.onCapturePhoto();
+            this.onCapturePhoto('医疗资料');
+          })
+        Button('急救', { type: ButtonType.Capsule })
+          .fontSize(15)
+          .height(40)
+          .fontColor('#FFFFFF')
+          .backgroundColor('#C8553D')
+          .margin({ left: 6 })
+          .onClick(() => {
+            this.openEmergencyHelp();
           })
         Button('我的', { type: ButtonType.Capsule })
-          .fontSize(16)
+          .fontSize(15)
           .height(40)
           .fontColor('#2E6F8E')
           .backgroundColor('#E3EEF4')
-          .margin({ left: 8 })
+          .margin({ left: 6 })
           .onClick(() => {
             this.openPage('pages/ProfilePage', null);
           })
@@ -900,6 +1220,8 @@ struct Index {
 
       Scroll(this.scroller) {
         Column() {
+          this.CareStatusCard()
+
           // 当前行程
           if (this.journeyStrip.length > 0) {
             Row() {
@@ -1034,14 +1356,23 @@ struct Index {
             .margin({ bottom: 12 })
           }
 
+          this.QuickCaptureCard()
+
           // 进度面板：看得见 Agent 正在替我做什么
           if (this.progress.length > 0) {
             Column() {
               Row() {
-                Text(this.progressTitle)
-                  .fontSize(17)
-                  .fontWeight(FontWeight.Medium)
-                  .fontColor('#5A6A76')
+                Column() {
+                  Text('四个助手正在协同')
+                    .fontSize(19)
+                    .fontWeight(FontWeight.Bold)
+                    .fontColor('#1B2A34')
+                  Text(this.progressTitle)
+                    .fontSize(14)
+                    .fontColor('#6A7E87')
+                    .margin({ top: 3 })
+                }
+                .alignItems(HorizontalAlign.Start)
                   .layoutWeight(1)
                 if (this.progressDone) {
                   Text('收起')
@@ -1054,9 +1385,18 @@ struct Index {
                 }
               }
               .width('100%')
-              ForEach(this.progress, (item: ProgressItem) => {
-                this.ProgressRow(item);
-              }, (item: ProgressItem) => `${item.taskId}_${item.status}_${item.dataSource}`)
+              Text('医疗整理完成后，出行规划与院内引导会并行进行，最后汇总提醒。')
+                .fontSize(13)
+                .fontColor('#6A7E87')
+                .lineHeight(19)
+                .width('100%')
+                .margin({ top: 10, bottom: 8 })
+              Flex({ wrap: FlexWrap.Wrap, justifyContent: FlexAlign.SpaceBetween }) {
+                ForEach(this.progress, (item: ProgressItem) => {
+                  this.AgentNode(item);
+                }, (item: ProgressItem) => `${item.taskId}_${item.status}_${item.dataSource}`)
+              }
+              .width('100%')
               if (this.progressDone) {
                 Button('查看完整安排', { type: ButtonType.Capsule })
                   .fontSize(18)

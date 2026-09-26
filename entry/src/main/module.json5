@@ -11,40 +11,6 @@
     "deliveryWithInstall": true,
     "installationFree": false,
     "pages": "$profile:main_pages",
-    "skillProfiles": [
-      {
-        "name": "medical-assist",
-        "abilityName": "EntryAbility",
-        "srcEntries": [
-          "../../skills/medical-assist/scripts/MedicalAssistSkill.ets"
-        ],
-        "version": "1.0.3"
-      },
-      {
-        "name": "travel-plan",
-        "abilityName": "EntryAbility",
-        "srcEntries": [
-          "../../skills/travel-plan/scripts/TravelPlanSkill.ets"
-        ],
-        "version": "1.0.1"
-      },
-      {
-        "name": "hospital-nav",
-        "abilityName": "EntryAbility",
-        "srcEntries": [
-          "../../skills/hospital-nav/scripts/HospitalNavSkill.ets"
-        ],
-        "version": "1.0.1"
-      },
-      {
-        "name": "care-reminder",
-        "abilityName": "EntryAbility",
-        "srcEntries": [
-          "../../skills/care-reminder/scripts/CareReminderSkill.ets"
-        ],
-        "version": "1.0.1"
-      }
-    ],
     "abilities": [
       {
         "name": "EntryAbility",

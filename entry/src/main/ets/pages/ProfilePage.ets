@@ -209,6 +209,14 @@ struct ProfilePage {
     await ContextStore.getInstance().saveDemoSettings(d);
   }
 
+  /** 答辩模式一次打开两个异常回流，避免现场逐项寻找开关。 */
+  private async enablePresentationMode(): Promise<void> {
+    this.simulateStorm = true;
+    this.simulateDoctorOff = true;
+    await this.saveDemo();
+    this.toast('答辩场景已开启：下次安排会演示暴雨和停诊后的自动重规划。');
+  }
+
   private resetDemo(): void {
     this.confirm('恢复演示数据？', '会清空现在的病历和行程，写入演示档案和一条快到复诊时间的记录。', '恢复', () => {
       this.doResetDemo();
@@ -540,6 +548,22 @@ struct ProfilePage {
             }
             .width('100%')
             .padding({ top: 6, bottom: 6 })
+            Button('一键开启答辩场景', { type: ButtonType.Capsule })
+              .width('100%')
+              .height(50)
+              .fontSize(18)
+              .fontColor('#FFFFFF')
+              .backgroundColor('#6C5AA8')
+              .margin({ top: 10 })
+              .onClick(() => {
+                this.enablePresentationMode();
+              })
+            Text('会同时模拟“就诊日暴雨”和“医生临时停诊”，展示多智能体只重跑受影响环节。')
+              .fontSize(14)
+              .fontColor('#6A5E8C')
+              .lineHeight(20)
+              .width('100%')
+              .margin({ top: 6 })
             Button('恢复演示数据', { type: ButtonType.Capsule })
               .width('100%')
               .height(48)

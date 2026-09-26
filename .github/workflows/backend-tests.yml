@@ -6,6 +6,16 @@ on:
     branches: [main, master]
 
 jobs:
+  arkts-static-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check ArkTS imports, pages, and media references
+        run: python tools/check_arkts_project.py
+
   pytest:
     runs-on: ubuntu-latest
     defaults:

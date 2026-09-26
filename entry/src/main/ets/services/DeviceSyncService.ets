@@ -178,12 +178,12 @@ export class DeviceSyncService {
     return DeviceSyncService.speaking;
   }
 
-  /** 去掉不适合朗读的符号与标签 */
+  /** 去掉不适合朗读的符号；数据来源提示必须保留，避免把演示方案听成真实结果。 */
   private static forSpeech(text: string): string {
     if (text === undefined || text === null) {
       return '';
     }
-    return text.replace(/[【】\[\]]/g, '').replace(/（演示数据）|\(演示数据\)/g, '').trim();
+    return text.replace(/[【】\[\]]/g, '').trim();
   }
 
   static releaseTts(): void {

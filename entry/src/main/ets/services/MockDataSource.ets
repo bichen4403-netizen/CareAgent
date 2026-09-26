@@ -3,8 +3,8 @@
  *
  * 医院号源、诊室楼层等没有公开接口的数据，在初赛阶段用演示数据代替，
  * 所有结果都标注 dataSource = DEMO，页面上会显示“演示数据”标签。
- * 演示数据尽量贴近真实：不同科室对应不同医生/楼层；上午/下午偏好生效；
- * 当天门诊时间已过会如实返回“今天约不上”。
+ * 演示数据仅用于完整流程演示，不是医院号源或院内地图：医生、时段、费用、诊室、
+ * 排队号和路线均为合成数据，用户必须以医院官方渠道和现场导视为准。
  */
 
 import { Appointment, IndoorNavPlan, NavStep, BookingStatus } from '../core/AgentTypes';
@@ -20,20 +20,20 @@ interface DeptDemo {
 }
 
 const DEPT_DEMO: DeptDemo[] = [
-  { dept: '心血管内科', doctor: '王建国', title: '主任医师', building: '门诊楼', floor: '3楼', room: '316诊室' },
-  { dept: '内分泌科', doctor: '刘敏', title: '副主任医师', building: '门诊楼', floor: '4楼', room: '408诊室' },
-  { dept: '消化内科', doctor: '孙立', title: '主任医师', building: '门诊楼', floor: '3楼', room: '305诊室' },
-  { dept: '呼吸内科', doctor: '周红', title: '副主任医师', building: '门诊楼', floor: '2楼', room: '221诊室' },
-  { dept: '神经内科', doctor: '吴涛', title: '主任医师', building: '门诊楼', floor: '5楼', room: '502诊室' },
-  { dept: '骨科', doctor: '赵刚', title: '副主任医师', building: '外科楼', floor: '1楼', room: '108诊室' },
-  { dept: '眼科', doctor: '陈静', title: '主治医师', building: '门诊楼', floor: '2楼', room: '212诊室' },
-  { dept: '耳鼻喉科', doctor: '郑华', title: '主治医师', building: '门诊楼', floor: '2楼', room: '208诊室' },
-  { dept: '口腔科', doctor: '何平', title: '主治医师', building: '门诊楼', floor: '1楼', room: '112诊室' },
-  { dept: '体检中心', doctor: '体检医生', title: '', building: '体检中心', floor: '1楼', room: '体检大厅' }
+  { dept: '心血管内科', doctor: '演示心内科医生', title: '模拟号源', building: '演示门诊楼', floor: '演示3楼', room: '演示316诊室' },
+  { dept: '内分泌科', doctor: '演示内分泌医生', title: '模拟号源', building: '演示门诊楼', floor: '演示4楼', room: '演示408诊室' },
+  { dept: '消化内科', doctor: '演示消化内科医生', title: '模拟号源', building: '演示门诊楼', floor: '演示3楼', room: '演示305诊室' },
+  { dept: '呼吸内科', doctor: '演示呼吸内科医生', title: '模拟号源', building: '演示门诊楼', floor: '演示2楼', room: '演示221诊室' },
+  { dept: '神经内科', doctor: '演示神经内科医生', title: '模拟号源', building: '演示门诊楼', floor: '演示5楼', room: '演示502诊室' },
+  { dept: '骨科', doctor: '演示骨科医生', title: '模拟号源', building: '演示外科楼', floor: '演示1楼', room: '演示108诊室' },
+  { dept: '眼科', doctor: '演示眼科医生', title: '模拟号源', building: '演示门诊楼', floor: '演示2楼', room: '演示212诊室' },
+  { dept: '耳鼻喉科', doctor: '演示耳鼻喉科医生', title: '模拟号源', building: '演示门诊楼', floor: '演示2楼', room: '演示208诊室' },
+  { dept: '口腔科', doctor: '演示口腔科医生', title: '模拟号源', building: '演示门诊楼', floor: '演示1楼', room: '演示112诊室' },
+  { dept: '体检中心', doctor: '演示体检医生', title: '模拟号源', building: '演示体检中心', floor: '演示1楼', room: '演示体检大厅' }
 ];
 
 const DEFAULT_DEMO: DeptDemo = {
-  dept: '', doctor: '张华', title: '主治医师', building: '门诊楼', floor: '2楼', room: '201诊室'
+  dept: '', doctor: '演示医生', title: '模拟号源', building: '演示门诊楼', floor: '演示2楼', room: '演示201诊室'
 };
 
 /** 可预约时段：上午两个、下午两个 */
@@ -116,8 +116,8 @@ export class MockDataSource {
     let title: string = demo.title;
     let avoidTime: string = '';
     if (avoidDoctor.length > 0 && avoidDoctor.indexOf(demo.doctor) >= 0) {
-      doctor = '李明';
-      title = '副主任医师';
+      doctor = '演示备用医生';
+      title = '模拟号源';
       avoidTime = MockDataSource.pickTime(date, timePreference, isRevisit, nowTs, '');
     }
     const time: string = MockDataSource.pickTime(date, timePreference, isRevisit, nowTs, avoidTime);
@@ -127,7 +127,7 @@ export class MockDataSource {
     const dept: string = department.length > 0 ? department : '普通内科';
     const appt: Appointment = {
       hospitalName: hospital,
-      hospitalAddress: `${hospital}（演示地址：人民路128号）`,
+      hospitalAddress: `${hospital}（演示地址，非真实位置）`,
       hospitalLng: 0,
       hospitalLat: 0,
       department: dept,
@@ -135,7 +135,7 @@ export class MockDataSource {
       visitDate: date,
       visitTime: time,
       registrationFee: MockDataSource.feeOf(title),
-      queueNo: MockDataSource.queueNoOf(date, dept, time),
+      queueNo: `演示${MockDataSource.queueNoOf(date, dept, time)}`,
       buildingName: demo.building,
       floor: demo.floor,
       roomNo: demo.room,
@@ -145,38 +145,33 @@ export class MockDataSource {
     return appt;
   }
 
-  /** 院内导航：楼层不同步骤不同（1 楼不需要坐电梯） */
+  /** 院内导航：仅生成现场核对模板，不假设任一医院的实际布局。 */
   static queryIndoorNav(buildingName: string, floor: string, roomNo: string): IndoorNavPlan {
     const steps: NavStep[] = [];
-    steps.push({ order: 1, instruction: `从医院正门进入${buildingName}，先到一楼大厅`, landmark: '门口有导诊台，可以找工作人员帮忙' });
-    steps.push({ order: 2, instruction: '在自助机上刷医保卡或身份证取号，取号后拿好小票', landmark: '大厅左手边的自助机' });
-    if (floor !== '1楼' && floor.length > 0) {
-      steps.push({ order: 3, instruction: `坐电梯上${floor}，出电梯后看墙上的科室指示牌`, landmark: '电梯在大厅正中间，腿脚不便别走楼梯' });
-    } else {
-      steps.push({ order: 3, instruction: '就在一楼，顺着地上的指示线往里走', landmark: '跟着地面彩色导引线走' });
-    }
-    steps.push({ order: steps.length + 1, instruction: `找到${roomNo}门口，在候诊区坐下等叫号`, landmark: '门口屏幕会显示排队号' });
+    steps.push({ order: 1, instruction: `进入${buildingName}后，先向导诊台核对${floor}${roomNo}是否正确`, landmark: '导诊台或服务台' });
+    steps.push({ order: 2, instruction: `按现场导视牌前往${floor}，行动不便时询问无障碍路线`, landmark: '楼层与科室导视牌' });
+    steps.push({ order: 3, instruction: `到${floor}后，按门牌和叫号屏确认${roomNo}，再到候诊区等候`, landmark: '门牌、叫号屏或导诊人员' });
     const plan: IndoorNavPlan = {
-      entrance: '医院正门',
-      targetRoom: `${buildingName}${floor}${roomNo}`,
+      entrance: `${buildingName}入口（请以现场导视为准）`,
+      targetRoom: `${buildingName}${floor}${roomNo}（演示模板，待现场确认）`,
       steps: steps,
-      estimatedWalkMin: floor === '1楼' ? 5 : 8
+      estimatedWalkMin: 0
     };
     return plan;
   }
 
-  /** 取药导航（续方场景） */
+  /** 取药导航：仅提示到现场核对，不假设缴费处或药房位置。 */
   static queryPharmacyNav(): IndoorNavPlan {
     const steps: NavStep[] = [
-      { order: 1, instruction: '看完医生后，先到一楼缴费窗口或自助机缴费', landmark: '门诊大厅右手边' },
-      { order: 2, instruction: '缴费后到一楼西药房取药，把缴费单交给窗口', landmark: '药房门口有叫号屏' },
-      { order: 3, instruction: '拿到药先在窗口前核对药名和数量，再离开', landmark: '有疑问直接问药房工作人员' }
+      { order: 1, instruction: '先向导诊台确认缴费处和药房的位置', landmark: '导诊台或服务台' },
+      { order: 2, instruction: '按医院现场导视前往缴费处或药房', landmark: '缴费、药房导视牌' },
+      { order: 3, instruction: '取药后在窗口前核对药名和数量，有疑问立即询问工作人员', landmark: '药房窗口' }
     ];
     const plan: IndoorNavPlan = {
-      entrance: '门诊大厅',
-      targetRoom: '一楼西药房',
+      entrance: '医院入口（请以现场导视为准）',
+      targetRoom: '药房（演示模板，待导诊台确认）',
       steps: steps,
-      estimatedWalkMin: 5
+      estimatedWalkMin: 0
     };
     return plan;
   }

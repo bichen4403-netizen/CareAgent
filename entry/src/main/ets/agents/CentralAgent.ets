@@ -431,12 +431,18 @@ export class CentralAgent {
     return j;
   }
 
-  /** 给老人听的汇总：一句话讲清时间地点、何时出发、最后一步要做什么 */
+  /** 给老人听的汇总：先说明数据边界，再讲清时间地点和下一步。 */
   private static composeSummary(j: JourneyRecord, nowTs: number): string {
     const a: Appointment = j.appointment;
     const day: string = DateUtil.friendlyDate(a.visitDate, nowTs);
     const doctor: string = a.doctorName.split(' ')[0];
-    let s: string = `安排好了：${day}${a.visitTime}，${a.hospitalName}${a.department}，${doctor}医生。`;
+    const doctorLabel: string = doctor.endsWith('医生') ? doctor : `${doctor}医生`;
+    const hasDemo: boolean = j.medicalSource === DataSourceType.DEMO ||
+      j.travelSource === DataSourceType.DEMO || j.navSource === DataSourceType.DEMO;
+    let s: string = hasDemo
+      ? '这是演示推荐方案，医生、号源、诊室和院内路线不是医院实时信息，请以官方渠道和现场导视为准。'
+      : '已为您整理待确认的就诊方案。';
+    s += `${day}${a.visitTime}，${a.hospitalName}${a.department}，${doctorLabel}。`;
     if (j.travel !== null) {
       const departTs: number = DateUtil.toTimestamp(a.visitDate, j.travel.departTime);
       const departLabel: string = isNaN(departTs) ? j.travel.departTime : DateUtil.friendlyTime(departTs, nowTs);
@@ -446,7 +452,9 @@ export class CentralAgent {
       }
     }
     if (j.nav !== null) {
-      s += `到了从${j.nav.entrance}进，去${a.floor}${a.roomNo}。`;
+      s += j.navSource === DataSourceType.DEMO
+        ? '院内路线为演示核对模板，到院请先问导诊台。'
+        : `到了从${j.nav.entrance}进，去${a.floor}${a.roomNo}。`;
     }
     if (j.partial) {
       s += '有一部分还没安排好，可以在安排页里查看。';
@@ -469,18 +477,27 @@ export class CentralAgent {
     const a: Appointment = j.appointment;
     const day: string = DateUtil.friendlyDate(a.visitDate, nowTs);
     const unconfirmed: string = j.stage === JourneyStage.CONFIRMED ? '' : '这个安排还没在官方渠道确认挂号。';
+    const medicalDemoNotice: string = j.medicalSource === DataSourceType.DEMO
+      ? '其中医生、时间、号源和费用为演示信息，请以官方挂号结果为准。' : '';
+    const travelDemoNotice: string = j.travelSource === DataSourceType.DEMO
+      ? '这是演示出行建议，出发前请再核对实时路况。' : '';
+    const navDemoNotice: string = j.navSource === DataSourceType.DEMO
+      ? '院内路线是演示核对模板，请以现场导视和导诊台信息为准。' : '';
     if (kind === 'DEPART') {
       if (j.travel === null) {
         return `${day}${a.visitTime}看病，出行路线还没规划好，建议提前一小时出门。${unconfirmed}`;
       }
-      return `${day}${a.visitTime}看病，建议${j.travel.departTime}出发，路上约${j.travel.durationMin}分钟。${unconfirmed}`;
+      return `${day}${a.visitTime}看病，建议${j.travel.departTime}出发，路上约${j.travel.durationMin}分钟。` +
+        `${travelDemoNotice}${unconfirmed}`;
     }
     if (kind === 'WHEN') {
-      return `${day}${a.visitTime}，在${a.hospitalName}${a.department}，看${a.doctorName}。${unconfirmed}`;
+      return `${day}${a.visitTime}，在${a.hospitalName}${a.department}，看${a.doctorName}。` +
+        `${medicalDemoNotice}${unconfirmed}`;
     }
     if (kind === 'WHERE') {
       const entrance: string = j.nav !== null ? `到了从${j.nav.entrance}进，` : '';
-      return `${entrance}诊室在${a.buildingName}${a.floor}${a.roomNo}。到医院后打开“院内引导”，我一步一步带您走。`;
+      return `${entrance}诊室在${a.buildingName}${a.floor}${a.roomNo}。到医院后打开“院内引导”，我一步一步带您走。` +
+        `${medicalDemoNotice}${navDemoNotice}`;
     }
     if (kind === 'BRING') {
       return `记得带：${j.preparation.materials.join('、')}。`;

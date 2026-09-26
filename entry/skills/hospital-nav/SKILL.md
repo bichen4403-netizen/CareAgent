@@ -7,7 +7,8 @@ description: 院内导航技能。当用户到达医院后需要找科室、找�
 
 > 上传说明：`scripts/HospitalNavSkill.ets` 是独立运行脚本，不依赖 App 内的
 > `src/main/ets` 文件。上传包只需保留本文件和 `scripts/HospitalNavSkill.ets`。
-> 院内地图暂无公开接口，路线为演示数据，返回值中 `dataSource` 固定为 `demo`。
+> 院内地图暂无公开接口，返回的是“到院后核对”的引导模板，而不是医院实时地图；返回值中
+> `dataSource` 固定为 `TEMPLATE`，每一步都要求用户优先按现场导视或导诊台信息确认。
 
 ## 触发场景
 
@@ -29,14 +30,14 @@ description: 院内导航技能。当用户到达医院后需要找科室、找�
 
 ## 安全边界
 
-- 院内地图数据以医院官方发布为准，不臆造楼层和房间号。
+- 院内地图数据以医院官方发布为准，不臆造固定电梯、自助机、缴费窗口、药房位置、步行距离或步行时间。
 - 若目标位置信息缺失，如实告知并建议就近询问导医台，不猜测。
 - 不采集用户在院内的移动轨迹。
 
 ## 执行流程
 
 1. 从共享上下文读取目标位置（诊室 / 药房 / 缴费窗口）
-2. 生成分步路线，每步包含：动作 + 参照物
+2. 生成分步核对指引，每步包含：动作 + 现场可核对的参照物
 3. 通过耳机逐步语音播报，用户走到一个节点再播下一步
 4. 就诊场景导航到诊室；取药场景导航到缴费窗口再到药房
 
@@ -90,7 +91,7 @@ exec-cli(command: ohos-arkTSScript --skillName 'hospital-nav' --scriptPath 'scri
 
 ## 执行返回值
 
-### 成功：生成院内路线
+### 成功：生成到院后核对模板
 
 ```json
 {
@@ -98,18 +99,18 @@ exec-cli(command: ohos-arkTSScript --skillName 'hospital-nav' --scriptPath 'scri
   "status": "success",
   "data": {
     "navPlan": {
-      "entrance": "门诊楼正门",
-      "targetRoom": "3楼316诊室",
-      "estimatedWalkMin": 6,
+      "entrance": "门诊楼入口（请以现场导视为准）",
+      "targetRoom": "门诊楼3楼316诊室（待现场确认）",
+      "estimatedWalkMin": 0,
       "steps": [
-        { "order": 1, "instruction": "从门诊楼正门进入，前方10米右手边是自助机", "landmark": "门诊大厅" },
-        { "order": 2, "instruction": "在自助机取号，或直接到人工窗口报手机号取号", "landmark": "取号区" },
-        { "order": 3, "instruction": "乘坐正对面的2号电梯上到3楼", "landmark": "2号电梯" },
-        { "order": 4, "instruction": "出电梯后向左走，第三个房间即为316诊室", "landmark": "316诊室" }
+        { "order": 1, "instruction": "进入门诊楼后，先向导诊台核对3楼316诊室是否正确", "landmark": "导诊台或服务台" },
+        { "order": 2, "instruction": "按现场导视牌前往3楼；行动不便时询问无障碍路线", "landmark": "楼层与科室导视牌" },
+        { "order": 3, "instruction": "到3楼后，按门牌和叫号屏确认316诊室，再到候诊区等候", "landmark": "门牌、叫号屏或导诊人员" }
       ]
     },
-    "dataSource": "demo",
-    "speech": "从门诊楼正门进入，步行大约6分钟到3楼316诊室"
+    "dataSource": "TEMPLATE",
+    "verificationStatus": "ONSITE_CONFIRMATION_REQUIRED",
+    "speech": "以下是院内引导模板，不是该医院的实时地图。进入医院后，请先按现场导视或向导诊台确认。"
   }
 }
 ```
@@ -163,7 +164,7 @@ exec-cli(command: ohos-arkTSScript --skillName 'hospital-nav' --scriptPath 'scri
     "data": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["navPlan", "dataSource", "speech"],
+      "required": ["navPlan", "dataSource", "verificationStatus", "speech"],
       "properties": {
         "navPlan": {
           "type": "object",
@@ -188,7 +189,8 @@ exec-cli(command: ohos-arkTSScript --skillName 'hospital-nav' --scriptPath 'scri
             }
           }
         },
-        "dataSource": { "type": "string", "const": "demo" },
+        "dataSource": { "type": "string", "const": "TEMPLATE" },
+        "verificationStatus": { "type": "string", "const": "ONSITE_CONFIRMATION_REQUIRED" },
         "speech": { "type": "string", "minLength": 1 }
       }
     },
@@ -231,14 +233,14 @@ exec-cli(command: ohos-arkTSScript --skillName 'hospital-nav' --scriptPath 'scri
 
 ## 播报要求
 
-**每一步必须包含一个可见的参照物**，不能只说方向。
+**每一步必须包含一个可现场核对的参照物**，不能假设某医院的具体布局。
 
-- 错误："向前走50米后左转" —— 老人无法估算50米
-- 正确："往前走到自助机那里，然后往左拐"
+- 错误："向前走50米后左转" —— 老人无法估算50米，也未必适用于该医院
+- 正确："先到导诊台确认，再按楼层导视牌前往目标楼层"
 
 其他要求：
 - 一次只播一步，不要一口气念完整条路线
-- 用"电梯""窗口""大厅"这类日常词，不用"A区""B座""3号通道"
+- 用"导诊台""导视牌""门牌"这类日常词，不用未经核验的"2号电梯""左手边自助机"等具体位置
 - 每步控制在 20 字以内，适合语音朗读
 
 ## 异常处理
@@ -247,6 +249,6 @@ exec-cli(command: ohos-arkTSScript --skillName 'hospital-nav' --scriptPath 'scri
 |---|---|
 | 医院未确定 | `ERR_INVALID_PARAMS` |
 | clinic 场景下楼层/诊室信息不全 | `ERR_NEED_CLARIFICATION` |
-| 无该医院院内地图或内部异常 | `ERR_INTERNAL`，并提供到门诊楼层的粗粒度指引 |
-| 诊室临时变更 | 重新调用本技能生成路线并主动播报变更 |
-| 院内定位精度不足 | 降级为楼层级指引 + 参照物描述 |
+| 无该医院院内地图或内部异常 | 返回导诊台核对模板，明确不是实时路线 |
+| 诊室临时变更 | 提示用户在导诊台或官方挂号单上确认新诊室，再重新调用本技能 |
+| 院内定位精度不足 | 只提供楼层级核对提示，不提供方向或距离 |

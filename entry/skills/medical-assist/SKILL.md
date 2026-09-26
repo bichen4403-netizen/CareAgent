@@ -1,6 +1,6 @@
 ---
 name: medical-assist
-description: 提供就诊事务辅助，包括需求整理、端侧历史信息补全和就诊推荐方案生成；不提供诊断、处方或用药建议
+description: 提供就诊事务辅助，包括需求整理、准备清单和官方挂号前待确认信息；不提供诊断、处方、用药建议或号源查询
 ---
 
 # 医疗辅助 Skill
@@ -28,10 +28,10 @@ description: 提供就诊事务辅助，包括需求整理、端侧历史信息�
 
 ## 安全边界
 
-- 本 Skill 只生成就诊推荐方案，不代表已经挂号成功。
+- 本 Skill 只整理就诊准备和待确认信息，不代表已经挂号成功。
 - 所有付费、挂号、改约操作必须由用户在医院官方渠道确认。
 - 不输出诊断、药物推荐、剂量调整或替代处方。
-- 未取得可靠号源时必须返回失败，不得编造医生、时间或诊室。
+- 未取得可靠号源时，不得返回可预约方案，不得编造医生、时间、费用、排队号、地址、楼层或诊室；可以返回准备清单和需到官方渠道确认的信息。
 - 健康档案只在应用端侧用于本次信息补全，不作为模型训练数据上传。
 
 ### 场景 1：生成就诊推荐方案（planVisit）
@@ -88,32 +88,26 @@ JSON 作为一个参数传入的情况（可使用 `hospital`、`department`、`
 
 ## 执行返回值
 
-### 成功：生成推荐方案
+### 成功：生成准备清单与待确认信息
 
 ```json
 {
   "type": "result",
   "status": "success",
   "data": {
-    "appointment": {
+    "visitPlan": {
       "hospitalName": "市第一人民医院",
-      "hospitalAddress": "市第一人民医院（人民路128号）",
       "department": "心血管内科",
-      "doctorName": "王建国 主任医师",
-      "visitDate": "2026-09-01",
-      "visitTime": "09:00",
-      "registrationFee": 15,
-      "queueNo": "A012",
-      "buildingName": "门诊楼",
-      "floor": "3楼",
-      "roomNo": "316诊室",
-      "bookingStatus": "RECOMMENDED",
-      "officialChannelName": "国家政务服务平台"
+      "expectedDate": "2026-09-01",
+      "bookingStatus": "NEEDS_OFFICIAL_CONFIRMATION",
+      "officialChannelName": "医院官方渠道",
+      "missingConfirmation": ["医生", "就诊时间", "诊室", "费用及号源状态"]
     },
     "purpose": "拿高血压药",
-    "speech": "为您找到一个就诊推荐方案，但还需要在医院官方渠道确认",
+    "speech": "已为您整理就诊准备清单。本技能没有接入医院官方号源，请在医院官方渠道完成挂号后，以官方结果为准。",
     "bookingCompleted": false,
-    "officialChannelName": "国家政务服务平台",
+    "officialChannelName": "医院官方渠道",
+    "dataSource": "USER_PROVIDED_AND_LOCAL_PREPARATION",
     "preparation": {
       "visitItems": ["确认预约医院、科室和时间", "建议提前30分钟到院，预留取号和找路时间"],
       "materials": ["身份证", "医保卡（如使用）", "既往检查报告或病历资料", "预约凭证或手机截图"],
@@ -172,36 +166,33 @@ JSON 作为一个参数传入的情况（可使用 `hospital`、`department`、`
     "data": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["appointment", "purpose", "speech", "bookingCompleted", "officialChannelName", "preparation"],
+      "required": ["visitPlan", "purpose", "speech", "bookingCompleted", "officialChannelName", "dataSource", "preparation"],
       "properties": {
-        "appointment": {
+        "visitPlan": {
           "type": "object",
           "additionalProperties": false,
           "required": [
-            "hospitalName", "hospitalAddress", "department", "doctorName", "visitDate",
-            "visitTime", "registrationFee", "queueNo", "buildingName", "floor", "roomNo",
-            "bookingStatus", "officialChannelName"
+            "hospitalName", "department", "expectedDate", "bookingStatus", "officialChannelName",
+            "missingConfirmation"
           ],
           "properties": {
             "hospitalName": { "type": "string", "minLength": 1 },
-            "hospitalAddress": { "type": "string", "minLength": 1 },
             "department": { "type": "string", "minLength": 1 },
-            "doctorName": { "type": "string", "minLength": 1 },
-            "visitDate": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
-            "visitTime": { "type": "string", "pattern": "^[0-9]{2}:[0-9]{2}$" },
-            "registrationFee": { "type": "number", "minimum": 0 },
-            "queueNo": { "type": "string" },
-            "buildingName": { "type": "string" },
-            "floor": { "type": "string" },
-            "roomNo": { "type": "string" },
-            "bookingStatus": { "type": "string", "const": "RECOMMENDED" },
-            "officialChannelName": { "type": "string", "minLength": 1 }
+            "expectedDate": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+            "bookingStatus": { "type": "string", "const": "NEEDS_OFFICIAL_CONFIRMATION" },
+            "officialChannelName": { "type": "string", "const": "医院官方渠道" },
+            "missingConfirmation": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "minItems": 1
+            }
           }
         },
         "purpose": { "type": "string", "minLength": 1 },
         "speech": { "type": "string", "minLength": 1 },
         "bookingCompleted": { "type": "boolean", "const": false },
         "officialChannelName": { "type": "string", "minLength": 1 },
+        "dataSource": { "type": "string", "const": "USER_PROVIDED_AND_LOCAL_PREPARATION" },
         "preparation": {
           "type": "object",
           "additionalProperties": false,
@@ -254,8 +245,8 @@ JSON 作为一个参数传入的情况（可使用 `hospital`、`department`、`
 ## 播报要求
 
 - 使用“今天、明天、后天”等自然日期表达。
-- 明确说明结果是推荐方案，仍需在官方渠道确认。
-- 一次说清医院、科室、医生、时间和确认渠道。
+- 明确说明结果是准备清单，不等于已有号源或挂号成功。
+- 只说清用户已提供的医院、科室、计划日期和确认渠道；明确提示医生、时间、诊室、费用以官方结果为准。
 - 不使用“诊断成功”“处方已开”“已经挂号”等越权表达。
 
 ## 异常处理
@@ -264,5 +255,5 @@ JSON 作为一个参数传入的情况（可使用 `hospital`、`department`、`
 |---|---|
 | 用户没有说明就诊目的 | `ERR_INVALID_PARAMS` |
 | 医院或科室无法通过端侧历史补全 | `ERR_NEED_CLARIFICATION` |
-| 号源服务或数据源异常 | `ERR_INTERNAL` |
-| 医生停诊 | 返回重新推荐的医生与时段，仍标记为 `RECOMMENDED` |
+| 号源服务或数据源异常 | 不尝试编造号源；返回准备清单并提示用户到官方渠道确认 |
+| 医生停诊 | 不重新推荐医生；提示用户在官方渠道查看可选医生与时段 |

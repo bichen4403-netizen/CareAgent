@@ -1,7 +1,7 @@
 /**
  * 智护同行 - 大模型能力封装（平台适配层）
  *
- * 把“调模型”收敛成 LLMProvider 接口，接小艺开放平台或别的模型时只需新增一个实现：
+ * 把“调模型”收敛成 LLMProvider 接口，后续切换其他自建或第三方模型时只需新增一个实现：
  *   - HttpLLMProvider ：经 backend/ 网关调用 DeepSeek 等 OpenAI 兼容模型
  *   - MockLLMProvider ：离线规则模型，无网络也能完整演示（意图理解 + 处方单字段抽取）
  *

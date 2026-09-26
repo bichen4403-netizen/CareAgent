@@ -1,7 +1,7 @@
 """
 智护同行 · FastAPI 网关
 
-鸿蒙 App 与小艺技能脚本只访问本网关；DeepSeek 与高德的密钥只保存在服务端 .env。
+鸿蒙 App 只访问本网关；DeepSeek 与高德的密钥只保存在服务端 .env。
 
 接口一览（字段与客户端 services/*.ets 一一对应）：
   GET  /health                 健康检查（无需令牌）
@@ -27,6 +27,10 @@ from .models import HospitalResponse, LLMChatRequest, RouteRequest, RouteRespons
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("careagent")
+# httpx 的 INFO 日志会把完整请求 URL 写入控制台；高德 Web 服务 Key 位于查询参数中，
+# 因此不得输出该级别日志，避免密钥被终端记录或截图带出。
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
 
 VERSION = "1.1.0"
 

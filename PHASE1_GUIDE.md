@@ -15,7 +15,7 @@
 **第二阶段：v1.1 完整闭环**
 
 - 方案持久化与分阶段确认、系统代理提醒可撤销且点击直达、院内引导页、“我的”页、看完病闭环、拍处方单识别。
-- 语音识别 / 播报、权限申请、日期与医院名理解等问题全部修复（详见 CHANGELOG）。
+- 语音识别 / 播报、权限申请、日期与医院名理解等问题已修复（详见 [CHANGELOG.md](CHANGELOG.md)）。
 - 网关支持 DeepSeek `deepseek-flash`、高德医院检索与就诊日预报、访问令牌与限流；测试 39 项。
 
 ## 本地联调
@@ -35,7 +35,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 4. 修改 `entry/src/main/ets/config/BackendConfig.ets`：
 
 ```ts
-static readonly BASE_URL: string = 'http://10.0.2.2:8000';  // 模拟器；真机用电脑局域网 IP
+static readonly BASE_URL: string = 'http://192.168.1.8:8000';  // 模拟器和真机均用电脑当前局域网 IP
 static readonly APP_TOKEN: string = '';                      // 与 .env 的 APP_ACCESS_TOKEN 一致
 ```
 

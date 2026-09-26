@@ -1,5 +1,5 @@
 /**
- * 医疗辅助服务：医疗 Agent 与 medical-assist 技能共用的业务规则层。
+ * 医疗辅助服务：App 端医疗 Agent 的业务规则层。
  *
  * 负责：
  *   - 挂号方案推荐（号源为演示数据，接入网关时医院名称/地址/坐标为真实检索结果）
@@ -92,9 +92,11 @@ export class MedicalAssistService {
       MedicalAssistService.buildPreparation(req, appt, isRevisit);
     const day: string = DateUtil.friendlyDate(appt.visitDate, nowTs);
     const feeText: string = appt.registrationFee > 0 ? `，挂号费约${appt.registrationFee}元` : '';
-    const changed: string = req.anomalyType === 'DOCTOR_OFF' ? '原来的医生停诊了，已经换成同科室的医生。' : '';
-    const speech: string = `${changed}建议${day}${appt.visitTime}去${appt.hospitalName}${appt.department}，` +
-      `看${appt.doctorName}${feeText}。这是推荐方案，还要在${channel.name}确认挂号。`;
+    const changed: string = req.anomalyType === 'DOCTOR_OFF'
+      ? '已触发模拟停诊场景，并重新生成演示方案。' : '';
+    const speech: string = `这是演示推荐方案，不代表真实号源、医生、诊室或费用。${changed}` +
+      `建议${day}${appt.visitTime}去${appt.hospitalName}${appt.department}，` +
+      `演示信息为${appt.doctorName}${feeText}。请在${channel.name}确认真实挂号结果。`;
 
     const resp: MedicalAssistResponse = {
       success: true,
@@ -121,7 +123,7 @@ export class MedicalAssistService {
       visitItems.push('请医生确认是否继续原来的用药，再开药');
     }
     if (req.anomalyType === 'DOCTOR_OFF') {
-      visitItems.push(`原定医生停诊，已换为${appt.doctorName}`);
+      visitItems.push('模拟停诊场景已触发，请在官方渠道查看实际可选医生与时段');
     }
 
     const materials: string[] = ['身份证', '医保卡（或医保电子凭证）'];

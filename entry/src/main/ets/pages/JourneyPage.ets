@@ -10,7 +10,7 @@
 
 import { common } from '@kit.AbilityKit';
 import {
-  Appointment, JourneyRecord, JourneyStage, NavStep, ReminderItem, BusEvent, BusMessage
+  Appointment, JourneyRecord, JourneyStage, NavStep, ReminderItem, BusEvent, BusMessage, DataSourceType
 } from '../core/AgentTypes';
 import { eventBus } from '../core/EventBus';
 import { JourneyStore } from '../core/JourneyStore';
@@ -206,7 +206,8 @@ struct JourneyPage {
         .fontColor('#1B2A34')
       Blank()
       if (source.length > 0 && UiLabels.source(source).length > 0) {
-        Text(UiLabels.source(source))
+        Text(title === '出行方案' && source === DataSourceType.REALTIME_API
+          ? '高德实时 · 刚刚更新' : UiLabels.source(source))
           .fontSize(13)
           .fontColor(UiLabels.sourceColor(source))
           .padding({ left: 8, right: 8, top: 3, bottom: 3 })
@@ -284,6 +285,18 @@ struct JourneyPage {
   @Builder
   ReminderRow(r: ReminderItem) {
     Row() {
+      // 时间轴锚点：让“备材料 → 出发 → 到院 → 候诊”一眼形成连续流程。
+      Column() {
+        Text('●')
+          .fontSize(16)
+          .fontColor(r.triggerAt < this.nowTs ? '#B0BAC2' : '#2E6F8E')
+        Text('│')
+          .fontSize(22)
+          .fontColor('#C9DCE6')
+          .margin({ top: -3 })
+      }
+      .width(22)
+      .alignItems(HorizontalAlign.Center)
       Column() {
         Text(DateUtil.friendlyTime(r.triggerAt, this.nowTs))
           .fontSize(16)
@@ -351,7 +364,9 @@ struct JourneyPage {
   private statusDetail(j: JourneyRecord): string {
     const channel: string = j.appointment.officialChannelName;
     if (j.stage === JourneyStage.DRAFT) {
-      return `这是智能推荐的方案，还没有真正挂号。请先在“${channel}”完成挂号，再回来开启提醒。`;
+      const demoPrefix: string = j.medicalSource === DataSourceType.DEMO
+        ? '这是演示推荐方案，号源、医生、诊室和费用并非医院实时信息。' : '';
+      return `${demoPrefix}还没有真正挂号。请先在“${channel}”完成挂号，再回来开启提醒。`;
     }
     if (j.stage === JourneyStage.AWAITING_OFFICIAL) {
       return `在“${channel}”挂上号了吗？挂上了就点下面的按钮开启提醒；没挂上可以重新安排。`;
@@ -516,6 +531,20 @@ struct JourneyPage {
                 .margin({ bottom: 14 })
             }
 
+            if (this.journey.medicalSource === DataSourceType.DEMO ||
+              this.journey.travelSource === DataSourceType.DEMO || this.journey.navSource === DataSourceType.DEMO) {
+              Text('演示方案提示：号源、医生、诊室、费用及院内路线为演示信息；请以医院官方渠道的挂号结果和现场导视为准。')
+                .fontSize(16)
+                .fontColor('#8A4D1A')
+                .lineHeight(24)
+                .width('100%')
+                .padding(14)
+                .backgroundColor('#FFF6E8')
+                .border({ width: 1, color: '#F0C98A' })
+                .borderRadius(14)
+                .margin({ bottom: 14 })
+            }
+
             if (this.journey.travel !== null && this.journey.travel.warning.length > 0) {
               Text(`⚠ ${this.journey.travel.warning}`)
                 .fontSize(18)
@@ -542,11 +571,13 @@ struct JourneyPage {
               if (this.journey.appointment.registrationFee > 0) {
                 this.InfoRow('挂号费', `约 ${this.journey.appointment.registrationFee} 元（以医院为准）`)
               }
-              Text('号源、医生和诊室为演示数据，请以官方渠道最终挂号结果为准。')
-                .fontSize(14)
-                .fontColor('#A65A2E')
-                .margin({ top: 6 })
-                .width('100%')
+              if (this.journey.medicalSource === DataSourceType.DEMO) {
+                Text('这里的号源、医生、诊室和费用均为演示数据，请以官方渠道最终挂号结果为准。')
+                  .fontSize(14)
+                  .fontColor('#A65A2E')
+                  .margin({ top: 6 })
+                  .width('100%')
+              }
             }
             .width('100%')
             .padding(18)
@@ -593,6 +624,14 @@ struct JourneyPage {
                 this.InfoRow('路况', this.journey.travel.trafficLevel)
                 this.InfoRow('多留', `${this.journey.travel.bufferMin} 分钟（取号、排队、找诊室）`)
                 this.InfoRow('建议', this.journey.travel.suggestion)
+                Text(this.journey.travelSource === DataSourceType.REALTIME_API
+                  ? '● 路线、天气来自高德实时服务，已按本次查询更新。'
+                  : `● ${UiLabels.source(this.journey.travelSource) || '演示/估算数据'}，请以出发前实际情况为准。`)
+                  .fontSize(14)
+                  .fontColor(this.journey.travelSource === DataSourceType.REALTIME_API ? '#3B7A57' : '#A65A2E')
+                  .lineHeight(21)
+                  .width('100%')
+                  .margin({ top: 10 })
               }
               .width('100%')
               .padding(18)
@@ -605,6 +644,14 @@ struct JourneyPage {
             if (this.journey.nav !== null) {
               Column() {
                 this.SectionTitle('院内怎么走', this.journey.navSource)
+                if (this.journey.navSource === DataSourceType.DEMO) {
+                  Text('这是到院后核对用的演示模板，不是医院实时地图；请优先按现场导视或询问导诊台。')
+                    .fontSize(15)
+                    .fontColor('#A65A2E')
+                    .lineHeight(22)
+                    .width('100%')
+                    .margin({ bottom: 8 })
+                }
                 ForEach(this.journey.nav.steps, (s: NavStep) => {
                   this.StepRow(s)
                 }, (s: NavStep) => `s_${s.order}`)
@@ -629,7 +676,13 @@ struct JourneyPage {
             // 提醒
             if (this.journey.reminders.length > 0) {
               Column() {
-                this.SectionTitle('全流程提醒', '')
+                this.SectionTitle('陪诊时间轴', '')
+                Text('从出门前准备到候诊提醒，手机、手表和耳机会按时间接力。')
+                  .fontSize(14)
+                  .fontColor('#6A7E87')
+                  .lineHeight(21)
+                  .width('100%')
+                  .margin({ bottom: 8 })
                 ForEach(this.journey.reminders, (r: ReminderItem) => {
                   this.ReminderRow(r)
                 }, (r: ReminderItem) => `${r.id}_${r.triggerAt}`)

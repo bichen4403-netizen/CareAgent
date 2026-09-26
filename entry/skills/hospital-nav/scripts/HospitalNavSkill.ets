@@ -3,8 +3,8 @@ import { BusinessError } from '@kit.BasicServicesKit';
 
 /**
  * 上传到小艺开放平台的 Skill 必须自包含：不 import App 内 src/main/ets 的任何文件。
- * 院内地图暂无公开接口，路线为演示数据（dataSource 固定为 demo），
- * 生成规则与 App 内导航 Agent 一致：1 楼不需要坐电梯，取药场景走“缴费 → 药房”。
+ * 院内地图暂无公开接口，返回的是“到院后核对”的引导模板，不能当作医院实时地图。
+ * 不输出某个医院的固定电梯、自助机、药房位置或步行时间。
  */
 
 interface NavStepData {
@@ -17,7 +17,7 @@ interface NavPlanData {
   entrance: string;
   targetRoom: string;
   steps: NavStepData[];
-  estimatedWalkMin: number;
+  estimatedWalkMin: number; // 0 表示没有可靠步行时长
 }
 
 export default class HospitalNavSkill {
@@ -42,9 +42,10 @@ export default class HospitalNavSkill {
         : HospitalNavSkill.clinicRoute(building, floor, room);
       const data: Record<string, Object> = {
         'navPlan': plan,
-        'dataSource': 'demo',
-        'speech': `从${plan.entrance}进去，走大约${plan.estimatedWalkMin}分钟就到${plan.targetRoom}。` +
-          `一共${plan.steps.length}步，第一步：${plan.steps[0].instruction}`
+        'dataSource': 'TEMPLATE',
+        'verificationStatus': 'ONSITE_CONFIRMATION_REQUIRED',
+        'speech': `以下是院内引导模板，不是${hospital}的实时地图。进入医院后，请先按现场导视或向导诊台确认。` +
+          `第一步：${plan.steps[0].instruction}`
       };
       const payload: Record<string, Object> = {
         'type': 'result',
@@ -65,34 +66,29 @@ export default class HospitalNavSkill {
 
   private static clinicRoute(building: string, floor: string, room: string): NavPlanData {
     const steps: NavStepData[] = [];
-    steps.push(HospitalNavSkill.step(1, `从医院正门进入${building}，先到一楼大厅`, '门口有导诊台，可以找工作人员帮忙'));
-    steps.push(HospitalNavSkill.step(2, '在自助机上刷医保卡或身份证取号，取号后拿好小票', '大厅左手边的自助机'));
-    if (floor !== '1楼') {
-      steps.push(HospitalNavSkill.step(3, `坐电梯上${floor}，出电梯后看墙上的科室指示牌`, '电梯在大厅正中间，腿脚不便别走楼梯'));
-    } else {
-      steps.push(HospitalNavSkill.step(3, '就在一楼，顺着地上的指示线往里走', '跟着地面彩色导引线走'));
-    }
-    steps.push(HospitalNavSkill.step(4, `找到${room}门口，在候诊区坐下等叫号`, '门口屏幕会显示排队号'));
+    steps.push(HospitalNavSkill.step(1, `进入${building}后，先向导诊台核对${floor}${room}是否正确`, '导诊台或服务台'));
+    steps.push(HospitalNavSkill.step(2, `按现场导视牌前往${floor}；行动不便时询问无障碍路线`, '楼层与科室导视牌'));
+    steps.push(HospitalNavSkill.step(3, `到${floor}后，按门牌和叫号屏确认${room}，再到候诊区等候`, '门牌、叫号屏或导诊人员'));
     const plan: NavPlanData = {
-      entrance: '医院正门',
-      targetRoom: `${building}${floor}${room}`,
+      entrance: `${building}入口（请以现场导视为准）`,
+      targetRoom: `${building}${floor}${room}（待现场确认）`,
       steps: steps,
-      estimatedWalkMin: floor === '1楼' ? 5 : 8
+      estimatedWalkMin: 0
     };
     return plan;
   }
 
   private static pharmacyRoute(): NavPlanData {
     const steps: NavStepData[] = [
-      HospitalNavSkill.step(1, '看完医生后，先到一楼缴费窗口或自助机缴费', '门诊大厅右手边'),
-      HospitalNavSkill.step(2, '缴费后到一楼西药房取药，把缴费单交给窗口', '药房门口有叫号屏'),
-      HospitalNavSkill.step(3, '拿到药先在窗口前核对药名和数量，再离开', '有疑问直接问药房工作人员')
+      HospitalNavSkill.step(1, '先向导诊台确认缴费处和药房的位置', '导诊台或服务台'),
+      HospitalNavSkill.step(2, '按医院现场导视前往缴费处或药房', '缴费、药房导视牌'),
+      HospitalNavSkill.step(3, '取药后在窗口前核对药名和数量，有疑问立即询问工作人员', '药房窗口')
     ];
     const plan: NavPlanData = {
-      entrance: '门诊大厅',
-      targetRoom: '一楼西药房',
+      entrance: '医院入口（请以现场导视为准）',
+      targetRoom: '药房（待导诊台确认）',
       steps: steps,
-      estimatedWalkMin: 5
+      estimatedWalkMin: 0
     };
     return plan;
   }

@@ -4,7 +4,7 @@
  * 职责：根据挂号方案（楼栋/楼层/诊室）生成从医院正门到诊室的分步指引；
  * 续方取药场景额外追加“缴费 → 药房取药”路线。
  * 到院后由“院内引导”页逐步语音播报（buildStepSpeech），戴耳机即可边走边听。
- * 院内地图没有公开接口，初赛使用演示数据，结果标注 DEMO。
+ * 院内地图没有公开接口，初赛只生成“到院后核对”的演示模板，结果标注 DEMO。
  */
 
 import {
@@ -44,8 +44,8 @@ export class NavigationAgent extends BaseAgent {
       nav.estimatedWalkMin += pharmacy.estimatedWalkMin;
     }
 
-    const speech: string = `到了医院从${nav.entrance}进，诊室在${appt.buildingName}${appt.floor}${appt.roomNo}，` +
-      `走过去大约${nav.estimatedWalkMin}分钟。到医院后打开“院内引导”，我一步一步带您走。`;
+    const speech: string = '这是院内引导演示模板，不是医院实时地图。到医院后，请先按现场导视或向导诊台确认，' +
+      `再打开“院内引导”按步骤核对${appt.buildingName}${appt.floor}${appt.roomNo}。`;
     const data: Record<string, Object> = { 'navPlan': nav };
     return this.ok(task.id, speech, JSON.stringify(data), false, DataSourceType.DEMO, VerificationStatus.SUGGESTED);
   }
@@ -53,10 +53,11 @@ export class NavigationAgent extends BaseAgent {
   /** 到院后逐步播报的话术（院内引导页使用） */
   static buildStepSpeech(nav: IndoorNavPlan, stepIndex: number): string {
     if (stepIndex < 0 || stepIndex >= nav.steps.length) {
-      return `已经到了，您要去的是${nav.targetRoom}。`;
+      return `演示引导已完成。请以现场导视和导诊台信息确认是否到达${nav.targetRoom}。`;
     }
     const s: NavStep = nav.steps[stepIndex];
     const tail: string = stepIndex === nav.steps.length - 1 ? '这是最后一步。' : '做完了点“下一步”。';
-    return `第${stepIndex + 1}步，共${nav.steps.length}步。${s.instruction}。${s.landmark}。${tail}`;
+    return `这是演示路线模板，请优先按现场导视核对。第${stepIndex + 1}步，共${nav.steps.length}步。` +
+      `${s.instruction}。${s.landmark}。${tail}`;
   }
 }

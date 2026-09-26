@@ -6,7 +6,10 @@ import { BusinessError } from '@kit.BasicServicesKit';
  *
  * 这里不能依赖 entry/src 下的 App 业务文件：开放平台审核时只会拿到
  * SKILL.md 和本脚本，无法解析 App 内的相对 import。App 内的 MedicalAgent
- * 仍然使用 MedicalAssistService；这个文件只负责平台调用适配和演示方案生成。
+ * 仍然使用 MedicalAssistService；这个文件只负责平台调用适配和就诊准备整理。
+ *
+ * 注意：平台 Skill 没有接入医院官方号源。因此它绝不能虚构医生、时间、诊室、
+ * 费用或排队号；这些信息只能在用户完成官方渠道挂号后再由用户提供。
  */
 interface MedicalAssistArgs {
   hospital: string;
@@ -16,20 +19,13 @@ interface MedicalAssistArgs {
   isRevisit: boolean;
 }
 
-interface AppointmentData {
+interface VisitPlanData {
   hospitalName: string;
-  hospitalAddress: string;
   department: string;
-  doctorName: string;
-  visitDate: string;
-  visitTime: string;
-  registrationFee: number;
-  queueNo: string;
-  buildingName: string;
-  floor: string;
-  roomNo: string;
+  expectedDate: string;
   bookingStatus: string;
   officialChannelName: string;
+  missingConfirmation: string[];
 }
 
 interface PreparationData {
@@ -69,18 +65,19 @@ export default class MedicalAssistSkill {
         return;
       }
 
-      const appointment: AppointmentData = MedicalAssistSkill.buildAppointment(args);
+      const visitPlan: VisitPlanData = MedicalAssistSkill.buildVisitPlan(args);
       const preparation: PreparationData = MedicalAssistSkill.buildPreparation(
         args.purpose, args.isRevisit
       );
-      const channel: string = '国家政务服务平台';
+      const channel: string = '医院官方渠道';
       const data: Record<string, Object> = {
-        'appointment': appointment,
+        'visitPlan': visitPlan,
         'purpose': args.purpose,
         'bookingCompleted': false,
         'officialChannelName': channel,
         'preparation': preparation,
-        'speech': MedicalAssistSkill.buildSpeech(appointment, args.purpose, args.isRevisit, channel)
+        'dataSource': 'USER_PROVIDED_AND_LOCAL_PREPARATION',
+        'speech': MedicalAssistSkill.buildSpeech(visitPlan, channel)
       };
       await this.report(info, {
         code: 0,
@@ -98,26 +95,18 @@ export default class MedicalAssistSkill {
     }
   }
 
-  private static buildAppointment(args: MedicalAssistArgs): AppointmentData {
+  private static buildVisitPlan(args: MedicalAssistArgs): VisitPlanData {
     const hospital: string = args.hospital;
     const department: string = args.department.length > 0
       ? args.department : MedicalAssistSkill.inferDepartment(args.purpose);
     const date: string = MedicalAssistSkill.normalizeDate(args.expectedDate);
-    const isRevisit: boolean = args.isRevisit || MedicalAssistSkill.isFollowUp(args.purpose);
     return {
       hospitalName: hospital,
-      hospitalAddress: `${hospital}（人民路128号）`,
       department: department,
-      doctorName: '王建国 主任医师',
-      visitDate: date,
-      visitTime: isRevisit ? '09:00' : '10:30',
-      registrationFee: isRevisit ? 15 : 30,
-      queueNo: 'A012',
-      buildingName: '门诊楼',
-      floor: '3楼',
-      roomNo: '316诊室',
-      bookingStatus: 'RECOMMENDED',
-      officialChannelName: '国家政务服务平台'
+      expectedDate: date,
+      bookingStatus: 'NEEDS_OFFICIAL_CONFIRMATION',
+      officialChannelName: '医院官方渠道',
+      missingConfirmation: ['医生', '就诊时间', '诊室', '费用及号源状态']
     };
   }
 
@@ -147,19 +136,11 @@ export default class MedicalAssistSkill {
     return { visitItems: visitItems, materials: materials, notices: notices };
   }
 
-  private static buildSpeech(appointment: AppointmentData, purpose: string,
-                             isRevisit: boolean, channel: string): string {
-    const followUp: boolean = isRevisit || MedicalAssistSkill.isFollowUp(purpose);
-    const dateLabel: string = MedicalAssistSkill.friendlyDate(appointment.visitDate);
-    const feeLabel: string = `${appointment.registrationFee}元`;
-    if (followUp) {
-      return `帮您找到${appointment.hospitalName}${appointment.department}的推荐方案，` +
-        `${dateLabel}${appointment.visitTime}，${appointment.doctorName}，挂号费${feeLabel}。` +
-        `这只是推荐方案，还需要在${channel}确认才算挂号成功`;
-    }
-    return `帮您找到${appointment.hospitalName}${appointment.department}${appointment.doctorName}的推荐方案，` +
-      `${dateLabel}${appointment.visitTime}，挂号费${feeLabel}，诊室在${appointment.buildingName}` +
-      `${appointment.floor}${appointment.roomNo}。还需要在${channel}确认才算挂号成功`;
+  private static buildSpeech(visitPlan: VisitPlanData, channel: string): string {
+    const dateLabel: string = MedicalAssistSkill.friendlyDate(visitPlan.expectedDate);
+    return `已为您整理${dateLabel}去${visitPlan.hospitalName}${visitPlan.department}的就诊准备清单。` +
+      `本技能没有接入医院官方号源，暂时不能确认医生、就诊时间、诊室或费用。` +
+      `请在${channel}完成挂号后，再以官方结果为准。`;
   }
 
   private static inferDepartment(purpose: string): string {
